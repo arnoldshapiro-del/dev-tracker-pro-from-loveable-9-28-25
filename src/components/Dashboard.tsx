@@ -1,13 +1,16 @@
 import { Sidebar } from "./Sidebar";
-import { Plus, Bot, Rocket, BarChart3, ExternalLink, Activity, Folder, CheckCircle } from "lucide-react";
+import { Plus, Bot, Rocket, BarChart3, ExternalLink, Activity, Folder, CheckCircle, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { useAppStore } from "@/store/appStore";
+import { useAppStore, Project } from "@/store/appStore";
+import { ProjectEditor } from "./ProjectEditor";
+import { useState } from "react";
 
 export const Dashboard = () => {
   const { projects } = useAppStore();
   const { toast } = useToast();
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
   
   // Force refresh projects data on component mount
   console.log('Dashboard - Current projects from store:', projects);
@@ -69,6 +72,12 @@ export const Dashboard = () => {
         variant: "destructive"
       });
     }
+  };
+
+  const handleEditProject = (project: Project) => {
+    console.log('=== DASHBOARD EDIT DEBUG ===');
+    console.log('Setting editing project:', JSON.stringify(project, null, 2));
+    setEditingProject(project);
   };
 
   return (
@@ -178,9 +187,20 @@ export const Dashboard = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        handleEditProject(project);
+                      }}
+                      className="p-1 hover:bg-gray-100 rounded"
+                      title="Edit project"
+                    >
+                      <Edit className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
                         handleProjectClick(project);
                       }}
                       className="p-1 hover:bg-gray-100 rounded"
+                      title="Open project"
                     >
                       <ExternalLink className="h-4 w-4 text-gray-400 hover:text-gray-600" />
                     </button>
@@ -218,6 +238,13 @@ export const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Project Editor Modal */}
+      <ProjectEditor
+        project={editingProject || undefined}
+        isOpen={!!editingProject}
+        onClose={() => setEditingProject(null)}
+      />
     </div>
   );
 };
