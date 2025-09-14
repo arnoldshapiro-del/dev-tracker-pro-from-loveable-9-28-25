@@ -38,12 +38,16 @@ export const Dashboard = () => {
   };
 
   const handleProjectClick = (project: any) => {
-    if (project.deployment) {
-      window.open(`https://${project.deployment}`, '_blank');
+    const urlToOpen = project.primaryUrl || project.deployment;
+    
+    if (urlToOpen) {
+      // If URL doesn't include protocol, add https://
+      const finalUrl = urlToOpen.startsWith('http') ? urlToOpen : `https://${urlToOpen}`;
+      window.open(finalUrl, '_blank');
     } else {
       toast({
-        title: "No Deployment URL",
-        description: "This project doesn't have a deployment URL set.",
+        title: "No Primary URL",
+        description: "This project doesn't have a primary URL set. Edit the project to set one.",
         variant: "destructive"
       });
     }

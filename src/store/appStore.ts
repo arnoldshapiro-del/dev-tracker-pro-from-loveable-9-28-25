@@ -11,6 +11,7 @@ export interface Project {
   lastActivity: string;
   repository?: string;
   deployment?: string;
+  primaryUrl?: string;
   issues: number;
   technologies: string[];
   createdAt: string;

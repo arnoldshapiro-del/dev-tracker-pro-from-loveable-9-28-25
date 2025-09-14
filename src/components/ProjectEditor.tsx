@@ -21,7 +21,9 @@ import {
   Phone,
   AlertTriangle,
   TrendingUp,
-  Clock
+  Clock,
+  Trash2,
+  Check
 } from "lucide-react";
 
 interface ProjectEditorProps {
@@ -30,12 +32,18 @@ interface ProjectEditorProps {
   onClose: () => void;
 }
 
+interface PlatformUrl {
+  id: string;
+  url: string;
+  type: 'development' | 'live';
+  label: string;
+}
+
 interface PlatformConfig {
   name: string;
   icon: React.ReactNode;
   color: string;
-  developmentUrl: string;
-  liveUrl: string;
+  urls: PlatformUrl[];
   developmentUpdated?: string;
   publishedDate?: string;
   version?: string;
@@ -62,38 +70,19 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     description: project?.description || '',
     status: project?.status || 'planning',
     progress: project?.progress || 0,
+    primaryUrl: project?.primaryUrl || '',
     ...project
   });
 
   const [platforms, setPlatforms] = useState<PlatformConfig[]>([
     {
-      name: "Mocha Publishing",
-      icon: <Globe className="h-4 w-4" />,
-      color: "text-blue-600",
-      developmentUrl: "https://getmocha.com/apps/123?chat=open",
-      liveUrl: "https://abc123.mocha.app",
-      developmentUpdated: "",
-      publishedDate: "",
-      version: "v1.0.0"
-    },
-    {
-      name: "GitHub Repository",
-      icon: <Github className="h-4 w-4" />,
-      color: "text-gray-600",
-      developmentUrl: "https://github.com/user/repo/tree/dev",
-      liveUrl: "https://github.com/user/repo",
-      repositoryUrl: "https://github.com/user/repo",
-      lastPushed: "",
-      branch: "main",
-      commitHash: "a1b2c3d4e5f6...",
-      developmentUpdated: ""
-    },
-    {
       name: "Netlify Deployment",
       icon: <Bell className="h-4 w-4" />,
       color: "text-green-600",
-      developmentUrl: "https://app.netlify.com/sites/myapp",
-      liveUrl: "https://app.netlify.app",
+      urls: [
+        { id: "netlify-dev", url: "https://app.netlify.com/sites/myapp", type: "development", label: "Development URL" },
+        { id: "netlify-live", url: "https://app.netlify.app", type: "live", label: "Live URL" }
+      ],
       deployedAt: "",
       domainName: "myapp.netlify.app",
       deployId: "6123456789abcdef",
@@ -103,8 +92,10 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
       name: "Vercel Deployment",
       icon: <Zap className="h-4 w-4" />,
       color: "text-purple-600",
-      developmentUrl: "https://zoer.ai/zchat/7671",
-      liveUrl: "https://app.vercel.app",
+      urls: [
+        { id: "vercel-dev", url: "https://zoer.ai/zchat/7671", type: "development", label: "Development URL" },
+        { id: "vercel-live", url: "https://app.vercel.app", type: "live", label: "Published URL" }
+      ],
       deploymentId: "dpl_xyz123",
       developmentUpdated: "",
       deployedAt: ""
@@ -113,8 +104,10 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
       name: "Twilio Configuration",
       icon: <Phone className="h-4 w-4" />,
       color: "text-red-600",
-      developmentUrl: "https://console.twilio.com",
-      liveUrl: "",
+      urls: [
+        { id: "twilio-dev", url: "https://console.twilio.com", type: "development", label: "Development URL" },
+        { id: "twilio-live", url: "https://example.com", type: "live", label: "Live URL" }
+      ],
       phoneNumber: "+1234567890",
       configuredAt: "",
       status: "Not Configured",
@@ -122,11 +115,11 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     }
   ]);
 
-  const [recommendedUrl, setRecommendedUrl] = useState("https://zoer.ai/zchat/7671");
+  const [primaryUrl, setPrimaryUrl] = useState(project?.primaryUrl || "https://zoer.ai/zchat/7671");
 
   const handleSave = () => {
     if (project?.id) {
-      updateProject(project.id, projectData);
+      updateProject(project.id, { ...projectData, primaryUrl });
       toast({
         title: "Project Updated",
         description: "Your project has been saved successfully.",
@@ -139,6 +132,47 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     setPlatforms(prev => prev.map((platform, i) => 
       i === index ? { ...platform, [field]: value } : platform
     ));
+  };
+
+  const handleUrlUpdate = (platformIndex: number, urlId: string, newUrl: string) => {
+    setPlatforms(prev => prev.map((platform, i) => 
+      i === platformIndex ? {
+        ...platform,
+        urls: platform.urls.map(url => 
+          url.id === urlId ? { ...url, url: newUrl } : url
+        )
+      } : platform
+    ));
+  };
+
+  const handleAddUrl = (platformIndex: number, type: 'development' | 'live') => {
+    const newUrl: PlatformUrl = {
+      id: `${Date.now()}-${type}`,
+      url: "",
+      type,
+      label: type === 'development' ? 'Development URL' : 'Live URL'
+    };
+    
+    setPlatforms(prev => prev.map((platform, i) => 
+      i === platformIndex ? {
+        ...platform,
+        urls: [...platform.urls, newUrl]
+      } : platform
+    ));
+  };
+
+  const handleDeleteUrl = (platformIndex: number, urlId: string) => {
+    setPlatforms(prev => prev.map((platform, i) => 
+      i === platformIndex ? {
+        ...platform,
+        urls: platform.urls.filter(url => url.id !== urlId)
+      } : platform
+    ));
+  };
+
+  const handleSetPrimaryUrl = (url: string) => {
+    setPrimaryUrl(url);
+    setProjectData(prev => ({ ...prev, primaryUrl: url }));
   };
 
   const openUrl = (url: string) => {
@@ -158,18 +192,18 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Recommended URL Section */}
+          {/* Primary URL Section */}
           <Card className="border-green-200 bg-green-50/50">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-green-600" />
-                  <span className="font-medium text-green-800">👥 RECOMMENDED URL</span>
+                  <span className="font-medium text-green-800">👥 PRIMARY URL</span>
                 </div>
                 <Button 
                   size="sm" 
                   className="bg-green-600 hover:bg-green-700 text-white"
-                  onClick={() => openUrl(recommendedUrl)}
+                  onClick={() => openUrl(primaryUrl)}
                 >
                   <ExternalLink className="h-3 w-3 mr-1" />
                   OPEN BEST URL
@@ -178,9 +212,9 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="font-medium">Vercel</div>
+                <div className="font-medium">Selected Primary URL</div>
                 <div className="text-sm text-green-700 font-mono bg-white/60 p-2 rounded">
-                  {recommendedUrl}
+                  {primaryUrl || "No primary URL selected"}
                 </div>
               </div>
             </CardContent>
@@ -191,24 +225,61 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <ExternalLink className="h-4 w-4 text-blue-600" />
-                <span className="font-medium text-blue-800">☑️ ALL YOUR URLs (1 found)</span>
+                <span className="font-medium text-blue-800">☑️ ALL YOUR URLs ({platforms.reduce((acc, p) => acc + p.urls.length, 0)} found)</span>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between bg-green-100 p-2 rounded border border-green-200">
-                  <div>
-                    <span className="text-sm font-medium">Vercel</span>
-                    <Badge className="ml-2 bg-gray-500 text-white text-xs">DEVELOPMENT</Badge>
-                    <Badge className="ml-1 bg-green-500 text-white text-xs">👥 BEST</Badge>
+              <div className="space-y-4">
+                {platforms.map((platform, platformIndex) => (
+                  <div key={platform.name} className="space-y-2">
+                    <div className="font-medium text-sm flex items-center gap-2">
+                      <span className={platform.color}>{platform.icon}</span>
+                      {platform.name}
+                    </div>
+                    {platform.urls.map((url, urlIndex) => (
+                      <div key={url.id} className={`flex items-center justify-between p-2 rounded border ${
+                        primaryUrl === url.url ? 'bg-green-100 border-green-200' : 'bg-gray-50 border-gray-200'
+                      }`}>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{url.label}</span>
+                            <Badge className={`text-xs ${
+                              url.type === 'development' ? 'bg-gray-500 text-white' : 'bg-blue-500 text-white'
+                            }`}>
+                              {url.type.toUpperCase()}
+                            </Badge>
+                            {primaryUrl === url.url && (
+                              <Badge className="bg-green-500 text-white text-xs">👥 BEST</Badge>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-600 font-mono mt-1">
+                            {url.url || "No URL set"}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={() => handleSetPrimaryUrl(url.url)}
+                            disabled={!url.url || primaryUrl === url.url}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Check className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={() => openUrl(url.url)}
+                            disabled={!url.url}
+                            className="h-8 w-8 p-0"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <Button size="sm" variant="ghost" onClick={() => openUrl(recommendedUrl)}>
-                    <ExternalLink className="h-3 w-3" />
-                  </Button>
-                </div>
-                <div className="text-xs text-green-700 font-mono">
-                  {recommendedUrl}
-                </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -301,128 +372,83 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm">
-                          {platform.name === "GitHub Repository" ? "Development URL" : "Development URL"}
-                        </Label>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 px-2 bg-gray-100 text-xs"
-                          disabled={!platform.developmentUrl}
-                        >
-                          EMPTY - ADD URL
-                        </Button>
+                  {/* URLs Section */}
+                  <div className="space-y-4">
+                    {platform.urls.map((url, urlIndex) => (
+                      <div key={url.id} className="grid grid-cols-2 gap-4 p-3 border rounded-lg">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Label className="text-sm">{url.label}</Label>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-6 px-2 bg-red-100 text-red-600 text-xs hover:bg-red-200"
+                                onClick={() => handleDeleteUrl(index, url.id)}
+                              >
+                                <Trash2 className="h-3 w-3 mr-1" />
+                                DELETE
+                              </Button>
+                              {url.url && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className={`h-6 px-2 text-xs ${
+                                    primaryUrl === url.url 
+                                      ? 'bg-green-100 text-green-600' 
+                                      : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-600'
+                                  }`}
+                                  onClick={() => handleSetPrimaryUrl(url.url)}
+                                >
+                                  <Check className="h-3 w-3 mr-1" />
+                                  {primaryUrl === url.url ? 'PRIMARY' : 'SET PRIMARY'}
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                          <Input
+                            value={url.url}
+                            onChange={(e) => handleUrlUpdate(index, url.id, e.target.value)}
+                            placeholder="https://example.com"
+                            className="text-sm"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm">Type</Label>
+                          <Badge className={`text-xs w-fit ${
+                            url.type === 'development' ? 'bg-gray-500 text-white' : 'bg-blue-500 text-white'
+                          }`}>
+                            {url.type.toUpperCase()}
+                          </Badge>
+                        </div>
                       </div>
-                      <Input
-                        value={platform.developmentUrl}
-                        onChange={(e) => handlePlatformUpdate(index, 'developmentUrl', e.target.value)}
-                        placeholder={`https://example.com`}
-                        className="text-sm"
-                      />
-                      <div className="text-xs text-yellow-600 flex items-center gap-1">
-                        <Plus className="h-3 w-3" />
-                        Add a URL here to track this platform
-                      </div>
-                    </div>
+                    ))}
                     
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm">
-                          {platform.name === "GitHub Repository" ? "Repository URL" : 
-                           platform.name === "Netlify Deployment" ? "Live URL" :
-                           platform.name === "Twilio Configuration" ? "Live URL" : "Published URL"}
-                        </Label>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 px-2 bg-gray-100 text-xs"
-                          disabled={!platform.liveUrl}
-                        >
-                          EMPTY - ADD URL
-                        </Button>
-                      </div>
-                      <Input
-                        value={platform.liveUrl}
-                        onChange={(e) => handlePlatformUpdate(index, 'liveUrl', e.target.value)}
-                        placeholder={`https://example.com`}
-                        className="text-sm"
-                      />
-                      <div className="text-xs text-yellow-600 flex items-center gap-1">
-                        <Plus className="h-3 w-3" />
-                        Add a URL here to track this platform
-                      </div>
+                    {/* Add URL Buttons */}
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleAddUrl(index, 'development')}
+                        className="text-xs"
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add Development URL
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleAddUrl(index, 'live')}
+                        className="text-xs"
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add Live URL
+                      </Button>
                     </div>
                   </div>
 
                   {/* Platform-specific fields */}
                   <div className="grid grid-cols-3 gap-4 text-sm">
-                    {platform.name === "Mocha Publishing" && (
-                      <>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Development Updated</Label>
-                          <Input
-                            type="datetime-local"
-                            value={platform.developmentUpdated}
-                            onChange={(e) => handlePlatformUpdate(index, 'developmentUpdated', e.target.value)}
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Published Date & Time</Label>
-                          <Input
-                            type="datetime-local"
-                            value={platform.publishedDate}
-                            onChange={(e) => handlePlatformUpdate(index, 'publishedDate', e.target.value)}
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Version</Label>
-                          <Input
-                            value={platform.version}
-                            onChange={(e) => handlePlatformUpdate(index, 'version', e.target.value)}
-                            placeholder="v1.0.0"
-                            className="text-xs"
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    {platform.name === "GitHub Repository" && (
-                      <>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Development Updated</Label>
-                          <Input
-                            type="datetime-local"
-                            value={platform.developmentUpdated}
-                            onChange={(e) => handlePlatformUpdate(index, 'developmentUpdated', e.target.value)}
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Last Pushed</Label>
-                          <Input
-                            type="datetime-local"
-                            value={platform.lastPushed}
-                            onChange={(e) => handlePlatformUpdate(index, 'lastPushed', e.target.value)}
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Branch</Label>
-                          <Input
-                            value={platform.branch}
-                            onChange={(e) => handlePlatformUpdate(index, 'branch', e.target.value)}
-                            placeholder="main"
-                            className="text-xs"
-                          />
-                        </div>
-                      </>
-                    )}
-
                     {(platform.name === "Netlify Deployment" || platform.name === "Vercel Deployment") && (
                       <>
                         <div className="space-y-1">
@@ -463,15 +489,6 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                     {platform.name === "Twilio Configuration" && (
                       <>
                         <div className="space-y-1">
-                          <Label className="text-xs">Development URL</Label>
-                          <Input
-                            value={platform.developmentUrl}
-                            onChange={(e) => handlePlatformUpdate(index, 'developmentUrl', e.target.value)}
-                            placeholder="https://console.twilio.com"
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
                           <Label className="text-xs">Phone Number</Label>
                           <Input
                             value={platform.phoneNumber}
@@ -496,34 +513,10 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                             </SelectContent>
                           </Select>
                         </div>
+                        <div></div>
                       </>
                     )}
                   </div>
-
-                  {/* Additional fields for specific platforms */}
-                  {platform.name === "GitHub Repository" && (
-                    <div className="space-y-2">
-                      <Label className="text-xs">Commit Hash</Label>
-                      <Input
-                        value={platform.commitHash}
-                        onChange={(e) => handlePlatformUpdate(index, 'commitHash', e.target.value)}
-                        placeholder="a1b2c3d4e5f6..."
-                        className="text-xs"
-                      />
-                    </div>
-                  )}
-
-                  {platform.name === "Netlify Deployment" && (
-                    <div className="space-y-2">
-                      <Label className="text-xs">Deploy ID</Label>
-                      <Input
-                        value={platform.deployId}
-                        onChange={(e) => handlePlatformUpdate(index, 'deployId', e.target.value)}
-                        placeholder="6123456789abcdef"
-                        className="text-xs"
-                      />
-                    </div>
-                  )}
                 </CardContent>
               </Card>
             ))}
