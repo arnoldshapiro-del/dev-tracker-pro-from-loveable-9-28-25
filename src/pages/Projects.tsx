@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Plus, Github, ExternalLink, Calendar, AlertCircle, TrendingUp, GripVertical, CalendarIcon, Users, Building, Tag, Key, Globe, Shield, Database, Server, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { openProjectUrl } from "@/utils/projectUtils";
 import { ProjectEditor } from "@/components/ProjectEditor";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -316,32 +317,7 @@ export const Projects = () => {
   };
 
   const handleOpenProject = (project: Project) => {
-    console.log('=== PROJECTS PAGE LINK DEBUG ===');
-    console.log('Project data:', project);
-    console.log('project.primaryUrl:', project.primaryUrl);
-    console.log('project.lovable_live_url:', project.lovable_live_url);
-    console.log('project.lovable_dev_url:', project.lovable_dev_url);
-    console.log('project.deployment:', project.deployment);
-    
-    // Use same priority as dashboard: primaryUrl, lovable URLs, then deployment
-    const url = project.primaryUrl || project.lovable_live_url || project.lovable_dev_url || project.deployment || project.repository;
-    
-    console.log('Selected URL to open:', url);
-    
-    if (url) {
-      const finalUrl = url.startsWith('http') ? url : `https://${url}`;
-      window.open(finalUrl, '_blank');
-      toast({
-        title: "Opening Project",
-        description: `Opening ${project.name}...`,
-      });
-    } else {
-      toast({
-        title: "No URL Available",
-        description: "This project doesn't have a deployment or repository URL configured.",
-        variant: "destructive"
-      });
-    }
+    openProjectUrl(project, toast);
   };
 
   const handleDeleteProject = (project: Project) => {
