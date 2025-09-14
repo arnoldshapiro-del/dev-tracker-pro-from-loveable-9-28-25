@@ -8,9 +8,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Plus, Github, ExternalLink, Calendar, AlertCircle, TrendingUp, GripVertical } from "lucide-react";
+import { Search, Plus, Github, ExternalLink, Calendar, AlertCircle, TrendingUp, GripVertical, CalendarIcon, Users, Building, Tag, Key, Globe, Shield, Database, Server } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectEditor } from "@/components/ProjectEditor";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { format } from "date-fns";
 import { ProjectTabs } from "@/components/ProjectTabs";
 import { TemplateMarketplace } from "@/components/TemplateMarketplace";
 import { 
@@ -200,7 +204,22 @@ export const Projects = () => {
     netlify_url: '',
     credits_used: 0,
     credits_remaining: 100,
-    initial_budget_credits: 100
+    initial_budget_credits: 100,
+    // New fields
+    team_members: [] as string[],
+    project_category: 'web_app',
+    framework_stack: [] as string[],
+    project_priority: 'medium',
+    deadline: null as Date | null,
+    client_organization: '',
+    project_status: 'planning',
+    environment_variables: '',
+    database_url: '',
+    api_keys: [] as Array<{key: string, value: string}>,
+    custom_domain: '',
+    ssl_certificate: false,
+    backup_frequency: 'weekly',
+    project_tags: [] as string[]
   });
 
   const sensors = useSensors(
@@ -248,7 +267,22 @@ export const Projects = () => {
       netlify_url: '',
       credits_used: 0,
       credits_remaining: 100,
-      initial_budget_credits: 100
+      initial_budget_credits: 100,
+      // Reset new fields
+      team_members: [],
+      project_category: 'web_app',
+      framework_stack: [],
+      project_priority: 'medium',
+      deadline: null,
+      client_organization: '',
+      project_status: 'planning',
+      environment_variables: '',
+      database_url: '',
+      api_keys: [],
+      custom_domain: '',
+      ssl_certificate: false,
+      backup_frequency: 'weekly',
+      project_tags: []
     });
     setIsCreateModalOpen(false);
   };
@@ -313,7 +347,7 @@ export const Projects = () => {
             <DialogHeader>
               <DialogTitle>Add New AI Project</DialogTitle>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <div className="grid gap-4 py-4 max-h-96 overflow-y-auto">
               <div className="grid gap-2">
                 <Label htmlFor="name">Project Name *</Label>
                 <Input
@@ -378,6 +412,113 @@ export const Projects = () => {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Team Members */}
+              <div className="grid gap-2">
+                <Label htmlFor="team_members">Team Members</Label>
+                <Input
+                  id="team_members"
+                  value={newProject.team_members.join(', ')}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, team_members: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }))}
+                  placeholder="john@example.com, jane@example.com"
+                />
+              </div>
+
+              {/* Project Category */}
+              <div className="grid gap-2">
+                <Label htmlFor="project_category">Project Category</Label>
+                <Select value={newProject.project_category} onValueChange={(value) => setNewProject(prev => ({ ...prev, project_category: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="web_app">Web App</SelectItem>
+                    <SelectItem value="mobile_app">Mobile App</SelectItem>
+                    <SelectItem value="desktop_app">Desktop App</SelectItem>
+                    <SelectItem value="api">API</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Framework/Technology Stack */}
+              <div className="grid gap-2">
+                <Label htmlFor="framework_stack">Framework/Technology Stack</Label>
+                <Input
+                  id="framework_stack"
+                  value={newProject.framework_stack.join(', ')}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, framework_stack: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }))}
+                  placeholder="React, Node.js, PostgreSQL, TypeScript"
+                />
+              </div>
+
+              {/* Project Priority */}
+              <div className="grid gap-2">
+                <Label htmlFor="project_priority">Project Priority</Label>
+                <Select value={newProject.project_priority} onValueChange={(value) => setNewProject(prev => ({ ...prev, project_priority: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Deadline/Target Launch Date */}
+              <div className="grid gap-2">
+                <Label htmlFor="deadline">Deadline/Target Launch Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {newProject.deadline ? format(newProject.deadline, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={newProject.deadline || undefined}
+                      onSelect={(date) => setNewProject(prev => ({ ...prev, deadline: date || null }))}
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              {/* Client/Organization */}
+              <div className="grid gap-2">
+                <Label htmlFor="client_organization">Client/Organization</Label>
+                <Input
+                  id="client_organization"
+                  value={newProject.client_organization}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, client_organization: e.target.value }))}
+                  placeholder="Acme Corp, Internal Project, etc."
+                />
+              </div>
+
+              {/* Project Status */}
+              <div className="grid gap-2">
+                <Label htmlFor="project_status">Project Status</Label>
+                <Select value={newProject.project_status} onValueChange={(value) => setNewProject(prev => ({ ...prev, project_status: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="planning">Planning</SelectItem>
+                    <SelectItem value="development">Development</SelectItem>
+                    <SelectItem value="testing">Testing</SelectItem>
+                    <SelectItem value="production">Production</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               
               <div className="grid gap-2">
                 <Label htmlFor="platform_url">AI Platform Project URL</Label>
@@ -406,6 +547,77 @@ export const Projects = () => {
                   value={newProject.netlify_url || ''}
                   onChange={(e) => setNewProject(prev => ({ ...prev, netlify_url: e.target.value }))}
                   placeholder="https://your-app.netlify.app"
+                />
+              </div>
+
+              {/* Environment Variables */}
+              <div className="grid gap-2">
+                <Label htmlFor="environment_variables">Environment Variables</Label>
+                <Textarea
+                  id="environment_variables"
+                  value={newProject.environment_variables}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, environment_variables: e.target.value }))}
+                  placeholder="DATABASE_URL=..."
+                  rows={3}
+                />
+              </div>
+
+              {/* Database URL */}
+              <div className="grid gap-2">
+                <Label htmlFor="database_url">Database URL</Label>
+                <Input
+                  id="database_url"
+                  value={newProject.database_url}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, database_url: e.target.value }))}
+                  placeholder="postgresql://user:pass@host:port/db"
+                />
+              </div>
+
+              {/* Custom Domain */}
+              <div className="grid gap-2">
+                <Label htmlFor="custom_domain">Custom Domain</Label>
+                <Input
+                  id="custom_domain"
+                  value={newProject.custom_domain}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, custom_domain: e.target.value }))}
+                  placeholder="myapp.com"
+                />
+              </div>
+
+              {/* SSL Certificate */}
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="ssl_certificate"
+                  checked={newProject.ssl_certificate}
+                  onCheckedChange={(checked) => setNewProject(prev => ({ ...prev, ssl_certificate: !!checked }))}
+                />
+                <Label htmlFor="ssl_certificate">SSL Certificate</Label>
+              </div>
+
+              {/* Backup Frequency */}
+              <div className="grid gap-2">
+                <Label htmlFor="backup_frequency">Backup Frequency</Label>
+                <Select value={newProject.backup_frequency} onValueChange={(value) => setNewProject(prev => ({ ...prev, backup_frequency: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="never">Never</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Project Tags */}
+              <div className="grid gap-2">
+                <Label htmlFor="project_tags">Project Tags</Label>
+                <Input
+                  id="project_tags"
+                  value={newProject.project_tags.join(', ')}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, project_tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }))}
+                  placeholder="urgent, frontend, api, beta"
                 />
               </div>
               
