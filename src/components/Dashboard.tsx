@@ -1,5 +1,5 @@
 import { Sidebar } from "./Sidebar";
-import { Plus, Bot, Rocket, BarChart3, ExternalLink, Activity, Folder, CheckCircle, Edit, Trash2 } from "lucide-react";
+import { Plus, Bot, Rocket, BarChart3, ExternalLink, Activity, Folder, CheckCircle, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -8,7 +8,7 @@ import { ProjectEditor } from "./ProjectEditor";
 import { useState } from "react";
 
 export const Dashboard = () => {
-  const { projects, deleteProject } = useAppStore();
+  const { projects } = useAppStore();
   const { toast } = useToast();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   
@@ -78,16 +78,6 @@ export const Dashboard = () => {
     console.log('=== DASHBOARD EDIT DEBUG ===');
     console.log('Setting editing project:', JSON.stringify(project, null, 2));
     setEditingProject(project);
-  };
-
-  const handleDeleteProject = (project: Project) => {
-    if (window.confirm(`Are you sure you want to delete "${project.name}"? This action cannot be undone.`)) {
-      deleteProject(project.id);
-      toast({
-        title: "Project Deleted",
-        description: `${project.name} has been deleted successfully.`,
-      });
-    }
   };
 
   return (
@@ -203,16 +193,6 @@ export const Dashboard = () => {
                       title="Edit project"
                     >
                       <Edit className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteProject(project);
-                      }}
-                      className="p-1 hover:bg-gray-100 rounded"
-                      title="Delete project"
-                    >
-                      <Trash2 className="h-4 w-4 text-red-400 hover:text-red-600" />
                     </button>
                     <button
                       onClick={(e) => {

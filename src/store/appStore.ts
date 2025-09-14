@@ -24,7 +24,6 @@ export interface Project {
   initial_budget_credits?: number;
   credits_remaining?: number;
   github_repo_url?: string;
-  github_dev_url?: string;
   netlify_url?: string;
   netlify_dev_url?: string;
   vercel_url?: string;
@@ -39,19 +38,6 @@ export interface Project {
   features_completed?: string[];
   features_pending?: string[];
   known_bugs?: string[];
-  
-  // New fields for Loveable development/deployed dates
-  lovable_development_updated?: string;
-  lovable_deployed_at?: string;
-  version?: string;
-  
-  // Future platform fields
-  platform1_dev_url?: string;
-  platform1_live_url?: string;
-  platform2_dev_url?: string;
-  platform2_live_url?: string;
-  platform3_dev_url?: string;
-  platform3_live_url?: string;
 }
 
 export interface AnalyticsData {
