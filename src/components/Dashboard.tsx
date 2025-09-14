@@ -1,30 +1,44 @@
-import { useState } from "react";
 import { Sidebar } from "./Sidebar";
-import { WelcomeHero } from "./WelcomeHero";
-import { MetricCard } from "./MetricCard";
-import { SetupChecklist } from "./SetupChecklist";
-import { AchievementSection } from "./AchievementSection";
-import { FolderOpen, TrendingUp, AlertCircle, Plus } from "lucide-react";
+import { Plus, Bot, Rocket, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useAppStore } from "@/store/appStore";
+import { useState } from "react";
 
 export const Dashboard = () => {
-  const [projectCount, setProjectCount] = useState(3);
+  const { projects } = useAppStore();
   const { toast } = useToast();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const handleNewProject = () => {
-    setProjectCount(prev => prev + 1);
+  const handleStartNewProject = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCompareAI = () => {
     toast({
-      title: "New Project Created!",
-      description: `You now have ${projectCount + 1} projects.`,
+      title: "Compare AI Assistance",
+      description: "AI comparison feature coming soon!",
     });
   };
 
-  const handleGetStarted = () => {
+  const handleDeployProject = () => {
     toast({
-      title: "Welcome to DevTracker Pro!",
-      description: "Let's get you set up quickly.",
+      title: "Deploy Project",
+      description: "Project deployment feature coming soon!",
     });
+  };
+
+  const handleProjectClick = (project: any) => {
+    if (project.deployment) {
+      window.open(`https://${project.deployment}`, '_blank');
+    } else {
+      toast({
+        title: "No Deployment URL",
+        description: "This project doesn't have a deployment URL set.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -33,60 +47,58 @@ export const Dashboard = () => {
       
       {/* Main Content */}
       <div className="ml-64 p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back! Here's your development overview.</p>
-          </div>
+        {/* Action Buttons */}
+        <div className="flex gap-4 mb-8">
           <Button 
-            onClick={handleNewProject}
-            className="gradient-purple border-0 hover:opacity-90"
+            onClick={handleStartNewProject}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <Plus className="h-4 w-4 mr-2" />
-            New Project
+            Start New Project
+          </Button>
+          <Button 
+            onClick={handleCompareAI}
+            variant="outline"
+            className="border-border bg-background hover:bg-muted"
+          >
+            <Bot className="h-4 w-4 mr-2" />
+            Compare AI Assistance
+          </Button>
+          <Button 
+            onClick={handleDeployProject}
+            variant="outline"
+            className="border-border bg-background hover:bg-muted"
+          >
+            <Rocket className="h-4 w-4 mr-2" />
+            Deploy Project
           </Button>
         </div>
-        
-        {/* Welcome Hero */}
-        <div className="mb-8">
-          <WelcomeHero onGetStarted={handleGetStarted} />
-        </div>
-        
-        {/* Metrics */}
-        <div className="grid gap-6 md:grid-cols-3 mb-8">
-          <MetricCard
-            title="Projects Imported"
-            value={projectCount}
-            gradient="green"
-            icon={<FolderOpen className="h-8 w-8" />}
-          />
-          <MetricCard
-            title="Daily Progress"
-            value="50%"
-            gradient="blue"
-            icon={<TrendingUp className="h-8 w-8" />}
-          />
-          <MetricCard
-            title="Total Issues"
-            value="08"
-            gradient="pink"
-            icon={<AlertCircle className="h-8 w-8" />}
-          />
-        </div>
-        
-        {/* Two Column Layout */}
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Setup Checklist */}
-          <div>
-            <SetupChecklist />
-          </div>
-          
-          {/* Achievement Section */}
-          <div>
-            <AchievementSection />
-          </div>
-        </div>
+
+        {/* Recent Projects */}
+        <Card className="bg-card border-border">
+          <CardHeader>
+            <CardTitle className="text-foreground">Recent Projects</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {projects.map((project) => (
+                <div 
+                  key={project.id}
+                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted cursor-pointer transition-colors"
+                  onClick={() => handleProjectClick(project)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="text-foreground font-medium">{project.name}</div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {project.status} • {project.lastActivity}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
