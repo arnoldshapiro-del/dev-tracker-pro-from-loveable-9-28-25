@@ -8,11 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import { 
   Search, 
   ExternalLink, 
@@ -23,12 +19,10 @@ import {
   Zap,
   Phone,
   AlertTriangle,
-  CalendarIcon,
+  Calendar,
   Cloud,
   Settings,
-  Puzzle,
-  Heart,
-  Bolt as BoltIcon
+  Puzzle
 } from "lucide-react";
 
 interface ProjectEditorProps {
@@ -48,21 +42,17 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     status: project?.status || 'planning',
     progress: project?.progress || 0,
     primaryUrl: project?.primaryUrl || '',
-    // Loveable fields
-    loveable_live_url: project?.loveable_live_url || '',
-    loveable_dev_url: project?.loveable_dev_url || '',
-    loveable_development_updated: project?.loveable_development_updated || '',
-    loveable_deployed_at: project?.loveable_deployed_at || '',
-    // Bolt fields  
-    bolt_live_url: project?.bolt_live_url || '',
-    bolt_dev_url: project?.bolt_dev_url || '',
-    bolt_development_updated: project?.bolt_development_updated || '',
-    bolt_deployed_at: project?.bolt_deployed_at || '',
-    // Other existing fields
+    lovable_live_url: project?.lovable_live_url || '',
+    lovable_dev_url: project?.lovable_dev_url || '',
     netlify_url: project?.netlify_url || '',
     netlify_dev_url: project?.netlify_dev_url || '',
+    vercel_url: project?.vercel_url || '',
+    vercel_dev_url: project?.vercel_dev_url || '',
     github_repo_url: project?.github_repo_url || '',
     github_dev_url: project?.github_dev_url || '',
+    // New fields for Loveable
+    lovable_development_updated: project?.lovable_development_updated || '',
+    lovable_deployed_at: project?.lovable_deployed_at || '',
     // Future platform fields
     platform1_dev_url: project?.platform1_dev_url || '',
     platform1_live_url: project?.platform1_live_url || '',
@@ -70,8 +60,6 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     platform2_live_url: project?.platform2_live_url || '',
     platform3_dev_url: project?.platform3_dev_url || '',
     platform3_live_url: project?.platform3_live_url || '',
-    // Best site selection
-    best_site: project?.best_site || 'loveable',
     ...project
   });
 
@@ -82,20 +70,20 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
   const getAllUrls = () => {
     const urls: { platform: string; url: string; type: string; badge?: string }[] = [];
     
-    if (projectData.loveable_live_url) {
-      urls.push({ platform: "Loveable", url: projectData.loveable_live_url, type: "LIVE", badge: projectData.best_site === 'loveable' ? "BEST" : undefined });
+    if (projectData.lovable_live_url) {
+      urls.push({ platform: "Lovable", url: projectData.lovable_live_url, type: "LIVE", badge: "BEST" });
     }
-    if (projectData.loveable_dev_url) {
-      urls.push({ platform: "Loveable", url: projectData.loveable_dev_url, type: "DEVELOPMENT" });
+    if (projectData.lovable_dev_url) {
+      urls.push({ platform: "Lovable", url: projectData.lovable_dev_url, type: "DEVELOPMENT" });
     }
-    if (projectData.bolt_live_url) {
-      urls.push({ platform: "Bolt", url: projectData.bolt_live_url, type: "LIVE", badge: projectData.best_site === 'bolt' ? "BEST" : undefined });
+    if (projectData.vercel_url) {
+      urls.push({ platform: "Vercel", url: projectData.vercel_url, type: "LIVE" });
     }
-    if (projectData.bolt_dev_url) {
-      urls.push({ platform: "Bolt", url: projectData.bolt_dev_url, type: "DEVELOPMENT" });
+    if (projectData.vercel_dev_url) {
+      urls.push({ platform: "Vercel", url: projectData.vercel_dev_url, type: "DEVELOPMENT" });
     }
     if (projectData.netlify_url) {
-      urls.push({ platform: "Netlify", url: projectData.netlify_url, type: "LIVE", badge: projectData.best_site === 'netlify' ? "BEST" : undefined });
+      urls.push({ platform: "Netlify", url: projectData.netlify_url, type: "LIVE" });
     }
     if (projectData.netlify_dev_url) {
       urls.push({ platform: "Netlify", url: projectData.netlify_dev_url, type: "DEVELOPMENT" });
@@ -105,16 +93,7 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
   };
 
   const getBestUrl = () => {
-    switch (projectData.best_site) {
-      case 'loveable':
-        return projectData.loveable_live_url || projectData.loveable_dev_url || projectData.primaryUrl || "";
-      case 'bolt':
-        return projectData.bolt_live_url || projectData.bolt_dev_url || "";
-      case 'netlify':
-        return projectData.netlify_url || projectData.netlify_dev_url || "";
-      default:
-        return projectData.primaryUrl || projectData.loveable_live_url || projectData.bolt_live_url || projectData.netlify_url || "";
-    }
+    return projectData.primaryUrl || projectData.lovable_live_url || projectData.vercel_url || projectData.netlify_url || "";
   };
 
   const handleSave = () => {
@@ -177,7 +156,7 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="font-medium">Best Platform: {projectData.best_site ? projectData.best_site.charAt(0).toUpperCase() + projectData.best_site.slice(1) : 'None Selected'}</div>
+                <div className="font-medium">Vercel</div>
                 <div className="text-sm text-green-700 font-mono bg-white p-2 rounded border">
                   {getBestUrl() || "No URL configured"}
                 </div>
@@ -304,38 +283,12 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
             </div>
           </div>
 
-          {/* Best Site Selection */}
-          <Card className="border-amber-200 bg-amber-50">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-amber-600" />
-                <span className="font-medium text-amber-800">SELECT BEST SITE</span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="bestSite">Choose which platform is your primary/best site</Label>
-                <Select value={projectData.best_site} onValueChange={(value) => handleInputChange('best_site', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select best platform" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-                    <SelectItem value="loveable">Loveable</SelectItem>
-                    <SelectItem value="bolt">Bolt</SelectItem>
-                    <SelectItem value="netlify">Netlify</SelectItem>
-                    <SelectItem value="github">GitHub</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Loveable Platform Section */}
-          <Card className="border-pink-200">
+          {/* Mocha Publishing Section */}
+          <Card className="border-blue-200">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-pink-600">
-                <Heart className="h-4 w-4" />
-                Loveable Platform
+              <CardTitle className="flex items-center gap-2 text-blue-600">
+                <Zap className="h-4 w-4" />
+                Mocha Publishing
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -346,8 +299,8 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                     <span className="text-sm font-medium">Development URL</span>
                   </div>
                   <Input
-                    value={projectData.loveable_dev_url}
-                    onChange={(e) => handleInputChange('loveable_dev_url', e.target.value)}
+                    value={projectData.lovable_dev_url}
+                    onChange={(e) => handleInputChange('lovable_dev_url', e.target.value)}
                     placeholder="Add a URL here to track this platform"
                     className="font-mono text-sm"
                   />
@@ -356,11 +309,11 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <Globe className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium">Live URL</span>
+                    <span className="text-sm font-medium">Published URL</span>
                   </div>
                   <Input
-                    value={projectData.loveable_live_url}
-                    onChange={(e) => handleInputChange('loveable_live_url', e.target.value)}
+                    value={projectData.lovable_live_url}
+                    onChange={(e) => handleInputChange('lovable_live_url', e.target.value)}
                     placeholder="Add a URL here to track this platform"
                     className="font-mono text-sm"
                   />
@@ -371,164 +324,33 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label>Development Updated</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !projectData.loveable_development_updated && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {projectData.loveable_development_updated ? format(new Date(projectData.loveable_development_updated), "PPP") : <span>Pick a date</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-white border border-gray-200 shadow-lg z-50" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={projectData.loveable_development_updated ? new Date(projectData.loveable_development_updated) : undefined}
-                        onSelect={(date) => handleInputChange('loveable_development_updated', date?.toISOString())}
-                        initialFocus
-                        className={cn("p-3 pointer-events-auto")}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <div className="relative">
+                    <Input
+                      type="datetime-local"
+                      value={projectData.lovable_development_updated || ''}
+                      onChange={(e) => handleInputChange('lovable_development_updated', e.target.value)}
+                      className="pr-10"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label>Deployed At</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !projectData.loveable_deployed_at && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {projectData.loveable_deployed_at ? format(new Date(projectData.loveable_deployed_at), "PPP") : <span>Pick a date</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-white border border-gray-200 shadow-lg z-50" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={projectData.loveable_deployed_at ? new Date(projectData.loveable_deployed_at) : undefined}
-                        onSelect={(date) => handleInputChange('loveable_deployed_at', date?.toISOString())}
-                        initialFocus
-                        className={cn("p-3 pointer-events-auto")}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <div className="relative">
+                    <Input
+                      type="datetime-local"
+                      value={projectData.lovable_deployed_at || ''}
+                      onChange={(e) => handleInputChange('lovable_deployed_at', e.target.value)}
+                      className="pr-10"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label>Version</Label>
                   <Input
                     value={projectData.version || "v1.0.0"}
                     onChange={(e) => handleInputChange('version', e.target.value)}
-                    placeholder="v1.0.0"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Bolt Platform Section */}
-          <Card className="border-blue-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-600">
-                <BoltIcon className="h-4 w-4" />
-                Bolt Platform
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium">Development URL</span>
-                  </div>
-                  <Input
-                    value={projectData.bolt_dev_url}
-                    onChange={(e) => handleInputChange('bolt_dev_url', e.target.value)}
-                    placeholder="Add a URL here to track this platform"
-                    className="font-mono text-sm"
-                  />
-                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium">Live URL</span>
-                  </div>
-                  <Input
-                    value={projectData.bolt_live_url}
-                    onChange={(e) => handleInputChange('bolt_live_url', e.target.value)}
-                    placeholder="Add a URL here to track this platform"
-                    className="font-mono text-sm"
-                  />
-                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Development Updated</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !projectData.bolt_development_updated && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {projectData.bolt_development_updated ? format(new Date(projectData.bolt_development_updated), "PPP") : <span>Pick a date</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-white border border-gray-200 shadow-lg z-50" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={projectData.bolt_development_updated ? new Date(projectData.bolt_development_updated) : undefined}
-                        onSelect={(date) => handleInputChange('bolt_development_updated', date?.toISOString())}
-                        initialFocus
-                        className={cn("p-3 pointer-events-auto")}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="space-y-2">
-                  <Label>Deployed At</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !projectData.bolt_deployed_at && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {projectData.bolt_deployed_at ? format(new Date(projectData.bolt_deployed_at), "PPP") : <span>Pick a date</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-white border border-gray-200 shadow-lg z-50" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={projectData.bolt_deployed_at ? new Date(projectData.bolt_deployed_at) : undefined}
-                        onSelect={(date) => handleInputChange('bolt_deployed_at', date?.toISOString())}
-                        initialFocus
-                        className={cn("p-3 pointer-events-auto")}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="space-y-2">
-                  <Label>Version</Label>
-                  <Input
-                    value={projectData.bolt_version || "v1.0.0"}
-                    onChange={(e) => handleInputChange('bolt_version', e.target.value)}
                     placeholder="v1.0.0"
                   />
                 </div>
@@ -692,6 +514,80 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                 <Input
                   value="6123456789abcdef"
                   placeholder="Deploy ID"
+                  className="font-mono"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Vercel Deployment Section */}
+          <Card className="border-purple-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-600">
+                <Zap className="h-4 w-4" />
+                Vercel Deployment
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Development URL</span>
+                  </div>
+                  <Input
+                    value={projectData.vercel_dev_url}
+                    onChange={(e) => handleInputChange('vercel_dev_url', e.target.value)}
+                    placeholder="https://app.vercel.app"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Live URL</span>
+                  </div>
+                  <Input
+                    value={projectData.vercel_url}
+                    onChange={(e) => handleInputChange('vercel_url', e.target.value)}
+                    placeholder="https://app.vercel.app"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Development Updated</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Deployed At</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Deployment ID</Label>
+                <Input
+                  value="dpl_xyz123"
+                  placeholder="Deployment ID"
                   className="font-mono"
                 />
               </div>

@@ -346,12 +346,12 @@ export const Projects = () => {
     console.log('=== PROJECTS PAGE LINK DEBUG ===');
     console.log('Project data:', project);
     console.log('project.primaryUrl:', project.primaryUrl);
-    console.log('project.loveable_live_url:', project.loveable_live_url);
-    console.log('project.loveable_dev_url:', project.loveable_dev_url);
+    console.log('project.lovable_live_url:', project.lovable_live_url);
+    console.log('project.lovable_dev_url:', project.lovable_dev_url);
     console.log('project.deployment:', project.deployment);
     
-    // Use same priority as dashboard: primaryUrl, loveable URLs, then deployment
-    const url = project.primaryUrl || project.loveable_live_url || project.loveable_dev_url || project.deployment || project.repository;
+    // Use same priority as dashboard: primaryUrl, lovable URLs, then deployment
+    const url = project.primaryUrl || project.lovable_live_url || project.lovable_dev_url || project.deployment || project.repository;
     
     console.log('Selected URL to open:', url);
     
