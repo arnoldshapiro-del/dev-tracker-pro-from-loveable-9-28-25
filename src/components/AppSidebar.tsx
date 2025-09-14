@@ -15,6 +15,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/appStore";
 import { NavLink, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ModeSwitcher } from "@/components/ModeSwitcher";
+import { useModeStore } from "@/store/modeStore";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -33,6 +36,7 @@ const sidebarItems = [
 
 export const AppSidebar = () => {
   const location = useLocation();
+  const { currentMode, setMode } = useModeStore();
 
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-background border-r border-border flex flex-col z-50">
@@ -64,9 +68,28 @@ export const AppSidebar = () => {
         </ul>
       </nav>
       
-      {/* Footer */}
+      {/* Mode Switcher */}
       <div className="p-4 border-t border-border">
-        <div className="text-xs text-muted-foreground">
+        <ModeSwitcher 
+          currentMode={currentMode} 
+          onModeChange={setMode} 
+          compact={true}
+        />
+        
+        {/* User Profile */}
+        <div className="mt-4 pt-4 border-t border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+              A
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-foreground truncate">arnold.shapiro</div>
+              <div className="text-xs text-muted-foreground">AI Development Manager</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-xs text-muted-foreground mt-4">
           © 2024 DevTracker Pro
         </div>
       </div>

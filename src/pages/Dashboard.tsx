@@ -1,12 +1,10 @@
-import { useState } from "react";
-import { WelcomeHero } from "@/components/WelcomeHero";
-import { MetricCard } from "@/components/MetricCard";
-import { SetupChecklist } from "@/components/SetupChecklist";
-import { AchievementSection } from "@/components/AchievementSection";
-import { FolderOpen, TrendingUp, AlertCircle, Plus, Activity, Clock } from "lucide-react";
+import React, { useState } from "react";
+import { Plus, Bot, Rocket, BarChart3, Code2, Folder, ExternalLink, FileText, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store/appStore";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,17 +12,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Dashboard = () => {
+  const { projects, analytics, addProject } = useAppStore();
   const { toast } = useToast();
-  const { projects, analytics, addProject, updateAnalytics } = useAppStore();
+  const navigate = useNavigate();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newProject, setNewProject] = useState({
     name: '',
     description: '',
-    status: 'active' as const,
-    progress: 0,
-    lastActivity: 'Just created',
-    issues: 0,
-    technologies: [] as string[]
+    status: 'planning' as const,
+    ai_platform: 'mocha',
+    project_type: 'web'
   });
 
   const handleCreateProject = () => {
@@ -37,10 +34,12 @@ export const Dashboard = () => {
       return;
     }
 
-    addProject(newProject);
-    updateAnalytics({ 
-      totalProjects: analytics.totalProjects + 1,
-      activeProjects: analytics.activeProjects + 1
+    addProject({
+      ...newProject,
+      progress: 0,
+      lastActivity: 'Just created',
+      issues: 0,
+      technologies: []
     });
     
     toast({
@@ -51,44 +50,72 @@ export const Dashboard = () => {
     setNewProject({
       name: '',
       description: '',
-      status: 'active',
-      progress: 0,
-      lastActivity: 'Just created',
-      issues: 0,
-      technologies: []
+      status: 'planning',
+      ai_platform: 'mocha',
+      project_type: 'web'
     });
     setIsCreateModalOpen(false);
   };
 
-  const handleGetStarted = () => {
-    toast({
-      title: "Welcome to DevTracker Pro!",
-      description: "Let's explore all the features together.",
-    });
+  const handleStartNewProject = () => {
+    setIsCreateModalOpen(true);
   };
 
-  const recentActivity = projects
-    .filter(p => p.status === 'active')
-    .slice(0, 3)
-    .map(p => ({
-      id: p.id,
-      title: p.name,
-      time: p.lastActivity,
-      type: 'update'
-    }));
+  const handleCompareAI = () => {
+    navigate('/ai');
+  };
+
+  const handleDeployProject = () => {
+    navigate('/deployment');
+  };
+
+  const handleAnalytics = () => {
+    navigate('/analytics');
+  };
+
+  const handleProjectClick = (project: any) => {
+    const urlToOpen = project.primaryUrl || project.deployment;
+    
+    if (urlToOpen) {
+      const finalUrl = urlToOpen.startsWith('http') ? urlToOpen : `https://${urlToOpen}`;
+      window.open(finalUrl, '_blank');
+    } else {
+      toast({
+        title: "No Primary URL",
+        description: "This project doesn't have a primary URL set. Edit the project to set one.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const platformIcons: { [key: string]: React.ReactNode } = {
+    mocha: <div className="w-2 h-2 rounded-full bg-purple-500"></div>,
+    lovable: <div className="w-2 h-2 rounded-full bg-pink-500"></div>,
+    bolt: <div className="w-2 h-2 rounded-full bg-yellow-500"></div>,
+    claude: <div className="w-2 h-2 rounded-full bg-orange-500"></div>,
+    chatgpt: <div className="w-2 h-2 rounded-full bg-green-500"></div>
+  };
+
+  const platformPerformance = [
+    { name: 'Mocha', type: 'Full-stack development', rate: '95%', color: 'text-purple-600' },
+    { name: 'Claude', type: 'Code analysis', rate: '88%', color: 'text-orange-600' },
+    { name: 'ChatGPT', type: 'Feature development', rate: '82%', color: 'text-green-600' }
+  ];
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Welcome back! Here's your development overview.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome back, arnold</h1>
+          <p className="text-gray-600">
+            {analytics.totalProjects} projects • {analytics.activeProjects} active • 1000 credits remaining
+          </p>
         </div>
         
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <Button className="gradient-purple border-0 hover:opacity-90">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
               <Plus className="h-4 w-4 mr-2" />
               New Project
             </Button>
@@ -117,15 +144,34 @@ export const Dashboard = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="status">Status</Label>
-                <Select value={newProject.status} onValueChange={(value) => setNewProject(prev => ({ ...prev, status: value as any }))}>
+                <Label htmlFor="ai_platform">AI Platform</Label>
+                <Select value={newProject.ai_platform} onValueChange={(value) => setNewProject(prev => ({ ...prev, ai_platform: value }))}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="on-hold">On Hold</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="mocha">Mocha</SelectItem>
+                    <SelectItem value="lovable">Lovable</SelectItem>
+                    <SelectItem value="bolt">Bolt</SelectItem>
+                    <SelectItem value="claude">Claude</SelectItem>
+                    <SelectItem value="chatgpt">ChatGPT</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="project_type">Project Type</Label>
+                <Select value={newProject.project_type} onValueChange={(value) => setNewProject(prev => ({ ...prev, project_type: value }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="medical">Medical</SelectItem>
+                    <SelectItem value="ecommerce">E-commerce</SelectItem>
+                    <SelectItem value="saas">SaaS</SelectItem>
+                    <SelectItem value="web">Web</SelectItem>
+                    <SelectItem value="mobile">Mobile</SelectItem>
+                    <SelectItem value="ai">AI</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -142,68 +188,234 @@ export const Dashboard = () => {
         </Dialog>
       </div>
 
-      {/* Welcome Hero */}
-      <WelcomeHero onGetStarted={handleGetStarted} />
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-4 gap-4">
+        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">{analytics.totalProjects}</div>
+                <div className="text-xs opacity-90">Total Projects</div>
+              </div>
+              <Folder className="h-8 w-8 opacity-80" />
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Metrics */}
-      <div className="grid gap-6 md:grid-cols-4">
-        <MetricCard
-          title="Total Projects"
-          value={analytics.totalProjects}
-          gradient="green"
-          icon={<FolderOpen className="h-8 w-8" />}
-        />
-        <MetricCard
-          title="Daily Progress"
-          value={`${analytics.dailyProgress}%`}
-          gradient="blue"
-          icon={<TrendingUp className="h-8 w-8" />}
-        />
-        <MetricCard
-          title="Active Projects"
-          value={analytics.activeProjects}
-          gradient="purple"
-          icon={<Activity className="h-8 w-8" />}
-        />
-        <MetricCard
-          title="Total Issues"
-          value={analytics.totalIssues}
-          gradient="pink"
-          icon={<AlertCircle className="h-8 w-8" />}
-        />
+        <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">{analytics.activeProjects}</div>
+                <div className="text-xs opacity-90">Active Projects</div>
+              </div>
+              <Code2 className="h-8 w-8 opacity-80" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-cyan-500 to-cyan-600 text-white border-0 shadow-lg">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">0%</div>
+                <div className="text-xs opacity-90">Success Rate</div>
+              </div>
+              <BarChart3 className="h-8 w-8 opacity-80" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">0</div>
+                <div className="text-xs opacity-90">Credits Used</div>
+              </div>
+              <Lightbulb className="h-8 w-8 opacity-80" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Content Grid */}
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* Setup Checklist */}
-        <div className="lg:col-span-2">
-          <SetupChecklist />
+      {/* Action Cards */}
+      <div className="grid grid-cols-3 gap-4">
+        <Card 
+          className="bg-white hover:shadow-md transition-shadow cursor-pointer border border-gray-200"
+          onClick={handleStartNewProject}
+        >
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Plus className="h-6 w-6 text-purple-600" />
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900 mb-1">Start New Project</div>
+                <div className="text-sm text-gray-500">Create a new AI development project</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="bg-white hover:shadow-md transition-shadow cursor-pointer border border-gray-200"
+          onClick={handleCompareAI}
+        >
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Code2 className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900 mb-1">Compare AI Assistants</div>
+                <div className="text-sm text-gray-500">Analyze performance across platforms</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="bg-white hover:shadow-md transition-shadow cursor-pointer border border-gray-200"
+          onClick={handleDeployProject}
+        >
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <Rocket className="h-6 w-6 text-green-600" />
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900 mb-1">Deploy Projects</div>
+                <div className="text-sm text-gray-500">Manage deployments and publishing</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-3 gap-6">
+        {/* Recent Projects */}
+        <div className="col-span-2">
+          <Card className="bg-white shadow-sm border border-gray-200">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Recent Projects
+                </CardTitle>
+                <Button variant="outline" size="sm">View All</Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {projects.slice(0, 5).map((project) => (
+                  <div 
+                    key={project.id}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-gray-100"
+                    onClick={() => handleProjectClick(project)}
+                  >
+                    <div className="flex items-center gap-3">
+                      {platformIcons[project.ai_platform || 'mocha'] || platformIcons.mocha}
+                      <div>
+                        <div className="font-medium text-gray-900 text-sm">{project.name}</div>
+                        <div className="text-xs text-gray-500">{project.ai_platform || 'mocha'} • {project.progress}% complete</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        project.status === 'active' ? 'bg-blue-100 text-blue-700' : 
+                        project.status === 'completed' ? 'bg-green-100 text-green-700' : 
+                        project.status === 'planning' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {project.status}
+                      </span>
+                      <ExternalLink className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        
-        {/* Recent Activity */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            <Clock className="h-5 w-5 text-primary" />
-            Recent Activity
-          </h2>
-          <div className="space-y-3">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="p-3 rounded-lg border border-border bg-card/50">
-                <h3 className="font-medium text-sm">{activity.title}</h3>
-                <p className="text-xs text-muted-foreground">{activity.time}</p>
+
+        {/* Platform Performance */}
+        <div>
+          <Card className="bg-white shadow-sm border border-gray-200">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Platform Performance
+                </CardTitle>
+                <Button variant="outline" size="sm">View Details</Button>
               </div>
-            ))}
-            {recentActivity.length === 0 && (
-              <div className="p-4 text-center text-muted-foreground text-sm">
-                No recent activity
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {platformPerformance.map((platform, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div>
+                      <div className="font-medium text-sm text-gray-900">{platform.name}</div>
+                      <div className="text-xs text-gray-500">{platform.type}</div>
+                    </div>
+                    <div className={`text-sm font-semibold ${platform.color}`}>
+                      {platform.rate}
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Development Metrics */}
+      <Card className="bg-white shadow-sm border border-gray-200">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Development Metrics
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">2.5h</div>
+              <div className="text-xs text-gray-500">Avg Completion</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">6</div>
+              <div className="text-xs text-gray-500">Deployed</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">1000</div>
+              <div className="text-xs text-gray-500">Credits Left</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-600">98%</div>
+              <div className="text-xs text-gray-500">Uptime</div>
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* Achievement Section */}
-      <AchievementSection />
+      {/* Bottom Actions */}
+      <div className="flex justify-center gap-4 pt-4">
+        <Button variant="outline" onClick={() => navigate('/projects')}>
+          <Folder className="h-4 w-4 mr-2" />
+          Manage Projects
+        </Button>
+        <Button variant="outline" onClick={handleCompareAI}>
+          <Bot className="h-4 w-4 mr-2" />
+          AI Assistants
+        </Button>
+        <Button variant="outline" onClick={handleAnalytics}>
+          <BarChart3 className="h-4 w-4 mr-2" />
+          Analytics
+        </Button>
+      </div>
     </div>
   );
 };

@@ -190,7 +190,9 @@ export const Projects = () => {
     progress: 0,
     lastActivity: 'Just created',
     issues: 0,
-    technologies: [] as string[]
+    technologies: [] as string[],
+    ai_platform: 'mocha',
+    project_type: 'web'
   });
 
   const sensors = useSensors(
@@ -230,7 +232,9 @@ export const Projects = () => {
       progress: 0,
       lastActivity: 'Just created',
       issues: 0,
-      technologies: []
+      technologies: [],
+      ai_platform: 'mocha',
+      project_type: 'web'
     });
     setIsCreateModalOpen(false);
   };
