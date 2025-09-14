@@ -38,22 +38,32 @@ Modern dashboard with vibrant gradients and clean design
 
     --radius: 0.75rem;
 
-    /* Custom DevTracker Colors - Vibrant Mocha-style */
-    --purple-gradient-start: 280 100% 75%;
-    --purple-gradient-end: 290 100% 85%;
-    --green-gradient-start: 140 85% 55%;
-    --green-gradient-end: 120 90% 65%;
-    --blue-gradient-start: 220 100% 75%;
-    --blue-gradient-end: 210 100% 80%;
-    --pink-gradient-start: 320 85% 65%;
-    --pink-gradient-end: 330 90% 75%;
-    --orange-gradient-start: 25 95% 65%;
-    --orange-gradient-end: 35 100% 70%;
-    --red-gradient-start: 0 85% 65%;
-    --red-gradient-end: 10 90% 70%;
+    /* Custom DevTracker Colors - VIBRANT MOCHA STYLE */
+    --vibrant-blue: 220 91% 60%;          /* #2563EB equivalent */
+    --vibrant-green: 160 84% 39%;         /* #10B981 equivalent */
+    --vibrant-orange: 38 92% 50%;         /* #F59E0B equivalent */
+    --vibrant-red: 0 84% 60%;             /* #EF4444 equivalent */
+    --vibrant-purple: 248 53% 58%;        /* #8B5CF6 equivalent */
+    --vibrant-cyan: 189 94% 43%;          /* #06B6D4 equivalent */
+    --vibrant-pink: 330 81% 60%;          /* #EC4899 equivalent */
+    --vibrant-yellow: 48 96% 53%;         /* #EAB308 equivalent */
+    
+    /* Legacy gradient support */
+    --purple-gradient-start: 248 53% 58%;
+    --purple-gradient-end: 248 53% 58%;
+    --green-gradient-start: 160 84% 39%;
+    --green-gradient-end: 160 84% 39%;
+    --blue-gradient-start: 220 91% 60%;
+    --blue-gradient-end: 220 91% 60%;
+    --pink-gradient-start: 330 81% 60%;
+    --pink-gradient-end: 330 81% 60%;
+    --orange-gradient-start: 38 92% 50%;
+    --orange-gradient-end: 38 92% 50%;
+    --red-gradient-start: 0 84% 60%;
+    --red-gradient-end: 0 84% 60%;
     
     /* Success colors */
-    --success: 142 76% 36%;
+    --success: 160 84% 39%;
     --success-foreground: 0 0% 98%;
     
     /* Sidebar colors */
@@ -115,29 +125,76 @@ Modern dashboard with vibrant gradients and clean design
     @apply bg-background text-foreground font-sans;
   }
   
-  /* Custom utility classes */
+  /* Custom utility classes - VIBRANT MOCHA COLORS */
+  .vibrant-blue {
+    background: hsl(var(--vibrant-blue));
+    color: white;
+  }
+  
+  .vibrant-green {
+    background: hsl(var(--vibrant-green));
+    color: white;
+  }
+  
+  .vibrant-orange {
+    background: hsl(var(--vibrant-orange));
+    color: white;
+  }
+  
+  .vibrant-red {
+    background: hsl(var(--vibrant-red));
+    color: white;
+  }
+  
+  .vibrant-purple {
+    background: hsl(var(--vibrant-purple));
+    color: white;
+  }
+  
+  .vibrant-cyan {
+    background: hsl(var(--vibrant-cyan));
+    color: white;
+  }
+  
+  .vibrant-pink {
+    background: hsl(var(--vibrant-pink));
+    color: white;
+  }
+  
+  .vibrant-yellow {
+    background: hsl(var(--vibrant-yellow));
+    color: white;
+  }
+  
+  /* Legacy gradient classes */
   .gradient-purple {
-    background: var(--gradient-purple);
+    background: hsl(var(--vibrant-purple));
+    color: white;
   }
   
   .gradient-green {
-    background: var(--gradient-green);
+    background: hsl(var(--vibrant-green));
+    color: white;
   }
   
   .gradient-blue {
-    background: var(--gradient-blue);
+    background: hsl(var(--vibrant-blue));
+    color: white;
   }
   
   .gradient-pink {
-    background: var(--gradient-pink);
+    background: hsl(var(--vibrant-pink));
+    color: white;
   }
   
   .gradient-orange {
-    background: var(--gradient-orange);
+    background: hsl(var(--vibrant-orange));
+    color: white;
   }
   
   .gradient-red {
-    background: var(--gradient-red);
+    background: hsl(var(--vibrant-red));
+    color: white;
   }
   
   .glow-shadow {

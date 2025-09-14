@@ -60,11 +60,11 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'gradient-green text-white border-0 font-semibold shadow-lg';
-      case 'completed': return 'gradient-blue text-white border-0 font-semibold shadow-lg';
-      case 'on-hold': return 'gradient-orange text-white border-0 font-semibold shadow-lg';
-      case 'archived': return 'gradient-pink text-white border-0 font-semibold shadow-lg';
-      default: return 'gradient-purple text-white border-0 font-semibold shadow-lg';
+      case 'active': return 'vibrant-green font-bold text-white border-0 shadow-lg px-4 py-2';
+      case 'completed': return 'vibrant-blue font-bold text-white border-0 shadow-lg px-4 py-2';
+      case 'on-hold': return 'vibrant-orange font-bold text-white border-0 shadow-lg px-4 py-2';
+      case 'archived': return 'vibrant-red font-bold text-white border-0 shadow-lg px-4 py-2';
+      default: return 'vibrant-purple font-bold text-white border-0 shadow-lg px-4 py-2';
     }
   };
 
@@ -72,7 +72,7 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
     <Card 
       ref={setNodeRef} 
       style={style} 
-      className="hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[280px] p-6 bg-gradient-to-br from-white to-gray-50 border-2 hover:border-primary/30 hover:scale-105"
+      className="hover:shadow-2xl transition-all duration-300 cursor-pointer min-h-[360px] p-8 bg-white border-2 border-gray-200 hover:border-primary/50 hover:scale-[1.02] rounded-xl"
     >
       <CardHeader>
         <div className="flex items-start justify-between">
@@ -130,23 +130,27 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
             <span>Progress</span>
             <span>{project.progress}%</span>
           </div>
-          <div className="w-full bg-muted rounded-full h-2">
+          <div className="w-full bg-gray-200 rounded-full h-3">
             <div 
-              className="bg-primary h-2 rounded-full transition-all" 
+              className="vibrant-blue h-3 rounded-full transition-all shadow-sm" 
               style={{ width: `${project.progress}%` }}
             />
           </div>
         </div>
 
         {/* Metrics */}
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-red-400" />
-            <span>{project.issues} issues</span>
+        <div className="grid grid-cols-2 gap-6 text-base font-medium">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg vibrant-red">
+              <AlertCircle className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-gray-700">{project.issues} issues</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-blue-400" />
-            <span>{project.lastActivity}</span>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg vibrant-blue">
+              <Calendar className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-gray-700">{project.lastActivity}</span>
           </div>
         </div>
 
