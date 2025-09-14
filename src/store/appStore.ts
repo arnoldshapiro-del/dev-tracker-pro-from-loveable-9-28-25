@@ -40,6 +40,7 @@ interface AppState {
   addProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateProject: (id: string, updates: Partial<Project>) => void;
   deleteProject: (id: string) => void;
+  reorderProjects: (projects: Project[]) => void;
   
   // Analytics
   analytics: AnalyticsData;
@@ -139,6 +140,10 @@ export const useAppStore = create<AppState>()(
           ...state.analytics,
           totalProjects: state.analytics.totalProjects - 1
         }
+      })),
+      
+      reorderProjects: (projects: Project[]) => set(() => ({
+        projects
       })),
       
       analytics: {
