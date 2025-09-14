@@ -38,13 +38,16 @@ export const Dashboard = () => {
   };
 
   const handleProjectClick = (project: any) => {
+    // Priority: primaryUrl first, then try deployment field as fallback
     const urlToOpen = project.primaryUrl || project.deployment;
     
     if (urlToOpen) {
-      // If URL doesn't include protocol, add https://
+      // Ensure URL has proper protocol
       const finalUrl = urlToOpen.startsWith('http') ? urlToOpen : `https://${urlToOpen}`;
+      console.log('Opening URL:', finalUrl, 'from project:', project.name); // Debug log
       window.open(finalUrl, '_blank');
     } else {
+      console.log('No URL found for project:', project.name, 'primaryUrl:', project.primaryUrl, 'deployment:', project.deployment); // Debug log
       toast({
         title: "No Primary URL",
         description: "This project doesn't have a primary URL set. Edit the project to set one.",
