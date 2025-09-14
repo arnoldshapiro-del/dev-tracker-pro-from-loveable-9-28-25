@@ -19,7 +19,10 @@ import {
   Zap,
   Phone,
   AlertTriangle,
-  Calendar
+  Calendar,
+  Cloud,
+  Settings,
+  Puzzle
 } from "lucide-react";
 
 interface ProjectEditorProps {
@@ -47,6 +50,16 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     vercel_dev_url: project?.vercel_dev_url || '',
     github_repo_url: project?.github_repo_url || '',
     github_dev_url: project?.github_dev_url || '',
+    // New fields for Loveable
+    lovable_development_updated: project?.lovable_development_updated || '',
+    lovable_deployed_at: project?.lovable_deployed_at || '',
+    // Future platform fields
+    platform1_dev_url: project?.platform1_dev_url || '',
+    platform1_live_url: project?.platform1_live_url || '',
+    platform2_dev_url: project?.platform2_dev_url || '',
+    platform2_live_url: project?.platform2_live_url || '',
+    platform3_dev_url: project?.platform3_dev_url || '',
+    platform3_live_url: project?.platform3_live_url || '',
     ...project
   });
 
@@ -105,7 +118,11 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
   };
 
   const formatDate = (date?: string) => {
-    return date || "mm/dd/yyyy --:-- --";
+    if (date) {
+      const dateObj = new Date(date);
+      return dateObj.toLocaleString();
+    }
+    return new Date().toLocaleString();
   };
 
   return (
@@ -309,20 +326,22 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                   <Label>Development Updated</Label>
                   <div className="relative">
                     <Input
-                      value={formatDate()}
-                      readOnly
-                      className="bg-gray-50"
+                      type="datetime-local"
+                      value={projectData.lovable_development_updated || ''}
+                      onChange={(e) => handleInputChange('lovable_development_updated', e.target.value)}
+                      className="pr-10"
                     />
                     <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Published Date & Time</Label>
+                  <Label>Deployed At</Label>
                   <div className="relative">
                     <Input
-                      value={formatDate()}
-                      readOnly
-                      className="bg-gray-50"
+                      type="datetime-local"
+                      value={projectData.lovable_deployed_at || ''}
+                      onChange={(e) => handleInputChange('lovable_deployed_at', e.target.value)}
+                      className="pr-10"
                     />
                     <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
@@ -330,7 +349,7 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                 <div className="space-y-2">
                   <Label>Version</Label>
                   <Input
-                    value="v1.0.0"
+                    value={projectData.version || "v1.0.0"}
                     onChange={(e) => handleInputChange('version', e.target.value)}
                     placeholder="v1.0.0"
                   />
@@ -634,6 +653,120 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                       <SelectItem value="error">Error</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Future Platform 1 Section */}
+          <Card className="border-indigo-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-indigo-600">
+                <Cloud className="h-4 w-4" />
+                Future Platform 1
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Development URL</span>
+                  </div>
+                  <Input
+                    value={projectData.platform1_dev_url}
+                    onChange={(e) => handleInputChange('platform1_dev_url', e.target.value)}
+                    placeholder="Add a URL here to track this platform"
+                    className="font-mono text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Live URL</span>
+                  </div>
+                  <Input
+                    value={projectData.platform1_live_url}
+                    onChange={(e) => handleInputChange('platform1_live_url', e.target.value)}
+                    placeholder="Add a URL here to track this platform"
+                    className="font-mono text-sm"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Future Platform 2 Section */}
+          <Card className="border-teal-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-teal-600">
+                <Settings className="h-4 w-4" />
+                Future Platform 2
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Development URL</span>
+                  </div>
+                  <Input
+                    value={projectData.platform2_dev_url}
+                    onChange={(e) => handleInputChange('platform2_dev_url', e.target.value)}
+                    placeholder="Add a URL here to track this platform"
+                    className="font-mono text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Live URL</span>
+                  </div>
+                  <Input
+                    value={projectData.platform2_live_url}
+                    onChange={(e) => handleInputChange('platform2_live_url', e.target.value)}
+                    placeholder="Add a URL here to track this platform"
+                    className="font-mono text-sm"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Future Platform 3 Section */}
+          <Card className="border-orange-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-orange-600">
+                <Puzzle className="h-4 w-4" />
+                Future Platform 3
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Development URL</span>
+                  </div>
+                  <Input
+                    value={projectData.platform3_dev_url}
+                    onChange={(e) => handleInputChange('platform3_dev_url', e.target.value)}
+                    placeholder="Add a URL here to track this platform"
+                    className="font-mono text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Live URL</span>
+                  </div>
+                  <Input
+                    value={projectData.platform3_live_url}
+                    onChange={(e) => handleInputChange('platform3_live_url', e.target.value)}
+                    placeholder="Add a URL here to track this platform"
+                    className="font-mono text-sm"
+                  />
                 </div>
               </div>
             </CardContent>
