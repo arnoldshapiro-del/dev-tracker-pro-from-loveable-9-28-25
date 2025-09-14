@@ -357,6 +357,12 @@ export const Projects = () => {
         title: "Project Deleted",
         description: `${project.name} has been deleted successfully.`,
       });
+    } else {
+      toast({
+        title: "Cannot Delete Project",
+        description: "This project doesn't have a valid ID.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -756,14 +762,14 @@ export const Projects = () => {
           strategy={verticalListSortingStrategy}
         >
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredProjects.map((project) => (
-                <SortableProjectCard
-                  key={project.id}
-                  project={project}
-                  onEdit={handleEditProject}
-                  onOpen={handleOpenProject}
-                  onDelete={handleDeleteProject}
-                />
+            {filteredProjects.map((project, index) => (
+              <SortableProjectCard
+                key={project.id || `project-${index}`}
+                project={project}
+                onEdit={handleEditProject}
+                onOpen={handleOpenProject}
+                onDelete={handleDeleteProject}
+              />
             ))}
           </div>
         </SortableContext>

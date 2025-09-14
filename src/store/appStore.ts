@@ -187,7 +187,7 @@ export const useAppStore = create<AppState>()(
       addProject: (projectData) => set((state) => {
         const newProject: Project = {
           ...projectData,
-          id: Date.now().toString(),
+          id: Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9), // Ensure unique ID
           createdAt: new Date().toISOString().split('T')[0],
           updatedAt: new Date().toISOString().split('T')[0]
         };
