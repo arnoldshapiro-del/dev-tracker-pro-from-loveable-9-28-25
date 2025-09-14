@@ -309,10 +309,21 @@ export const Projects = () => {
   };
 
   const handleOpenProject = (project: Project) => {
-    // Open the project's live URL or deployment URL
-    const url = project.deployment || project.repository;
+    console.log('=== PROJECTS PAGE LINK DEBUG ===');
+    console.log('Project data:', project);
+    console.log('project.primaryUrl:', project.primaryUrl);
+    console.log('project.lovable_live_url:', project.lovable_live_url);
+    console.log('project.lovable_dev_url:', project.lovable_dev_url);
+    console.log('project.deployment:', project.deployment);
+    
+    // Use same priority as dashboard: primaryUrl, lovable URLs, then deployment
+    const url = project.primaryUrl || project.lovable_live_url || project.lovable_dev_url || project.deployment || project.repository;
+    
+    console.log('Selected URL to open:', url);
+    
     if (url) {
-      window.open(url, '_blank');
+      const finalUrl = url.startsWith('http') ? url : `https://${url}`;
+      window.open(finalUrl, '_blank');
       toast({
         title: "Opening Project",
         description: `Opening ${project.name}...`,

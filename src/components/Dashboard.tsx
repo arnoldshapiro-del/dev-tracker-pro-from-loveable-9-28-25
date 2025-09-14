@@ -38,16 +38,25 @@ export const Dashboard = () => {
   };
 
   const handleProjectClick = (project: any) => {
-    // Priority: primaryUrl first, then try deployment field as fallback
-    const urlToOpen = project.primaryUrl || project.deployment;
+    console.log('=== DASHBOARD LINK DEBUG ===');
+    console.log('Project data:', project);
+    console.log('project.primaryUrl:', { _type: typeof project.primaryUrl, value: project.primaryUrl });
+    console.log('project.deployment:', project.deployment);
+    console.log('project.lovable_live_url:', project.lovable_live_url);
+    console.log('project.lovable_dev_url:', project.lovable_dev_url);
+    
+    // Priority order: primaryUrl, lovable_live_url, lovable_dev_url, deployment
+    const urlToOpen = project.primaryUrl || project.lovable_live_url || project.lovable_dev_url || project.deployment;
+    
+    console.log('Selected URL to open:', urlToOpen);
     
     if (urlToOpen) {
       // Ensure URL has proper protocol
       const finalUrl = urlToOpen.startsWith('http') ? urlToOpen : `https://${urlToOpen}`;
-      console.log('Opening URL:', finalUrl, 'from project:', project.name); // Debug log
+      console.log('Opening URL:', finalUrl, 'from project:', project.name);
       window.open(finalUrl, '_blank');
     } else {
-      console.log('No URL found for project:', project.name, 'primaryUrl:', project.primaryUrl, 'deployment:', project.deployment); // Debug log
+      console.log('No URL found for project:', project.name);
       toast({
         title: "No Primary URL",
         description: "This project doesn't have a primary URL set. Edit the project to set one.",

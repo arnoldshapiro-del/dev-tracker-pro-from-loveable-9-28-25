@@ -256,6 +256,9 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
   };
 
   const handleSaveUrl = (platformIndex: number, urlId: string) => {
+    console.log('=== URL SAVE DEBUG ===');
+    console.log('Saving URL for platform:', platformIndex, 'urlId:', urlId);
+    
     setPlatforms(prev => prev.map((platform, i) => {
       if (i === platformIndex) {
         const updatedPlatform = {
@@ -263,6 +266,7 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
           urls: platform.urls.map(url => {
             if (url.id === urlId) {
               const newUrl = url.tempUrl || url.url;
+              console.log('Saving URL:', newUrl, 'for platform:', platform.name, 'type:', url.type);
               return { ...url, url: newUrl, isEditing: false, tempUrl: undefined };
             }
             return url;
@@ -280,12 +284,19 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
               updateField = urlObj.type === 'development' ? 'netlify_dev_url' : 'netlify_url';
             } else if (platform.name === 'Vercel Deployment') {
               updateField = urlObj.type === 'development' ? 'vercel_dev_url' : 'vercel_url';
+            } else if (platform.name.includes('Custom Platform')) {
+              // Handle custom platforms
+              const platformKey = platform.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+              updateField = urlObj.type === 'development' ? `${platformKey}_dev_url` : `${platformKey}_live_url`;
             }
+            
+            console.log('Update field:', updateField, 'with value:', urlObj.url);
             
             if (updateField) {
               setProjectData(prev => ({ ...prev, [updateField]: urlObj.url }));
               // Save to store immediately
               updateProject(project.id, { [updateField]: urlObj.url });
+              console.log('Saved to project store:', updateField, '=', urlObj.url);
             }
           }
         }
