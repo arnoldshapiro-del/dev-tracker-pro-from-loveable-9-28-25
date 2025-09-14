@@ -27,10 +27,20 @@ export interface Project {
   github_dev_url?: string;
   netlify_url?: string;
   netlify_dev_url?: string;
-  vercel_url?: string;
-  vercel_dev_url?: string;
-  lovable_live_url?: string;
-  lovable_dev_url?: string;
+  
+  // Loveable platform fields
+  loveable_live_url?: string;
+  loveable_dev_url?: string;
+  loveable_development_updated?: string;
+  loveable_deployed_at?: string;
+  
+  // Bolt platform fields
+  bolt_live_url?: string;
+  bolt_dev_url?: string;
+  bolt_development_updated?: string;
+  bolt_deployed_at?: string;
+  bolt_version?: string;
+  
   platform_url?: string;
   mocha_published_url?: string;
   time_to_deploy_hours?: number;
@@ -40,10 +50,9 @@ export interface Project {
   features_pending?: string[];
   known_bugs?: string[];
   
-  // New fields for Loveable development/deployed dates
-  lovable_development_updated?: string;
-  lovable_deployed_at?: string;
+  // Version and best site selection
   version?: string;
+  best_site?: 'loveable' | 'bolt' | 'netlify' | 'github';
   
   // Future platform fields
   platform1_dev_url?: string;
