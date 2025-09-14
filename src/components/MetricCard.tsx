@@ -4,16 +4,26 @@ interface MetricCardProps {
   title: string;
   value: string | number;
   icon?: React.ReactNode;
-  gradient: "purple" | "green" | "blue" | "pink";
+  gradient: "coral" | "mint" | "sunset" | "ocean" | "forest" | "lavender" | "gold" | "ruby" | "sky" | "peach" | "emerald" | "plum" | "bronze" | "electric";
   className?: string;
 }
 
 export const MetricCard = ({ title, value, icon, gradient, className }: MetricCardProps) => {
   const gradientClasses = {
-    purple: "gradient-purple",
-    green: "gradient-green", 
-    blue: "gradient-blue",
-    pink: "gradient-pink"
+    coral: "gradient-coral",
+    mint: "gradient-mint",
+    sunset: "gradient-sunset", 
+    ocean: "gradient-ocean",
+    forest: "gradient-forest",
+    lavender: "gradient-lavender",
+    gold: "gradient-gold",
+    ruby: "gradient-ruby",
+    sky: "gradient-sky",
+    peach: "gradient-peach",
+    emerald: "gradient-emerald",
+    plum: "gradient-plum",
+    bronze: "gradient-bronze",
+    electric: "gradient-electric"
   };
 
   return (

@@ -78,7 +78,7 @@ export const Dashboard = () => {
         {/* Top Action Cards */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           <Card 
-            className="bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors border-0 shadow-lg"
+            className="gradient-lavender text-white cursor-pointer hover:scale-105 transition-all duration-300 border-0 shadow-lg"
             onClick={handleStartNewProject}
           >
             <CardContent className="p-4">
@@ -93,7 +93,7 @@ export const Dashboard = () => {
           </Card>
 
           <Card 
-            className="bg-green-500 text-white cursor-pointer hover:bg-green-600 transition-colors border-0 shadow-lg"
+            className="gradient-forest text-white cursor-pointer hover:scale-105 transition-all duration-300 border-0 shadow-lg"
             onClick={handleCompareAI}
           >
             <CardContent className="p-4">
@@ -108,7 +108,7 @@ export const Dashboard = () => {
           </Card>
 
           <Card 
-            className="bg-blue-500 text-white cursor-pointer hover:bg-blue-600 transition-colors border-0 shadow-lg"
+            className="gradient-ocean text-white cursor-pointer hover:scale-105 transition-all duration-300 border-0 shadow-lg"
             onClick={handleDeployProject}
           >
             <CardContent className="p-4">
@@ -123,7 +123,7 @@ export const Dashboard = () => {
           </Card>
 
           <Card 
-            className="bg-orange-500 text-white cursor-pointer hover:bg-orange-600 transition-colors border-0 shadow-lg"
+            className="gradient-gold text-white cursor-pointer hover:scale-105 transition-all duration-300 border-0 shadow-lg"
             onClick={handleAnalytics}
           >
             <CardContent className="p-4">

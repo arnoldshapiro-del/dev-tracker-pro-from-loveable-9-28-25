@@ -59,21 +59,23 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
     transition,
   };
 
-  const getProjectBackgroundColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-[#059669]'; // Bright green background
-      case 'completed': return 'bg-[#1E40AF]'; // Bright blue background  
-      case 'on-hold': return 'bg-[#EA580C]'; // Bright orange background
-      case 'archived': return 'bg-[#DC2626]'; // Bright red background
-      default: return 'bg-[#7C3AED]'; // Bright purple background
-    }
+  const gradients = [
+    'gradient-coral', 'gradient-mint', 'gradient-sunset', 'gradient-ocean',
+    'gradient-forest', 'gradient-lavender', 'gradient-gold', 'gradient-ruby',
+    'gradient-sky', 'gradient-peach', 'gradient-emerald', 'gradient-plum',
+    'gradient-bronze', 'gradient-electric'
+  ];
+
+  const getProjectGradient = (projectId: string) => {
+    const index = projectId ? parseInt(projectId.slice(-1), 36) % gradients.length : 0;
+    return gradients[index];
   };
 
   return (
     <div 
       ref={setNodeRef} 
       style={style} 
-      className={`${getProjectBackgroundColor(project.status)} hover:shadow-2xl transition-all duration-300 cursor-pointer min-h-[320px] min-w-[400px] p-8 rounded-xl hover:scale-[1.02] text-white relative overflow-hidden`}
+      className={`${getProjectGradient(project.id)} hover:shadow-2xl transition-all duration-300 cursor-pointer min-h-[320px] min-w-[400px] p-8 rounded-xl hover:scale-[1.02] text-white relative overflow-hidden`}
     >
       {/* Drag Handle */}
       <div 
@@ -147,7 +149,7 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
             e.stopPropagation();
             onEdit(project);
           }}
-          className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-white/30 font-semibold"
+          className={`${getProjectGradient(project.id + '-edit')} border-0 text-white hover:scale-105 transition-all duration-200 font-semibold shadow-lg`}
         >
           <Plus className="h-4 w-4 mr-2" />
           Edit Project

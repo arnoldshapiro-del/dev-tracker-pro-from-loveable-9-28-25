@@ -71,7 +71,23 @@ Modern dashboard with vibrant gradients and clean design
     --sidebar-border: 214.3 31.8% 91.4%;
     --sidebar-item-hover: 210 40% 98%;
     
-    /* Gradients - Vibrant Mocha-style */
+    /* Beautiful New Gradients */
+    --gradient-coral: linear-gradient(135deg, #ff6b6b 0%, #ffa726 50%, #ffcc02 100%);
+    --gradient-mint: linear-gradient(135deg, #4ecdc4 0%, #44a08d 50%, #2dd4bf 100%);
+    --gradient-sunset: linear-gradient(135deg, #ff8a80 0%, #ff7043 50%, #f4511e 100%);
+    --gradient-ocean: linear-gradient(135deg, #26c6da 0%, #00acc1 50%, #0097a7 100%);
+    --gradient-forest: linear-gradient(135deg, #66bb6a 0%, #43a047 50%, #2e7d32 100%);
+    --gradient-lavender: linear-gradient(135deg, #ba68c8 0%, #9c27b0 50%, #7b1fa2 100%);
+    --gradient-gold: linear-gradient(135deg, #ffd54f 0%, #ffb300 50%, #ff8f00 100%);
+    --gradient-ruby: linear-gradient(135deg, #f06292 0%, #e91e63 50%, #c2185b 100%);
+    --gradient-sky: linear-gradient(135deg, #42a5f5 0%, #1e88e5 50%, #1565c0 100%);
+    --gradient-peach: linear-gradient(135deg, #ffab91 0%, #ff7043 50%, #f4511e 100%);
+    --gradient-emerald: linear-gradient(135deg, #4db6ac 0%, #26a69a 50%, #00695c 100%);
+    --gradient-plum: linear-gradient(135deg, #ab47bc 0%, #8e24aa 50%, #6a1b9a 100%);
+    --gradient-bronze: linear-gradient(135deg, #a1887f 0%, #8d6e63 50%, #5d4037 100%);
+    --gradient-electric: linear-gradient(135deg, #7e57c2 0%, #5e35b1 50%, #4527a0 100%);
+    
+    /* Legacy gradients - Vibrant Mocha-style */
     --gradient-purple: linear-gradient(135deg, hsl(var(--purple-gradient-start)), hsl(var(--purple-gradient-end)));
     --gradient-green: linear-gradient(135deg, hsl(var(--green-gradient-start)), hsl(var(--green-gradient-end)));
     --gradient-blue: linear-gradient(135deg, hsl(var(--blue-gradient-start)), hsl(var(--blue-gradient-end)));
@@ -163,6 +179,77 @@ Modern dashboard with vibrant gradients and clean design
   
   .vibrant-yellow {
     background: hsl(var(--vibrant-yellow));
+    color: white;
+  }
+  
+  /* Beautiful gradient classes */
+  .gradient-coral {
+    background: var(--gradient-coral);
+    color: white;
+  }
+  
+  .gradient-mint {
+    background: var(--gradient-mint);
+    color: white;
+  }
+  
+  .gradient-sunset {
+    background: var(--gradient-sunset);
+    color: white;
+  }
+  
+  .gradient-ocean {
+    background: var(--gradient-ocean);
+    color: white;
+  }
+  
+  .gradient-forest {
+    background: var(--gradient-forest);
+    color: white;
+  }
+  
+  .gradient-lavender {
+    background: var(--gradient-lavender);
+    color: white;
+  }
+  
+  .gradient-gold {
+    background: var(--gradient-gold);
+    color: white;
+  }
+  
+  .gradient-ruby {
+    background: var(--gradient-ruby);
+    color: white;
+  }
+  
+  .gradient-sky {
+    background: var(--gradient-sky);
+    color: white;
+  }
+  
+  .gradient-peach {
+    background: var(--gradient-peach);
+    color: white;
+  }
+  
+  .gradient-emerald {
+    background: var(--gradient-emerald);
+    color: white;
+  }
+  
+  .gradient-plum {
+    background: var(--gradient-plum);
+    color: white;
+  }
+  
+  .gradient-bronze {
+    background: var(--gradient-bronze);
+    color: white;
+  }
+  
+  .gradient-electric {
+    background: var(--gradient-electric);
     color: white;
   }
   
