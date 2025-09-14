@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Plus, Github, ExternalLink, Calendar, AlertCircle, TrendingUp, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectEditor } from "@/components/ProjectEditor";
+import { ProjectTabs } from "@/components/ProjectTabs";
+import { TemplateMarketplace } from "@/components/TemplateMarketplace";
 import { 
   DndContext, 
   closestCenter,
