@@ -44,20 +44,48 @@ export const Dashboard = () => {
   };
 
   const handleProjectClick = (project: any) => {
-    console.log('=== DASHBOARD LINK CRITICAL DEBUG ===');
-    console.log('Full project object:', JSON.stringify(project, null, 2));
-    console.log('primaryUrl type and value:', typeof project.primaryUrl, project.primaryUrl);
+    console.log('=== DASHBOARD CLICK ANALYSIS ===');
+    console.log('Project ID:', project.id);
+    console.log('Project name:', project.name);
     
-    // Get fresh project data from store to ensure we have latest, but only if ID exists
+    // SYSTEMATIC COMPARISON: Check all URL fields
+    console.log('=== ALL URL FIELDS COMPARISON ===');
+    console.log('primaryUrl:', project.primaryUrl);
+    console.log('deployment:', project.deployment);
+    console.log('lovable_live_url:', project.lovable_live_url);
+    console.log('lovable_dev_url:', project.lovable_dev_url);
+    console.log('platform_url:', project.platform_url);
+    console.log('github_repo_url:', project.github_repo_url);
+    console.log('netlify_url:', project.netlify_url);
+    
+    // Get fresh project data from store to ensure we have latest
     const freshProject = project.id ? projects.find(p => p.id === project.id) : null;
-    console.log('Fresh project from store:', JSON.stringify(freshProject, null, 2));
+    
+    if (freshProject) {
+      console.log('=== FRESH PROJECT FROM STORE URLS ===');
+      console.log('FRESH primaryUrl:', freshProject.primaryUrl);
+      console.log('FRESH deployment:', freshProject.deployment);
+      console.log('FRESH lovable_live_url:', freshProject.lovable_live_url);
+      console.log('FRESH lovable_dev_url:', freshProject.lovable_dev_url);
+      console.log('FRESH platform_url:', freshProject.platform_url);
+      console.log('FRESH netlify_url:', freshProject.netlify_url);
+    } else {
+      console.log('NO FRESH PROJECT FOUND FOR ID:', project.id);
+    }
     
     const projectToUse = freshProject || project;
     
-    // Priority order: primaryUrl, lovable_live_url, lovable_dev_url, deployment
-    const urlToOpen = projectToUse.primaryUrl || projectToUse.lovable_live_url || projectToUse.lovable_dev_url || projectToUse.deployment;
+    // Priority order: primaryUrl, lovable_live_url, lovable_dev_url, deployment, platform_url
+    const urlToOpen = projectToUse.primaryUrl || projectToUse.lovable_live_url || projectToUse.lovable_dev_url || projectToUse.deployment || projectToUse.platform_url;
     
-    console.log('FINAL URL selected:', urlToOpen);
+    console.log('=== FINAL DECISION ===');
+    console.log('Selected URL:', urlToOpen);
+    console.log('URL source priority check:');
+    console.log('- primaryUrl:', !!projectToUse.primaryUrl);
+    console.log('- lovable_live_url:', !!projectToUse.lovable_live_url);
+    console.log('- lovable_dev_url:', !!projectToUse.lovable_dev_url);
+    console.log('- deployment:', !!projectToUse.deployment);
+    console.log('- platform_url:', !!projectToUse.platform_url);
     
     if (urlToOpen) {
       // Ensure URL has proper protocol

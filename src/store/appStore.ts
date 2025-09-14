@@ -189,8 +189,18 @@ export const useAppStore = create<AppState>()(
           ...projectData,
           id: Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9), // Ensure unique ID
           createdAt: new Date().toISOString().split('T')[0],
-          updatedAt: new Date().toISOString().split('T')[0]
+          updatedAt: new Date().toISOString().split('T')[0],
+          // CRITICAL FIX: Map platform_url to primaryUrl for consistency with existing projects
+          primaryUrl: projectData.primaryUrl || projectData.platform_url || projectData.deployment,
+          // Ensure deployment field is also populated
+          deployment: projectData.deployment || projectData.platform_url
         };
+        
+        console.log('=== NEW PROJECT CREATION DEBUG ===');
+        console.log('Original projectData platform_url:', projectData.platform_url);
+        console.log('Final newProject primaryUrl:', newProject.primaryUrl);
+        console.log('Final newProject deployment:', newProject.deployment);
+        
         return {
           projects: [...state.projects, newProject],
           analytics: {
