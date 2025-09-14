@@ -11,59 +11,21 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/hooks/use-toast";
 import { 
   Search, 
-  Plus, 
   ExternalLink, 
-  Calendar,
+  TrendingUp,
   Globe,
   Github,
   Bell,
   Zap,
   Phone,
   AlertTriangle,
-  TrendingUp,
-  Clock,
-  Trash2,
-  Check,
-  Edit,
-  Save,
-  X
+  Calendar
 } from "lucide-react";
 
 interface ProjectEditorProps {
   project?: Project;
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface PlatformUrl {
-  id: string;
-  url: string;
-  type: 'development' | 'live';
-  label: string;
-  isEditing?: boolean;
-  tempUrl?: string;
-}
-
-interface PlatformConfig {
-  name: string;
-  icon: React.ReactNode;
-  color: string;
-  urls: PlatformUrl[];
-  developmentUpdated?: string;
-  publishedDate?: string;
-  version?: string;
-  repositoryUrl?: string;
-  lastPushed?: string;
-  branch?: string;
-  commitHash?: string;
-  deployedAt?: string;
-  domainName?: string;
-  deployId?: string;
-  deploymentId?: string;
-  phoneNumber?: string;
-  configuredAt?: string;
-  status?: string;
-  isCustom?: boolean;
 }
 
 export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) => {
@@ -77,136 +39,53 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     status: project?.status || 'planning',
     progress: project?.progress || 0,
     primaryUrl: project?.primaryUrl || '',
+    lovable_live_url: project?.lovable_live_url || '',
+    lovable_dev_url: project?.lovable_dev_url || '',
+    netlify_url: project?.netlify_url || '',
+    netlify_dev_url: project?.netlify_dev_url || '',
+    vercel_url: project?.vercel_url || '',
+    vercel_dev_url: project?.vercel_dev_url || '',
+    github_repo_url: project?.github_repo_url || '',
+    github_dev_url: project?.github_dev_url || '',
     ...project
   });
 
-  const [platforms, setPlatforms] = useState<PlatformConfig[]>([
-    {
-      name: "Netlify Deployment",
-      icon: <Bell className="h-4 w-4" />,
-      color: "text-green-600",
-      urls: [
-        { id: "netlify-dev", url: project?.netlify_dev_url || "https://app.netlify.com/sites/myapp", type: "development", label: "Development URL" },
-        { id: "netlify-live", url: project?.netlify_url || "https://app.netlify.app", type: "live", label: "Live URL" }
-      ],
-      deployedAt: "",
-      domainName: "myapp.netlify.app",
-      deployId: "6123456789abcdef",
-      developmentUpdated: ""
-    },
-    {
-      name: "Lovable Deployment",
-      icon: <Zap className="h-4 w-4" />,
-      color: "text-purple-600",
-      urls: [
-        { id: "lovable-dev", url: project?.lovable_dev_url || "https://zoer.ai/zchat/7671", type: "development", label: "Development URL" },
-        { id: "lovable-live", url: project?.lovable_live_url || "https://phoenix-project-revive.lovable.app/", type: "live", label: "Published URL" }
-      ],
-      deploymentId: "dpl_xyz123",
-      developmentUpdated: "",
-      deployedAt: ""
-    },
-    {
-      name: "Twilio Configuration",
-      icon: <Phone className="h-4 w-4" />,
-      color: "text-red-600",
-      urls: [
-        { id: "twilio-dev", url: "https://console.twilio.com", type: "development", label: "Development URL" },
-        { id: "twilio-live", url: "https://example.com", type: "live", label: "Live URL" }
-      ],
-      phoneNumber: "+1234567890",
-      configuredAt: "",
-      status: "Not Configured",
-      developmentUpdated: ""
-    },
-    {
-      name: "Custom Platform 1",
-      icon: <Globe className="h-4 w-4" />,
-      color: "text-blue-600",
-      urls: [
-        { id: "custom1-dev", url: "", type: "development", label: "Development URL" },
-        { id: "custom1-live", url: "", type: "live", label: "Live URL" }
-      ],
-      isCustom: true,
-      developmentUpdated: "",
-      deployedAt: ""
-    },
-    {
-      name: "Custom Platform 2",
-      icon: <Globe className="h-4 w-4" />,
-      color: "text-orange-600",
-      urls: [
-        { id: "custom2-dev", url: "", type: "development", label: "Development URL" },
-        { id: "custom2-live", url: "", type: "live", label: "Live URL" }
-      ],
-      isCustom: true,
-      developmentUpdated: "",
-      deployedAt: ""
-    },
-    {
-      name: "Custom Platform 3",
-      icon: <Globe className="h-4 w-4" />,
-      color: "text-teal-600",
-      urls: [
-        { id: "custom3-dev", url: "", type: "development", label: "Development URL" },
-        { id: "custom3-live", url: "", type: "live", label: "Live URL" }
-      ],
-      isCustom: true,
-      developmentUpdated: "",
-      deployedAt: ""
-    }
-  ]);
+  const [creditsUsed] = useState(0);
+  const [completion] = useState(0);
 
-  const [primaryUrl, setPrimaryUrl] = useState(() => {
-    console.log('ProjectEditor - Setting primary URL from project:', project);
-    const selectedUrl = project?.primaryUrl || project?.lovable_live_url || project?.lovable_dev_url || project?.deployment || "";
-    console.log('ProjectEditor - Selected primary URL:', selectedUrl);
-    return selectedUrl;
-  });
+  // Get all URLs for the health check section
+  const getAllUrls = () => {
+    const urls: { platform: string; url: string; type: string; badge?: string }[] = [];
+    
+    if (projectData.lovable_live_url) {
+      urls.push({ platform: "Lovable", url: projectData.lovable_live_url, type: "LIVE", badge: "BEST" });
+    }
+    if (projectData.lovable_dev_url) {
+      urls.push({ platform: "Lovable", url: projectData.lovable_dev_url, type: "DEVELOPMENT" });
+    }
+    if (projectData.vercel_url) {
+      urls.push({ platform: "Vercel", url: projectData.vercel_url, type: "LIVE" });
+    }
+    if (projectData.vercel_dev_url) {
+      urls.push({ platform: "Vercel", url: projectData.vercel_dev_url, type: "DEVELOPMENT" });
+    }
+    if (projectData.netlify_url) {
+      urls.push({ platform: "Netlify", url: projectData.netlify_url, type: "LIVE" });
+    }
+    if (projectData.netlify_dev_url) {
+      urls.push({ platform: "Netlify", url: projectData.netlify_dev_url, type: "DEVELOPMENT" });
+    }
+    
+    return urls;
+  };
+
+  const getBestUrl = () => {
+    return projectData.primaryUrl || projectData.lovable_live_url || projectData.vercel_url || projectData.netlify_url || "";
+  };
 
   const handleSave = () => {
     if (project?.id) {
-      // Collect all URLs from platforms into the project data
-      const allUrls: any = {};
-      platforms.forEach(platform => {
-        platform.urls.forEach(url => {
-          if (url.url) {
-            if (platform.name === 'Lovable Deployment') {
-              if (url.type === 'development') {
-                allUrls.lovable_dev_url = url.url;
-              } else {
-                allUrls.lovable_live_url = url.url;
-              }
-            } else if (platform.name === 'Netlify Deployment') {
-              if (url.type === 'development') {
-                allUrls.netlify_dev_url = url.url;
-              } else {
-                allUrls.netlify_url = url.url;
-              }
-            } else if (platform.name === 'Vercel Deployment') {
-              if (url.type === 'development') {
-                allUrls.vercel_dev_url = url.url;
-              } else {
-                allUrls.vercel_url = url.url;
-              }
-            } else {
-              // Custom platforms
-              const platformKey = platform.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-              if (url.type === 'development') {
-                allUrls[`${platformKey}_dev_url`] = url.url;
-              } else {
-                allUrls[`${platformKey}_live_url`] = url.url;
-              }
-            }
-          }
-        });
-      });
-
-      updateProject(project.id, { 
-        ...projectData, 
-        primaryUrl,
-        ...allUrls
-      });
+      updateProject(project.id, projectData);
       toast({
         title: "Project Updated",
         description: "Your project has been saved successfully.",
@@ -215,155 +94,18 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     onClose();
   };
 
-  const handlePlatformUpdate = (index: number, field: string, value: string) => {
-    setPlatforms(prev => prev.map((platform, i) => 
-      i === index ? { ...platform, [field]: value } : platform
-    ));
-  };
-
-  const handlePlatformNameUpdate = (index: number, newName: string) => {
-    setPlatforms(prev => prev.map((platform, i) => 
-      i === index ? { ...platform, name: newName } : platform
-    ));
-  };
-
-  const handleStartEdit = (platformIndex: number, urlId: string) => {
-    setPlatforms(prev => prev.map((platform, i) => 
-      i === platformIndex ? {
-        ...platform,
-        urls: platform.urls.map(url => 
-          url.id === urlId ? { ...url, isEditing: true, tempUrl: url.url } : url
-        )
-      } : platform
-    ));
-  };
-
-  const handleCancelEdit = (platformIndex: number, urlId: string) => {
-    setPlatforms(prev => prev.map((platform, i) => 
-      i === platformIndex ? {
-        ...platform,
-        urls: platform.urls.map(url => 
-          url.id === urlId ? { ...url, isEditing: false, tempUrl: undefined } : url
-        )
-      } : platform
-    ));
-  };
-
-  const handleTempUrlChange = (platformIndex: number, urlId: string, tempUrl: string) => {
-    setPlatforms(prev => prev.map((platform, i) => 
-      i === platformIndex ? {
-        ...platform,
-        urls: platform.urls.map(url => 
-          url.id === urlId ? { ...url, tempUrl } : url
-        )
-      } : platform
-    ));
-  };
-
-  const handleSaveUrl = (platformIndex: number, urlId: string) => {
-    console.log('=== URL SAVE DEBUG ===');
-    console.log('Saving URL for platform:', platformIndex, 'urlId:', urlId);
-    
-    setPlatforms(prev => prev.map((platform, i) => {
-      if (i === platformIndex) {
-        const updatedPlatform = {
-          ...platform,
-          urls: platform.urls.map(url => {
-            if (url.id === urlId) {
-              const newUrl = url.tempUrl || url.url;
-              console.log('Saving URL:', newUrl, 'for platform:', platform.name, 'type:', url.type);
-              return { ...url, url: newUrl, isEditing: false, tempUrl: undefined };
-            }
-            return url;
-          })
-        };
-        
-        // Immediately save to project data
-        if (project?.id) {
-          const urlObj = updatedPlatform.urls.find(u => u.id === urlId);
-          if (urlObj && urlObj.url) {
-            let updateField = '';
-            if (platform.name === 'Lovable Deployment') {
-              updateField = urlObj.type === 'development' ? 'lovable_dev_url' : 'lovable_live_url';
-            } else if (platform.name === 'Netlify Deployment') {
-              updateField = urlObj.type === 'development' ? 'netlify_dev_url' : 'netlify_url';
-            } else if (platform.name === 'Vercel Deployment') {
-              updateField = urlObj.type === 'development' ? 'vercel_dev_url' : 'vercel_url';
-            } else if (platform.name.includes('Custom Platform')) {
-              // Handle custom platforms
-              const platformKey = platform.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-              updateField = urlObj.type === 'development' ? `${platformKey}_dev_url` : `${platformKey}_live_url`;
-            }
-            
-            console.log('Update field:', updateField, 'with value:', urlObj.url);
-            
-            if (updateField) {
-              const updateData = { [updateField]: urlObj.url };
-              setProjectData(prev => ({ ...prev, ...updateData }));
-              
-              // Always update primary URL for live URLs from important platforms
-              if (urlObj.type === 'live' && (platform.name === 'Lovable Deployment' || platform.name === 'Netlify Deployment' || platform.name === 'Vercel Deployment')) {
-                updateData.primaryUrl = urlObj.url;
-                setPrimaryUrl(urlObj.url);
-                console.log('CRITICAL: Setting primaryUrl to:', urlObj.url);
-              }
-              
-              // Save to store immediately with all updates
-              updateProject(project.id, updateData);
-              console.log('CRITICAL: Saved to project store:', updateData);
-              
-              // Force refresh the component to reflect changes
-              const updatedProject = { ...project, ...updateData };
-              setProjectData(updatedProject);
-            }
-          }
-        }
-        
-        return updatedPlatform;
-      }
-      return platform;
-    }));
-
-    toast({
-      title: "URL Saved",
-      description: "URL has been updated successfully.",
-    });
-  };
-
-  const handleAddUrl = (platformIndex: number, type: 'development' | 'live') => {
-    const newUrl: PlatformUrl = {
-      id: `${Date.now()}-${type}`,
-      url: "",
-      type,
-      label: type === 'development' ? 'Development URL' : 'Live URL'
-    };
-    
-    setPlatforms(prev => prev.map((platform, i) => 
-      i === platformIndex ? {
-        ...platform,
-        urls: [...platform.urls, newUrl]
-      } : platform
-    ));
-  };
-
-  const handleDeleteUrl = (platformIndex: number, urlId: string) => {
-    setPlatforms(prev => prev.map((platform, i) => 
-      i === platformIndex ? {
-        ...platform,
-        urls: platform.urls.filter(url => url.id !== urlId)
-      } : platform
-    ));
-  };
-
-  const handleSetPrimaryUrl = (url: string) => {
-    setPrimaryUrl(url);
-    setProjectData(prev => ({ ...prev, primaryUrl: url }));
+  const handleInputChange = (field: string, value: any) => {
+    setProjectData(prev => ({ ...prev, [field]: value }));
   };
 
   const openUrl = (url: string) => {
     if (url) {
       window.open(url, '_blank');
     }
+  };
+
+  const formatDate = (date?: string) => {
+    return date || "mm/dd/yyyy --:-- --";
   };
 
   return (
@@ -377,18 +119,18 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Primary URL Section */}
-          <Card className="border-green-200 bg-green-50/50">
+          {/* URL Health Check Section */}
+          <Card className="border-green-200 bg-green-50">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-green-600" />
-                  <span className="font-medium text-green-800">👥 PRIMARY URL</span>
+                  <span className="font-medium text-green-800">RECOMMENDED URL</span>
                 </div>
                 <Button 
                   size="sm" 
                   className="bg-green-600 hover:bg-green-700 text-white"
-                  onClick={() => openUrl(primaryUrl)}
+                  onClick={() => openUrl(getBestUrl())}
                 >
                   <ExternalLink className="h-3 w-3 mr-1" />
                   OPEN BEST URL
@@ -397,121 +139,46 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="font-medium">Selected Primary URL</div>
-                <div className="text-sm text-green-700 font-mono bg-white/60 p-2 rounded">
-                  {primaryUrl || "No primary URL selected"}
+                <div className="font-medium">Vercel</div>
+                <div className="text-sm text-green-700 font-mono bg-white p-2 rounded border">
+                  {getBestUrl() || "No URL configured"}
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* All URLs Section */}
-          <Card className="border-blue-200 bg-blue-50/50">
+          <Card className="border-blue-200 bg-blue-50">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <ExternalLink className="h-4 w-4 text-blue-600" />
-                <span className="font-medium text-blue-800">☑️ ALL YOUR URLs ({platforms.reduce((acc, p) => acc + p.urls.length, 0)} found)</span>
+                <span className="font-medium text-blue-800">ALL YOUR URLs ({getAllUrls().length} found)</span>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {platforms.map((platform, platformIndex) => (
-                  <div key={platform.name} className="space-y-2">
-                    <div className="font-medium text-sm flex items-center gap-2">
-                      <span className={platform.color}>{platform.icon}</span>
-                      {platform.name}
+              <div className="space-y-2">
+                {getAllUrls().map((item, index) => (
+                  <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">{item.platform}</span>
+                      <Badge variant={item.type === "DEVELOPMENT" ? "secondary" : "default"} className="text-xs">
+                        {item.type}
+                      </Badge>
+                      {item.badge && (
+                        <Badge className="bg-green-500 text-white text-xs">{item.badge}</Badge>
+                      )}
                     </div>
-                     {platform.urls.map((url, urlIndex) => (
-                       <div key={url.id} className={`flex items-center justify-between p-3 rounded border ${
-                         primaryUrl === url.url ? 'bg-green-100 border-green-200' : 'bg-gray-50 border-gray-200'
-                       }`}>
-                         <div className="flex-1 space-y-2">
-                           <div className="flex items-center gap-2">
-                             <span className="text-sm font-medium">{url.label}</span>
-                             <Badge className={`text-xs ${
-                               url.type === 'development' ? 'bg-gray-500 text-white' : 'bg-blue-500 text-white'
-                             }`}>
-                               {url.type.toUpperCase()}
-                             </Badge>
-                             {primaryUrl === url.url && (
-                               <Badge className="bg-green-500 text-white text-xs">👥 BEST</Badge>
-                             )}
-                           </div>
-                           
-                           {url.isEditing ? (
-                             <div className="flex items-center gap-2">
-                               <Input
-                                 value={url.tempUrl || ''}
-                                 onChange={(e) => handleTempUrlChange(platformIndex, url.id, e.target.value)}
-                                 placeholder="Enter URL..."
-                                 className="text-xs font-mono"
-                               />
-                               <Button
-                                 size="sm"
-                                 onClick={() => handleSaveUrl(platformIndex, url.id)}
-                                 className="h-8 px-2 bg-green-600 hover:bg-green-700 text-white"
-                               >
-                                 <Save className="h-3 w-3" />
-                               </Button>
-                               <Button
-                                 size="sm"
-                                 variant="ghost"
-                                 onClick={() => handleCancelEdit(platformIndex, url.id)}
-                                 className="h-8 px-2"
-                               >
-                                 <X className="h-3 w-3" />
-                               </Button>
-                             </div>
-                           ) : (
-                             <div className="flex items-center gap-2">
-                               <div className="text-xs text-gray-600 font-mono flex-1 bg-white/60 p-2 rounded border">
-                                 {url.url || "No URL set"}
-                               </div>
-                               <Button
-                                 size="sm"
-                                 variant="ghost"
-                                 onClick={() => handleStartEdit(platformIndex, url.id)}
-                                 className="h-8 px-2"
-                               >
-                                 <Edit className="h-3 w-3" />
-                               </Button>
-                             </div>
-                           )}
-                         </div>
-                         
-                         <div className="flex items-center gap-2 ml-2">
-                           <Button 
-                             size="sm" 
-                             variant="ghost" 
-                             onClick={() => handleSetPrimaryUrl(url.url)}
-                             disabled={!url.url || primaryUrl === url.url}
-                             className="h-8 w-8 p-0"
-                             title="Set as Primary URL"
-                           >
-                             <Check className="h-3 w-3" />
-                           </Button>
-                           <Button 
-                             size="sm" 
-                             variant="ghost" 
-                             onClick={() => openUrl(url.url)}
-                             disabled={!url.url}
-                             className="h-8 w-8 p-0"
-                             title="Open URL"
-                           >
-                             <ExternalLink className="h-3 w-3" />
-                           </Button>
-                           <Button 
-                             size="sm" 
-                             variant="ghost" 
-                             onClick={() => handleDeleteUrl(platformIndex, url.id)}
-                             className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                             title="Delete URL"
-                           >
-                             <Trash2 className="h-3 w-3" />
-                           </Button>
-                         </div>
-                       </div>
-                     ))}
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono text-gray-600">{item.url}</span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => openUrl(item.url)}
+                        className="h-6 w-6 p-0"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -519,325 +186,473 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
           </Card>
 
           {/* Quick Tips */}
-          <Card className="border-yellow-200 bg-yellow-50/50">
+          <Card className="border-yellow-200 bg-yellow-50">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                <span className="font-medium text-yellow-800">⚠️ QUICK TIPS</span>
+                <span className="font-medium text-yellow-800">QUICK TIPS</span>
               </div>
             </CardHeader>
-            <CardContent className="text-sm space-y-1">
-              <div><span className="text-green-600">• Green URLs</span> = Most recent with timestamps (use these!)</div>
-              <div><span className="text-blue-600">• LIVE URLs</span> = Your actual deployed apps that users see</div>
-              <div><span className="text-orange-600">• DEV URLs</span> = Your development/console URLs for editing</div>
-              <div><span className="text-gray-600">• 👥 BEST</span> = The most recent live URL (recommended for sharing)</div>
+            <CardContent>
+              <div className="text-sm text-yellow-700 space-y-1">
+                <div>• <strong>Green URLs</strong> = Most recent with timestamps (use these!)</div>
+                <div>• <strong>LIVE URLs</strong> = Your actual deployed apps that users see</div>
+                <div>• <strong>DEV URLs</strong> = Your development/console URLs for editing</div>
+                <div>• <strong>⭐ BEST</strong> = The most recent live URL (recommended for sharing)</div>
+              </div>
             </CardContent>
           </Card>
 
-          {/* Project Basic Info */}
+          {/* Project Details */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Project Name</Label>
+              <Label htmlFor="projectName">Project Name</Label>
               <Input
+                id="projectName"
                 value={projectData.name}
-                onChange={(e) => setProjectData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="DevTracker Pro amazing made by Zoer 9-8-25"
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                placeholder="Project name"
               />
             </div>
             <div className="space-y-2">
-              <Label>Credits Used</Label>
+              <Label htmlFor="creditsUsed">Credits Used</Label>
               <Input
-                type="number"
-                value={0}
+                id="creditsUsed"
+                value={creditsUsed}
                 readOnly
-                className="bg-muted"
+                className="bg-gray-50"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Description</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
+              id="description"
               value={projectData.description}
-              onChange={(e) => setProjectData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Beautiful made by Zoer 9-8-25"
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              placeholder="Project description"
               rows={3}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Status</Label>
-              <Select 
-                value={projectData.status} 
-                onValueChange={(value) => setProjectData(prev => ({ ...prev, status: value as any }))}
-              >
+              <Label htmlFor="status">Status</Label>
+              <Select value={projectData.status} onValueChange={(value) => handleInputChange('status', value)}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="planning">Planning</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="development">Development</SelectItem>
+                  <SelectItem value="testing">Testing</SelectItem>
+                  <SelectItem value="deployed">Deployed</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="on-hold">On Hold</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Completion (%)</Label>
+              <Label htmlFor="completion">Completion (%)</Label>
               <Input
+                id="completion"
                 type="number"
+                value={completion}
+                onChange={(e) => handleInputChange('progress', parseInt(e.target.value) || 0)}
+                placeholder="0"
                 min="0"
                 max="100"
-                value={projectData.progress}
-                onChange={(e) => setProjectData(prev => ({ ...prev, progress: parseInt(e.target.value) || 0 }))}
               />
             </div>
           </div>
 
-          {/* Platform Configurations */}
-          <div className="space-y-4">
-            {platforms.map((platform, index) => (
-              <Card key={platform.name} className="border border-gray-200">
-                <CardHeader className="pb-3">
+          {/* Mocha Publishing Section */}
+          <Card className="border-blue-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-blue-600">
+                <Zap className="h-4 w-4" />
+                Mocha Publishing
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className={platform.color}>{platform.icon}</span>
-                    {platform.isCustom ? (
-                      <Input
-                        value={platform.name}
-                        onChange={(e) => handlePlatformNameUpdate(index, e.target.value)}
-                        className="font-medium h-6 border-dashed"
-                        placeholder="Enter platform name (e.g., ZOER, REPLIT)"
-                      />
-                    ) : (
-                      <span className="font-medium">{platform.name}</span>
-                    )}
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Development URL</span>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* URLs Section */}
-                  <div className="space-y-4">
-                    {platform.urls.map((url, urlIndex) => (
-                       <div key={url.id} className="grid grid-cols-2 gap-4 p-3 border rounded-lg">
-                         <div className="space-y-2">
-                           <div className="flex items-center justify-between">
-                             <Label className="text-sm">{url.label}</Label>
-                             <div className="flex items-center gap-2">
-                               <Button
-                                 size="sm"
-                                 variant="ghost"
-                                 className="h-6 px-2 bg-red-100 text-red-600 text-xs hover:bg-red-200"
-                                 onClick={() => handleDeleteUrl(index, url.id)}
-                               >
-                                 <Trash2 className="h-3 w-3 mr-1" />
-                                 DELETE
-                               </Button>
-                               {url.url && (
-                                 <Button
-                                   size="sm"
-                                   variant="ghost"
-                                   className={`h-6 px-2 text-xs ${
-                                     primaryUrl === url.url 
-                                       ? 'bg-green-100 text-green-600' 
-                                       : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-600'
-                                   }`}
-                                   onClick={() => handleSetPrimaryUrl(url.url)}
-                                 >
-                                   <Check className="h-3 w-3 mr-1" />
-                                   {primaryUrl === url.url ? 'PRIMARY' : 'SET PRIMARY'}
-                                 </Button>
-                               )}
-                             </div>
-                           </div>
-                           
-                           {url.isEditing ? (
-                             <div className="flex items-center gap-2">
-                               <Input
-                                 value={url.tempUrl || ''}
-                                 onChange={(e) => handleTempUrlChange(index, url.id, e.target.value)}
-                                 placeholder="https://example.com"
-                                 className="text-sm"
-                               />
-                               <Button
-                                 size="sm"
-                                 onClick={() => handleSaveUrl(index, url.id)}
-                                 className="h-8 px-2 bg-green-600 hover:bg-green-700 text-white"
-                               >
-                                 <Save className="h-3 w-3" />
-                               </Button>
-                               <Button
-                                 size="sm"
-                                 variant="ghost"
-                                 onClick={() => handleCancelEdit(index, url.id)}
-                                 className="h-8 px-2"
-                               >
-                                 <X className="h-3 w-3" />
-                               </Button>
-                             </div>
-                           ) : (
-                             <div className="flex items-center gap-2">
-                               <div className="text-sm bg-gray-50 p-2 rounded border flex-1 font-mono">
-                                 {url.url || "No URL set"}
-                               </div>
-                               <Button
-                                 size="sm"
-                                 variant="ghost"
-                                 onClick={() => handleStartEdit(index, url.id)}
-                                 className="h-8 px-2"
-                               >
-                                 <Edit className="h-3 w-3" />
-                               </Button>
-                             </div>
-                           )}
-                         </div>
-                         <div className="space-y-2">
-                           <Label className="text-sm">Type</Label>
-                           <Badge className={`text-xs w-fit ${
-                             url.type === 'development' ? 'bg-gray-500 text-white' : 'bg-blue-500 text-white'
-                           }`}>
-                             {url.type.toUpperCase()}
-                           </Badge>
-                         </div>
-                       </div>
-                    ))}
-                    
-                    {/* Add URL Buttons */}
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleAddUrl(index, 'development')}
-                        className="text-xs"
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Add Development URL
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleAddUrl(index, 'live')}
-                        className="text-xs"
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Add Live URL
-                      </Button>
-                    </div>
+                  <Input
+                    value={projectData.lovable_dev_url}
+                    onChange={(e) => handleInputChange('lovable_dev_url', e.target.value)}
+                    placeholder="Add a URL here to track this platform"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Published URL</span>
                   </div>
-
-                  {/* Platform-specific fields */}
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    {(platform.name === "Netlify Deployment" || platform.name === "Lovable Deployment") && (
-                      <>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Development Updated</Label>
-                          <Input
-                            type="datetime-local"
-                            value={platform.developmentUpdated}
-                            onChange={(e) => handlePlatformUpdate(index, 'developmentUpdated', e.target.value)}
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Deployed At</Label>
-                          <Input
-                            type="datetime-local"
-                            value={platform.deployedAt}
-                            onChange={(e) => handlePlatformUpdate(index, 'deployedAt', e.target.value)}
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">
-                            {platform.name === "Netlify Deployment" ? "Domain Name" : "Deployment ID"}
-                          </Label>
-                          <Input
-                            value={platform.name === "Netlify Deployment" ? platform.domainName : platform.deploymentId}
-                            onChange={(e) => handlePlatformUpdate(index, 
-                              platform.name === "Netlify Deployment" ? 'domainName' : 'deploymentId', 
-                              e.target.value
-                            )}
-                            placeholder={platform.name === "Netlify Deployment" ? "myapp.netlify.app" : "dpl_xyz123"}
-                            className="text-xs"
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    {platform.name === "Twilio Configuration" && (
-                      <>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Phone Number</Label>
-                          <Input
-                            value={platform.phoneNumber}
-                            onChange={(e) => handlePlatformUpdate(index, 'phoneNumber', e.target.value)}
-                            placeholder="+1234567890"
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Status</Label>
-                          <Select 
-                            value={platform.status} 
-                            onValueChange={(value) => handlePlatformUpdate(index, 'status', value)}
-                          >
-                            <SelectTrigger className="text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Not Configured">Not Configured</SelectItem>
-                              <SelectItem value="Configured">Configured</SelectItem>
-                              <SelectItem value="Active">Active</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div></div>
-                      </>
-                    )}
-
-                    {platform.isCustom && (
-                      <>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Development Updated</Label>
-                          <Input
-                            type="datetime-local"
-                            value={platform.developmentUpdated}
-                            onChange={(e) => handlePlatformUpdate(index, 'developmentUpdated', e.target.value)}
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Deployed At</Label>
-                          <Input
-                            type="datetime-local"
-                            value={platform.deployedAt}
-                            onChange={(e) => handlePlatformUpdate(index, 'deployedAt', e.target.value)}
-                            className="text-xs"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Custom Field</Label>
-                          <Input
-                            value={platform.deploymentId || ""}
-                            onChange={(e) => handlePlatformUpdate(index, 'deploymentId', e.target.value)}
-                            placeholder="Custom identifier"
-                            className="text-xs"
-                          />
-                        </div>
-                      </>
-                    )}
+                  <Input
+                    value={projectData.lovable_live_url}
+                    onChange={(e) => handleInputChange('lovable_live_url', e.target.value)}
+                    placeholder="Add a URL here to track this platform"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Development Updated</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Published Date & Time</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Version</Label>
+                  <Input
+                    value="v1.0.0"
+                    onChange={(e) => handleInputChange('version', e.target.value)}
+                    placeholder="v1.0.0"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Action buttons */}
-          <div className="flex justify-between pt-4">
-            <Button variant="outline" onClick={onClose}>
-              Cancel & Close
-            </Button>
-            <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
+          {/* GitHub Repository Section */}
+          <Card className="border-gray-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-gray-600">
+                <Github className="h-4 w-4" />
+                GitHub Repository
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Development URL</span>
+                  </div>
+                  <Input
+                    value={projectData.github_dev_url}
+                    onChange={(e) => handleInputChange('github_dev_url', e.target.value)}
+                    placeholder="https://github.com/user/repo/tree/dev"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Repository URL</span>
+                  </div>
+                  <Input
+                    value={projectData.github_repo_url}
+                    onChange={(e) => handleInputChange('github_repo_url', e.target.value)}
+                    placeholder="https://github.com/user/repo"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Development Updated</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Last Pushed</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Branch</Label>
+                  <Input
+                    value="main"
+                    placeholder="main"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Commit Hash</Label>
+                <Input
+                  value="a1b2c3d4e5f6..."
+                  placeholder="Commit hash"
+                  className="font-mono"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Netlify Deployment Section */}
+          <Card className="border-green-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-green-600">
+                <Bell className="h-4 w-4" />
+                Netlify Deployment
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Development URL</span>
+                  </div>
+                  <Input
+                    value={projectData.netlify_dev_url}
+                    onChange={(e) => handleInputChange('netlify_dev_url', e.target.value)}
+                    placeholder="https://app.netlify.com/sites/myapp"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Live URL</span>
+                  </div>
+                  <Input
+                    value={projectData.netlify_url}
+                    onChange={(e) => handleInputChange('netlify_url', e.target.value)}
+                    placeholder="https://app.netlify.app"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Development Updated</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Deployed At</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Domain Name</Label>
+                  <Input
+                    value="myapp.netlify.app"
+                    placeholder="Domain name"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Deploy ID</Label>
+                <Input
+                  value="6123456789abcdef"
+                  placeholder="Deploy ID"
+                  className="font-mono"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Vercel Deployment Section */}
+          <Card className="border-purple-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-600">
+                <Zap className="h-4 w-4" />
+                Vercel Deployment
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Development URL</span>
+                  </div>
+                  <Input
+                    value={projectData.vercel_dev_url}
+                    onChange={(e) => handleInputChange('vercel_dev_url', e.target.value)}
+                    placeholder="https://app.vercel.app"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">Live URL</span>
+                  </div>
+                  <Input
+                    value={projectData.vercel_url}
+                    onChange={(e) => handleInputChange('vercel_url', e.target.value)}
+                    placeholder="https://app.vercel.app"
+                    className="font-mono text-sm"
+                  />
+                  <div className="text-xs text-yellow-600">⚠ Add a URL here to track this platform</div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Development Updated</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Deployed At</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Deployment ID</Label>
+                <Input
+                  value="dpl_xyz123"
+                  placeholder="Deployment ID"
+                  className="font-mono"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Twilio Configuration Section */}
+          <Card className="border-red-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-red-600">
+                <Phone className="h-4 w-4" />
+                Twilio Configuration
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-5 gap-4">
+                <div className="space-y-2">
+                  <Label>Development URL</Label>
+                  <Input
+                    value="https://console.twilio.com"
+                    readOnly
+                    className="bg-gray-50 font-mono text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Development Updated</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Phone Number</Label>
+                  <Input
+                    value="+1234567890"
+                    placeholder="Phone number"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Configured At</Label>
+                  <div className="relative">
+                    <Input
+                      value={formatDate()}
+                      readOnly
+                      className="bg-gray-50"
+                    />
+                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Status</Label>
+                  <Select defaultValue="not-configured">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="not-configured">Not Configured</SelectItem>
+                      <SelectItem value="configured">Configured</SelectItem>
+                      <SelectItem value="error">Error</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Buttons */}
+          <div className="flex justify-between pt-6">
+            <Button
+              onClick={handleSave}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+            >
               Update Project
+            </Button>
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="px-8"
+            >
+              Cancel & Close
             </Button>
           </div>
         </div>

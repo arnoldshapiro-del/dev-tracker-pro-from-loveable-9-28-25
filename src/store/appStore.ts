@@ -24,6 +24,7 @@ export interface Project {
   initial_budget_credits?: number;
   credits_remaining?: number;
   github_repo_url?: string;
+  github_dev_url?: string;
   netlify_url?: string;
   netlify_dev_url?: string;
   vercel_url?: string;
