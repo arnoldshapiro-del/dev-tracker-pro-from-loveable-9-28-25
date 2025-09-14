@@ -1,7 +1,11 @@
 import { Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const WelcomeHero = () => {
+interface WelcomeHeroProps {
+  onGetStarted: () => void;
+}
+
+export const WelcomeHero = ({ onGetStarted }: WelcomeHeroProps) => {
   return (
     <div className="relative overflow-hidden rounded-xl gradient-purple p-8 text-white">
       {/* Content */}
@@ -15,6 +19,7 @@ export const WelcomeHero = () => {
               Let's get you set up in less than 15 minutes
             </p>
             <Button 
+              onClick={onGetStarted}
               variant="secondary" 
               className="bg-white/20 text-white border-white/30 hover:bg-white/30 transition-smooth"
             >

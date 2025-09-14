@@ -1,6 +1,8 @@
 import { Check, Upload, Link, Settings2, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface ChecklistItemProps {
   icon: React.ReactNode;
@@ -9,6 +11,7 @@ interface ChecklistItemProps {
   completed?: boolean;
   actionLabel: string;
   variant?: "default" | "success";
+  onAction: () => void;
 }
 
 const ChecklistItem = ({ 
@@ -17,7 +20,8 @@ const ChecklistItem = ({
   description, 
   completed = false, 
   actionLabel,
-  variant = "default" 
+  variant = "default",
+  onAction
 }: ChecklistItemProps) => {
   return (
     <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card/50 transition-smooth hover:bg-card/80">
@@ -34,6 +38,7 @@ const ChecklistItem = ({
       </div>
       
       <Button 
+        onClick={onAction}
         variant={variant === "success" ? "default" : "secondary"}
         size="sm"
         className={cn(
@@ -47,6 +52,36 @@ const ChecklistItem = ({
 };
 
 export const SetupChecklist = () => {
+  const { toast } = useToast();
+  const [completed, setCompleted] = useState({
+    import: true,
+    connect: false,
+    customize: false
+  });
+
+  const handleConnect = () => {
+    setCompleted(prev => ({ ...prev, connect: true }));
+    toast({
+      title: "Platforms Connected!",
+      description: "Successfully linked your GitHub and other accounts.",
+    });
+  };
+
+  const handleCustomize = () => {
+    setCompleted(prev => ({ ...prev, customize: true }));
+    toast({
+      title: "Dashboard Customized!",
+      description: "Your workspace has been personalized.",
+    });
+  };
+
+  const handleExplore = () => {
+    toast({
+      title: "Exploring Features!",
+      description: "Discovering advanced tracking and analytics.",
+    });
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-bold flex items-center gap-2">
@@ -59,23 +94,30 @@ export const SetupChecklist = () => {
           icon={<Upload className="h-5 w-5" />}
           title="Import Your Projects"
           description="Get all your existing projects into DevTracker Pro"
-          completed={true}
+          completed={completed.import}
           actionLabel="Complete"
           variant="success"
+          onAction={() => toast({ title: "Already Complete!", description: "Projects imported successfully." })}
         />
         
         <ChecklistItem
           icon={<Link className="h-5 w-5" />}
           title="Connect Platforms"
           description="Link your GitHub, Netlify, and AI platform accounts"
-          actionLabel="Connect"
+          completed={completed.connect}
+          actionLabel={completed.connect ? "Connected" : "Connect"}
+          variant={completed.connect ? "success" : "default"}
+          onAction={handleConnect}
         />
         
         <ChecklistItem
           icon={<Settings2 className="h-5 w-5" />}
           title="Customize Dashboard"
           description="Set up your workspace and preferences"
-          actionLabel="Customize"
+          completed={completed.customize}
+          actionLabel={completed.customize ? "Customized" : "Customize"}
+          variant={completed.customize ? "success" : "default"}
+          onAction={handleCustomize}
         />
       </div>
       
@@ -86,7 +128,11 @@ export const SetupChecklist = () => {
             <h3 className="font-semibold">Explore Features</h3>
             <p className="text-sm text-muted-foreground">Discover advanced tracking and analytics</p>
           </div>
-          <Button size="sm" className="ml-auto">
+          <Button 
+            onClick={handleExplore}
+            size="sm" 
+            className="ml-auto"
+          >
             Explore
           </Button>
         </div>
