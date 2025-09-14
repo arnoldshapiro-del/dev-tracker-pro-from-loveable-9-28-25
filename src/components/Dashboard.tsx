@@ -1,10 +1,9 @@
 import { Sidebar } from "./Sidebar";
-import { Plus, Bot, Rocket, BarChart3, ExternalLink } from "lucide-react";
+import { Plus, Bot, Rocket, BarChart3, ExternalLink, Activity, Folder, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store/appStore";
-import { useState } from "react";
 
 export const Dashboard = () => {
   const { projects } = useAppStore();
@@ -26,7 +25,7 @@ export const Dashboard = () => {
 
   const handleDeployProject = () => {
     toast({
-      title: "Deploy Projects",
+      title: "Deploy Projects", 
       description: "Opening deployment panel...",
     });
   };
@@ -51,68 +50,73 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       
       {/* Main Content */}
-      <div className="ml-64 p-6">
+      <div className="ml-64 p-6 bg-gray-50">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome back, Arnold</h1>
+          <p className="text-gray-600">Here's what's happening with your projects</p>
+        </div>
+
         {/* Top Action Cards */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           <Card 
-            className="bg-purple-500 text-white cursor-pointer hover:bg-purple-600 transition-colors border-0"
+            className="bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors border-0 shadow-lg"
             onClick={handleStartNewProject}
           >
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <Plus className="h-6 w-6" />
+                <Plus className="h-5 w-5" />
                 <div>
-                  <div className="font-semibold">Start New Project</div>
-                  <div className="text-sm opacity-90">Quickly create new project</div>
+                  <div className="font-semibold text-sm">Start New Project</div>
+                  <div className="text-xs opacity-90">Quickly create new project</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card 
-            className="bg-green-500 text-white cursor-pointer hover:bg-green-600 transition-colors border-0"
+            className="bg-green-500 text-white cursor-pointer hover:bg-green-600 transition-colors border-0 shadow-lg"
             onClick={handleCompareAI}
           >
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <Bot className="h-6 w-6" />
+                <Bot className="h-5 w-5" />
                 <div>
-                  <div className="font-semibold">Compare AI Assistants</div>
-                  <div className="text-sm opacity-90">Find the most suitable assistant</div>
+                  <div className="font-semibold text-sm">Compare AI Assistants</div>
+                  <div className="text-xs opacity-90">Find the most suitable assistant</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card 
-            className="bg-blue-500 text-white cursor-pointer hover:bg-blue-600 transition-colors border-0"
+            className="bg-blue-500 text-white cursor-pointer hover:bg-blue-600 transition-colors border-0 shadow-lg"
             onClick={handleDeployProject}
           >
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <Rocket className="h-6 w-6" />
+                <Rocket className="h-5 w-5" />
                 <div>
-                  <div className="font-semibold">Deploy Projects</div>
-                  <div className="text-sm opacity-90">Deploy and host your project</div>
+                  <div className="font-semibold text-sm">Deploy Projects</div>
+                  <div className="text-xs opacity-90">Deploy and host your project</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card 
-            className="bg-red-500 text-white cursor-pointer hover:bg-red-600 transition-colors border-0"
+            className="bg-orange-500 text-white cursor-pointer hover:bg-orange-600 transition-colors border-0 shadow-lg"
             onClick={handleAnalytics}
           >
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <BarChart3 className="h-6 w-6" />
+                <BarChart3 className="h-5 w-5" />
                 <div>
-                  <div className="font-semibold">Analytics</div>
-                  <div className="text-sm opacity-90">Monitor and analyze your projects</div>
+                  <div className="font-semibold text-sm">Analytics</div>
+                  <div className="text-xs opacity-90">Monitor and analyze your projects</div>
                 </div>
               </div>
             </CardContent>
@@ -120,30 +124,36 @@ export const Dashboard = () => {
         </div>
 
         {/* Recent Projects */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Recent Projects</CardTitle>
+        <Card className="mb-8 bg-white shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-semibold text-gray-900">📁 Recent Projects</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {projects.map((project) => (
+            <div className="space-y-2">
+              {projects.map((project, index) => (
                 <div 
                   key={project.id}
-                  className="flex items-center justify-between p-4 rounded-lg hover:bg-muted cursor-pointer transition-colors border border-border"
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                   onClick={() => handleProjectClick(project)}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <div className="w-6 h-6 bg-blue-500 rounded"></div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Folder className="h-4 w-4 text-blue-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-foreground">{project.name}</div>
-                      <div className="text-sm text-muted-foreground">{project.description}</div>
+                      <div className="font-medium text-gray-900 text-sm">{project.name}</div>
+                      <div className="text-xs text-gray-500">Last edited {project.lastActivity}</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-sm text-muted-foreground">{project.lastActivity}</div>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      project.status === 'active' ? 'bg-green-100 text-green-700' : 
+                      project.status === 'completed' ? 'bg-blue-100 text-blue-700' : 
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {project.status}
+                    </span>
+                    <ExternalLink className="h-4 w-4 text-gray-400" />
                   </div>
                 </div>
               ))}
@@ -152,27 +162,27 @@ export const Dashboard = () => {
         </Card>
 
         {/* Development Metrics */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Development Metrics</CardTitle>
+        <Card className="bg-white shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-semibold text-gray-900">📊 Development Metrics</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-4 gap-6">
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-500">2.5h</div>
-                <div className="text-sm text-muted-foreground">Avg working time</div>
+                <div className="text-2xl font-bold text-blue-600">2.5h</div>
+                <div className="text-xs text-gray-500">Avg working time</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-green-500">9</div>
-                <div className="text-sm text-muted-foreground">Projects</div>
+                <div className="text-2xl font-bold text-green-600">9</div>
+                <div className="text-xs text-gray-500">Projects</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-500">1000</div>
-                <div className="text-sm text-muted-foreground">Total code</div>
+                <div className="text-2xl font-bold text-purple-600">1000</div>
+                <div className="text-xs text-gray-500">Total code</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-500">88%</div>
-                <div className="text-sm text-muted-foreground">Success rate</div>
+                <div className="text-2xl font-bold text-orange-600">88%</div>
+                <div className="text-xs text-gray-500">Success rate</div>
               </div>
             </div>
           </CardContent>
