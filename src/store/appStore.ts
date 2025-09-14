@@ -25,7 +25,11 @@ export interface Project {
   credits_remaining?: number;
   github_repo_url?: string;
   netlify_url?: string;
+  netlify_dev_url?: string;
   vercel_url?: string;
+  vercel_dev_url?: string;
+  lovable_live_url?: string;
+  lovable_dev_url?: string;
   platform_url?: string;
   mocha_published_url?: string;
   time_to_deploy_hours?: number;
@@ -95,7 +99,9 @@ export const useAppStore = create<AppState>()(
           lastActivity: '2 hours ago',
           repository: 'github.com/user/devtracker-pro',
           deployment: 'devtracker-pro.vercel.app',
-          primaryUrl: 'https://zoer.ai/zchat/7671',
+          primaryUrl: 'https://phoenix-project-revive.lovable.app/',
+          lovable_live_url: 'https://phoenix-project-revive.lovable.app/',
+          lovable_dev_url: 'https://zoer.ai/zchat/7671',
           issues: 3,
           technologies: ['React', 'TypeScript', 'Tailwind'],
           createdAt: '2024-01-15',

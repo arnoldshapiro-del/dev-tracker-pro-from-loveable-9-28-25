@@ -156,7 +156,47 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
 
   const handleSave = () => {
     if (project?.id) {
-      updateProject(project.id, { ...projectData, primaryUrl });
+      // Collect all URLs from platforms into the project data
+      const allUrls: any = {};
+      platforms.forEach(platform => {
+        platform.urls.forEach(url => {
+          if (url.url) {
+            if (platform.name === 'Lovable Deployment') {
+              if (url.type === 'development') {
+                allUrls.lovable_dev_url = url.url;
+              } else {
+                allUrls.lovable_live_url = url.url;
+              }
+            } else if (platform.name === 'Netlify Deployment') {
+              if (url.type === 'development') {
+                allUrls.netlify_dev_url = url.url;
+              } else {
+                allUrls.netlify_url = url.url;
+              }
+            } else if (platform.name === 'Vercel Deployment') {
+              if (url.type === 'development') {
+                allUrls.vercel_dev_url = url.url;
+              } else {
+                allUrls.vercel_url = url.url;
+              }
+            } else {
+              // Custom platforms
+              const platformKey = platform.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+              if (url.type === 'development') {
+                allUrls[`${platformKey}_dev_url`] = url.url;
+              } else {
+                allUrls[`${platformKey}_live_url`] = url.url;
+              }
+            }
+          }
+        });
+      });
+
+      updateProject(project.id, { 
+        ...projectData, 
+        primaryUrl,
+        ...allUrls
+      });
       toast({
         title: "Project Updated",
         description: "Your project has been saved successfully.",
@@ -186,6 +226,26 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
         )
       } : platform
     ));
+    
+    // Also save to project data immediately
+    if (project?.id) {
+      const platform = platforms[platformIndex];
+      const urlObj = platform.urls.find(u => u.id === urlId);
+      if (urlObj) {
+        let updateField = '';
+        if (platform.name === 'Lovable Deployment') {
+          updateField = urlObj.type === 'development' ? 'lovable_dev_url' : 'lovable_live_url';
+        } else if (platform.name === 'Netlify Deployment') {
+          updateField = urlObj.type === 'development' ? 'netlify_dev_url' : 'netlify_url';
+        } else if (platform.name === 'Vercel Deployment') {
+          updateField = urlObj.type === 'development' ? 'vercel_dev_url' : 'vercel_url';
+        }
+        
+        if (updateField) {
+          setProjectData(prev => ({ ...prev, [updateField]: newUrl }));
+        }
+      }
+    }
   };
 
   const handleAddUrl = (platformIndex: number, type: 'development' | 'live') => {
