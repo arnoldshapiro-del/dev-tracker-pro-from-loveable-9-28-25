@@ -461,6 +461,13 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                           <Input
                             value={url.url}
                             onChange={(e) => handleUrlUpdate(index, url.id, e.target.value)}
+                            onBlur={(e) => handleUrlUpdate(index, url.id, e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleUrlUpdate(index, url.id, e.currentTarget.value);
+                              }
+                            }}
                             placeholder="https://example.com"
                             className="text-sm"
                           />
