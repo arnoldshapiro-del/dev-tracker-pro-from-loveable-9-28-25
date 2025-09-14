@@ -98,7 +98,7 @@ export const useAppStore = create<AppState>()(
           progress: 75,
           lastActivity: '2 hours ago',
           repository: 'github.com/user/devtracker-pro',
-          deployment: 'devtracker-pro.vercel.app',
+          deployment: 'https://phoenix-project-revive.lovable.app/',
           primaryUrl: 'https://phoenix-project-revive.lovable.app/',
           lovable_live_url: 'https://phoenix-project-revive.lovable.app/',
           lovable_dev_url: 'https://zoer.ai/zchat/7671',
