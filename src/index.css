@@ -38,15 +38,19 @@ Modern dashboard with vibrant gradients and clean design
 
     --radius: 0.75rem;
 
-    /* Custom DevTracker Colors */
-    --purple-gradient-start: 263 85% 65%;
-    --purple-gradient-end: 280 100% 70%;
-    --green-gradient-start: 142 76% 36%;
-    --green-gradient-end: 120 84% 45%;
-    --blue-gradient-start: 213 94% 68%;
-    --blue-gradient-end: 217 91% 60%;
-    --pink-gradient-start: 316 73% 52%;
-    --pink-gradient-end: 329 86% 70%;
+    /* Custom DevTracker Colors - Vibrant Mocha-style */
+    --purple-gradient-start: 280 100% 75%;
+    --purple-gradient-end: 290 100% 85%;
+    --green-gradient-start: 140 85% 55%;
+    --green-gradient-end: 120 90% 65%;
+    --blue-gradient-start: 220 100% 75%;
+    --blue-gradient-end: 210 100% 80%;
+    --pink-gradient-start: 320 85% 65%;
+    --pink-gradient-end: 330 90% 75%;
+    --orange-gradient-start: 25 95% 65%;
+    --orange-gradient-end: 35 100% 70%;
+    --red-gradient-start: 0 85% 65%;
+    --red-gradient-end: 10 90% 70%;
     
     /* Success colors */
     --success: 142 76% 36%;
@@ -57,11 +61,13 @@ Modern dashboard with vibrant gradients and clean design
     --sidebar-border: 214.3 31.8% 91.4%;
     --sidebar-item-hover: 210 40% 98%;
     
-    /* Gradients */
+    /* Gradients - Vibrant Mocha-style */
     --gradient-purple: linear-gradient(135deg, hsl(var(--purple-gradient-start)), hsl(var(--purple-gradient-end)));
     --gradient-green: linear-gradient(135deg, hsl(var(--green-gradient-start)), hsl(var(--green-gradient-end)));
     --gradient-blue: linear-gradient(135deg, hsl(var(--blue-gradient-start)), hsl(var(--blue-gradient-end)));
     --gradient-pink: linear-gradient(135deg, hsl(var(--pink-gradient-start)), hsl(var(--pink-gradient-end)));
+    --gradient-orange: linear-gradient(135deg, hsl(var(--orange-gradient-start)), hsl(var(--orange-gradient-end)));
+    --gradient-red: linear-gradient(135deg, hsl(var(--red-gradient-start)), hsl(var(--red-gradient-end)));
     
     /* Shadows */
     --shadow-glow: 0 0 20px hsl(var(--primary) / 0.15);
@@ -124,6 +130,14 @@ Modern dashboard with vibrant gradients and clean design
   
   .gradient-pink {
     background: var(--gradient-pink);
+  }
+  
+  .gradient-orange {
+    background: var(--gradient-orange);
+  }
+  
+  .gradient-red {
+    background: var(--gradient-red);
   }
   
   .glow-shadow {

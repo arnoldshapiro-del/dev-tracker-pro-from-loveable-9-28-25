@@ -60,11 +60,11 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'completed': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'on-hold': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'archived': return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+      case 'active': return 'gradient-green text-white border-0 font-semibold shadow-lg';
+      case 'completed': return 'gradient-blue text-white border-0 font-semibold shadow-lg';
+      case 'on-hold': return 'gradient-orange text-white border-0 font-semibold shadow-lg';
+      case 'archived': return 'gradient-pink text-white border-0 font-semibold shadow-lg';
+      default: return 'gradient-purple text-white border-0 font-semibold shadow-lg';
     }
   };
 
@@ -72,7 +72,7 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
     <Card 
       ref={setNodeRef} 
       style={style} 
-      className="hover:shadow-lg transition-shadow cursor-pointer"
+      className="hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[280px] p-6 bg-gradient-to-br from-white to-gray-50 border-2 hover:border-primary/30 hover:scale-105"
     >
       <CardHeader>
         <div className="flex items-start justify-between">

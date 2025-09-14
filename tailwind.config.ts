@@ -85,6 +85,18 @@ export default {
             end: "hsl(var(--pink-gradient-end))",
           },
         },
+        orange: {
+          gradient: {
+            start: "hsl(var(--orange-gradient-start))",
+            end: "hsl(var(--orange-gradient-end))",
+          },
+        },
+        red: {
+          gradient: {
+            start: "hsl(var(--red-gradient-start))",
+            end: "hsl(var(--red-gradient-end))",
+          },
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
