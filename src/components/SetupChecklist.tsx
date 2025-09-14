@@ -53,14 +53,10 @@ const ChecklistItem = ({
 
 export const SetupChecklist = () => {
   const { toast } = useToast();
-  const [completed, setCompleted] = useState({
-    import: true,
-    connect: false,
-    customize: false
-  });
+  const { setupCompleted, completeSetupStep } = useAppStore();
 
   const handleConnect = () => {
-    setCompleted(prev => ({ ...prev, connect: true }));
+    completeSetupStep('connect');
     toast({
       title: "Platforms Connected!",
       description: "Successfully linked your GitHub and other accounts.",
@@ -68,7 +64,7 @@ export const SetupChecklist = () => {
   };
 
   const handleCustomize = () => {
-    setCompleted(prev => ({ ...prev, customize: true }));
+    completeSetupStep('customize');
     toast({
       title: "Dashboard Customized!",
       description: "Your workspace has been personalized.",
@@ -94,7 +90,7 @@ export const SetupChecklist = () => {
           icon={<Upload className="h-5 w-5" />}
           title="Import Your Projects"
           description="Get all your existing projects into DevTracker Pro"
-          completed={completed.import}
+          completed={setupCompleted.import}
           actionLabel="Complete"
           variant="success"
           onAction={() => toast({ title: "Already Complete!", description: "Projects imported successfully." })}
@@ -104,9 +100,9 @@ export const SetupChecklist = () => {
           icon={<Link className="h-5 w-5" />}
           title="Connect Platforms"
           description="Link your GitHub, Netlify, and AI platform accounts"
-          completed={completed.connect}
-          actionLabel={completed.connect ? "Connected" : "Connect"}
-          variant={completed.connect ? "success" : "default"}
+          completed={setupCompleted.connect}
+          actionLabel={setupCompleted.connect ? "Connected" : "Connect"}
+          variant={setupCompleted.connect ? "success" : "default"}
           onAction={handleConnect}
         />
         
@@ -114,9 +110,9 @@ export const SetupChecklist = () => {
           icon={<Settings2 className="h-5 w-5" />}
           title="Customize Dashboard"
           description="Set up your workspace and preferences"
-          completed={completed.customize}
-          actionLabel={completed.customize ? "Customized" : "Customize"}
-          variant={completed.customize ? "success" : "default"}
+          completed={setupCompleted.customize}
+          actionLabel={setupCompleted.customize ? "Customized" : "Customize"}
+          variant={setupCompleted.customize ? "success" : "default"}
           onAction={handleCustomize}
         />
       </div>
