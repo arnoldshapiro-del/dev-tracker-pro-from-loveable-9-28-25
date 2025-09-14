@@ -1283,7 +1283,13 @@ export const Help = () => {
           Quick Start Guide
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-          <Card className="cursor-pointer hover:shadow-lg transition-all hover:scale-105 border-2 border-transparent hover:border-green-200">
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all hover:scale-105 border-2 border-transparent hover:border-green-200"
+            onClick={() => {
+              setActiveUserManualTab("user-manual");
+              setActiveUserManualPage("getting-started-guide");
+            }}
+          >
             <CardContent className="p-6 text-center">
               <div className="flex justify-center mb-4">
                 <div className="p-3 bg-green-100 rounded-full">
@@ -1295,7 +1301,13 @@ export const Help = () => {
             </CardContent>
           </Card>
           
-          <Card className="cursor-pointer hover:shadow-lg transition-all hover:scale-105 border-2 border-transparent hover:border-purple-200">
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all hover:scale-105 border-2 border-transparent hover:border-purple-200"
+            onClick={() => {
+              setActiveUserManualTab("user-manual");
+              setActiveUserManualPage("drag-drop-guide");
+            }}
+          >
             <CardContent className="p-6 text-center">
               <div className="flex justify-center mb-4">
                 <div className="p-3 bg-purple-100 rounded-full">
@@ -1307,7 +1319,13 @@ export const Help = () => {
             </CardContent>
           </Card>
           
-          <Card className="cursor-pointer hover:shadow-lg transition-all hover:scale-105 border-2 border-transparent hover:border-red-200">
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all hover:scale-105 border-2 border-transparent hover:border-red-200"
+            onClick={() => {
+              setActiveUserManualTab("user-manual");
+              setActiveUserManualPage("troubleshooting-guide");
+            }}
+          >
             <CardContent className="p-6 text-center">
               <div className="flex justify-center mb-4">
                 <div className="p-3 bg-red-100 rounded-full">
