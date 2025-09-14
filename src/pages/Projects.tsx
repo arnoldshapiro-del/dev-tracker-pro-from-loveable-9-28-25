@@ -58,144 +58,134 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
     transition,
   };
 
-  const getStatusColor = (status: string) => {
+  const getProjectBackgroundColor = (status: string) => {
     switch (status) {
-      case 'active': return 'vibrant-green font-bold text-white border-0 shadow-lg px-4 py-2';
-      case 'completed': return 'vibrant-blue font-bold text-white border-0 shadow-lg px-4 py-2';
-      case 'on-hold': return 'vibrant-orange font-bold text-white border-0 shadow-lg px-4 py-2';
-      case 'archived': return 'vibrant-red font-bold text-white border-0 shadow-lg px-4 py-2';
-      default: return 'vibrant-purple font-bold text-white border-0 shadow-lg px-4 py-2';
+      case 'active': return 'bg-[#059669]'; // Bright green background
+      case 'completed': return 'bg-[#1E40AF]'; // Bright blue background  
+      case 'on-hold': return 'bg-[#EA580C]'; // Bright orange background
+      case 'archived': return 'bg-[#DC2626]'; // Bright red background
+      default: return 'bg-[#7C3AED]'; // Bright purple background
     }
   };
 
   return (
-    <Card 
+    <div 
       ref={setNodeRef} 
       style={style} 
-      className="hover:shadow-2xl transition-all duration-300 cursor-pointer min-h-[360px] p-8 bg-white border-2 border-gray-200 hover:border-primary/50 hover:scale-[1.02] rounded-xl"
+      className={`${getProjectBackgroundColor(project.status)} hover:shadow-2xl transition-all duration-300 cursor-pointer min-h-[320px] min-w-[400px] p-8 rounded-xl hover:scale-[1.02] text-white relative overflow-hidden`}
     >
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2">
-            <div 
-              {...attributes} 
-              {...listeners} 
-              className="cursor-grab hover:text-primary p-1 rounded"
-            >
-              <GripVertical className="h-4 w-4" />
-            </div>
-            <CardTitle 
-              className="text-lg cursor-pointer hover:text-primary"
-              onClick={() => onOpen(project)}
-            >
-              {project.name}
-            </CardTitle>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge className={getStatusColor(project.status)}>
-              {project.status}
-            </Badge>
-            <Button 
-              size="sm" 
-              variant="ghost" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(project);
-              }}
-              className="text-xs"
-            >
-              <Plus className="h-3 w-3 mr-1" />
-              Edit
-            </Button>
-            <Button 
-              size="sm" 
-              variant="ghost" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(project);
-              }}
-              className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
-            >
-              <Trash2 className="h-3 w-3 mr-1" />
-              Delete
-            </Button>
-          </div>
-        </div>
-        <p className="text-sm text-muted-foreground">{project.description}</p>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Progress */}
-        <div>
-          <div className="flex justify-between text-sm mb-1">
-            <span>Progress</span>
-            <span>{project.progress}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div 
-              className="vibrant-blue h-3 rounded-full transition-all shadow-sm" 
-              style={{ width: `${project.progress}%` }}
-            />
-          </div>
-        </div>
+      {/* Drag Handle */}
+      <div 
+        {...attributes} 
+        {...listeners} 
+        className="absolute top-4 right-4 cursor-grab hover:bg-white/20 p-2 rounded opacity-70 hover:opacity-100"
+      >
+        <GripVertical className="h-5 w-5 text-white" />
+      </div>
 
-        {/* Metrics */}
-        <div className="grid grid-cols-2 gap-6 text-base font-medium">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg vibrant-red">
-              <AlertCircle className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-gray-700">{project.issues} issues</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg vibrant-blue">
-              <Calendar className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-gray-700">{project.lastActivity}</span>
-          </div>
-        </div>
+      {/* Project Header */}
+      <div className="mb-6">
+        <h3 
+          className="text-3xl font-bold text-white cursor-pointer hover:text-white/90 mb-2 pr-12"
+          onClick={() => onOpen(project)}
+        >
+          {project.name}
+        </h3>
+        <p className="text-white/80 text-lg leading-relaxed">{project.description}</p>
+      </div>
 
-        {/* Technologies */}
-        <div className="flex flex-wrap gap-1">
-          {project.technologies.map((tech, index) => (
-            <Badge key={index} variant="outline" className="text-xs">
-              {tech}
-            </Badge>
-          ))}
-        </div>
+      {/* Status Badge */}
+      <div className="mb-6">
+        <span className="bg-white/20 backdrop-blur-sm text-white font-bold px-4 py-2 rounded-lg text-sm uppercase tracking-wide">
+          {project.status}
+        </span>
+      </div>
 
-        {/* Actions */}
-        <div className="flex gap-2 pt-2">
-          {project.repository && (
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="flex-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(project.repository, '_blank');
-              }}
-            >
-              <Github className="h-3 w-3 mr-1" />
-              Repo
-            </Button>
-          )}
-          {project.deployment && (
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="flex-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(project.deployment, '_blank');
-              }}
-            >
-              <ExternalLink className="h-3 w-3 mr-1" />
-              Live
-            </Button>
-          )}
+      {/* Progress */}
+      <div className="mb-6">
+        <div className="flex justify-between text-white mb-3">
+          <span className="font-semibold text-lg">Progress</span>
+          <span className="font-bold text-lg">{project.progress}%</span>
         </div>
-      </CardContent>
-    </Card>
+        <div className="w-full bg-white/20 rounded-full h-4">
+          <div 
+            className="bg-white h-4 rounded-full transition-all shadow-lg" 
+            style={{ width: `${project.progress}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Metrics */}
+      <div className="grid grid-cols-2 gap-6 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-lg bg-white/20 backdrop-blur-sm">
+            <AlertCircle className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <div className="text-white font-semibold text-lg">{project.issues}</div>
+            <div className="text-white/70 text-sm">Issues</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-lg bg-white/20 backdrop-blur-sm">
+            <Calendar className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <div className="text-white font-semibold text-lg">{project.lastActivity}</div>
+            <div className="text-white/70 text-sm">Last Activity</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex items-center gap-3 mt-auto">
+        <Button 
+          size="sm" 
+          variant="secondary"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(project);
+          }}
+          className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-white/30 font-semibold"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Edit Project
+        </Button>
+        <Button 
+          size="sm" 
+          variant="secondary"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(project);
+          }}
+          className="bg-red-500/80 backdrop-blur-sm text-white hover:bg-red-600/90 border-red-400/30 font-semibold"
+        >
+          <Trash2 className="h-4 w-4 mr-2" />
+          Delete
+        </Button>
+      </div>
+
+      {/* Technologies */}
+      {project.technologies && project.technologies.length > 0 && (
+        <div className="mt-4 pt-4 border-t border-white/20">
+          <div className="flex flex-wrap gap-2">
+            {project.technologies.slice(0, 4).map((tech, index) => (
+              <span 
+                key={index} 
+                className="bg-white/15 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
+              >
+                {tech}
+              </span>
+            ))}
+            {project.technologies.length > 4 && (
+              <span className="bg-white/15 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                +{project.technologies.length - 4} more
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -765,7 +755,7 @@ export const Projects = () => {
           items={filteredProjects.map(p => p.id)}
           strategy={verticalListSortingStrategy}
         >
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {filteredProjects.map((project, index) => (
               <SortableProjectCard
                 key={project.id || `project-${index}`}
