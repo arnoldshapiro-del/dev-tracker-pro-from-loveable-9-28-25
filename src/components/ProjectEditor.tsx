@@ -23,7 +23,10 @@ import {
   TrendingUp,
   Clock,
   Trash2,
-  Check
+  Check,
+  Edit,
+  Save,
+  X
 } from "lucide-react";
 
 interface ProjectEditorProps {
@@ -37,6 +40,8 @@ interface PlatformUrl {
   url: string;
   type: 'development' | 'live';
   label: string;
+  isEditing?: boolean;
+  tempUrl?: string;
 }
 
 interface PlatformConfig {
@@ -81,8 +86,8 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
       icon: <Bell className="h-4 w-4" />,
       color: "text-green-600",
       urls: [
-        { id: "netlify-dev", url: "https://app.netlify.com/sites/myapp", type: "development", label: "Development URL" },
-        { id: "netlify-live", url: "https://app.netlify.app", type: "live", label: "Live URL" }
+        { id: "netlify-dev", url: project?.netlify_dev_url || "https://app.netlify.com/sites/myapp", type: "development", label: "Development URL" },
+        { id: "netlify-live", url: project?.netlify_url || "https://app.netlify.app", type: "live", label: "Live URL" }
       ],
       deployedAt: "",
       domainName: "myapp.netlify.app",
@@ -94,8 +99,8 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
       icon: <Zap className="h-4 w-4" />,
       color: "text-purple-600",
       urls: [
-        { id: "lovable-dev", url: "https://zoer.ai/zchat/7671", type: "development", label: "Development URL" },
-        { id: "lovable-live", url: "https://app.vercel.app", type: "live", label: "Published URL" }
+        { id: "lovable-dev", url: project?.lovable_dev_url || "https://zoer.ai/zchat/7671", type: "development", label: "Development URL" },
+        { id: "lovable-live", url: project?.lovable_live_url || "https://phoenix-project-revive.lovable.app/", type: "live", label: "Published URL" }
       ],
       deploymentId: "dpl_xyz123",
       developmentUpdated: "",
@@ -152,7 +157,7 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     }
   ]);
 
-  const [primaryUrl, setPrimaryUrl] = useState(project?.primaryUrl || "https://zoer.ai/zchat/7671");
+  const [primaryUrl, setPrimaryUrl] = useState(project?.primaryUrl || "https://phoenix-project-revive.lovable.app/");
 
   const handleSave = () => {
     if (project?.id) {
@@ -217,35 +222,83 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     ));
   };
 
-  const handleUrlUpdate = (platformIndex: number, urlId: string, newUrl: string) => {
+  const handleStartEdit = (platformIndex: number, urlId: string) => {
     setPlatforms(prev => prev.map((platform, i) => 
       i === platformIndex ? {
         ...platform,
         urls: platform.urls.map(url => 
-          url.id === urlId ? { ...url, url: newUrl } : url
+          url.id === urlId ? { ...url, isEditing: true, tempUrl: url.url } : url
         )
       } : platform
     ));
-    
-    // Also save to project data immediately
-    if (project?.id) {
-      const platform = platforms[platformIndex];
-      const urlObj = platform.urls.find(u => u.id === urlId);
-      if (urlObj) {
-        let updateField = '';
-        if (platform.name === 'Lovable Deployment') {
-          updateField = urlObj.type === 'development' ? 'lovable_dev_url' : 'lovable_live_url';
-        } else if (platform.name === 'Netlify Deployment') {
-          updateField = urlObj.type === 'development' ? 'netlify_dev_url' : 'netlify_url';
-        } else if (platform.name === 'Vercel Deployment') {
-          updateField = urlObj.type === 'development' ? 'vercel_dev_url' : 'vercel_url';
+  };
+
+  const handleCancelEdit = (platformIndex: number, urlId: string) => {
+    setPlatforms(prev => prev.map((platform, i) => 
+      i === platformIndex ? {
+        ...platform,
+        urls: platform.urls.map(url => 
+          url.id === urlId ? { ...url, isEditing: false, tempUrl: undefined } : url
+        )
+      } : platform
+    ));
+  };
+
+  const handleTempUrlChange = (platformIndex: number, urlId: string, tempUrl: string) => {
+    setPlatforms(prev => prev.map((platform, i) => 
+      i === platformIndex ? {
+        ...platform,
+        urls: platform.urls.map(url => 
+          url.id === urlId ? { ...url, tempUrl } : url
+        )
+      } : platform
+    ));
+  };
+
+  const handleSaveUrl = (platformIndex: number, urlId: string) => {
+    setPlatforms(prev => prev.map((platform, i) => {
+      if (i === platformIndex) {
+        const updatedPlatform = {
+          ...platform,
+          urls: platform.urls.map(url => {
+            if (url.id === urlId) {
+              const newUrl = url.tempUrl || url.url;
+              return { ...url, url: newUrl, isEditing: false, tempUrl: undefined };
+            }
+            return url;
+          })
+        };
+        
+        // Immediately save to project data
+        if (project?.id) {
+          const urlObj = updatedPlatform.urls.find(u => u.id === urlId);
+          if (urlObj) {
+            let updateField = '';
+            if (platform.name === 'Lovable Deployment') {
+              updateField = urlObj.type === 'development' ? 'lovable_dev_url' : 'lovable_live_url';
+            } else if (platform.name === 'Netlify Deployment') {
+              updateField = urlObj.type === 'development' ? 'netlify_dev_url' : 'netlify_url';
+            } else if (platform.name === 'Vercel Deployment') {
+              updateField = urlObj.type === 'development' ? 'vercel_dev_url' : 'vercel_url';
+            }
+            
+            if (updateField) {
+              setProjectData(prev => ({ ...prev, [updateField]: urlObj.url }));
+              // Save to store immediately
+              updateProject(project.id, { [updateField]: urlObj.url });
+            }
+          }
         }
         
-        if (updateField) {
-          setProjectData(prev => ({ ...prev, [updateField]: newUrl }));
-        }
+        return updatedPlatform;
       }
-    }
+      return platform;
+    }));
+
+    toast({
+      title: "URL Saved",
+      description: "URL has been updated successfully.",
+    });
   };
 
   const handleAddUrl = (platformIndex: number, type: 'development' | 'live') => {
@@ -339,48 +392,97 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                       <span className={platform.color}>{platform.icon}</span>
                       {platform.name}
                     </div>
-                    {platform.urls.map((url, urlIndex) => (
-                      <div key={url.id} className={`flex items-center justify-between p-2 rounded border ${
-                        primaryUrl === url.url ? 'bg-green-100 border-green-200' : 'bg-gray-50 border-gray-200'
-                      }`}>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">{url.label}</span>
-                            <Badge className={`text-xs ${
-                              url.type === 'development' ? 'bg-gray-500 text-white' : 'bg-blue-500 text-white'
-                            }`}>
-                              {url.type.toUpperCase()}
-                            </Badge>
-                            {primaryUrl === url.url && (
-                              <Badge className="bg-green-500 text-white text-xs">👥 BEST</Badge>
-                            )}
-                          </div>
-                          <div className="text-xs text-gray-600 font-mono mt-1">
-                            {url.url || "No URL set"}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button 
-                            size="sm" 
-                            variant="ghost" 
-                            onClick={() => handleSetPrimaryUrl(url.url)}
-                            disabled={!url.url || primaryUrl === url.url}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Check className="h-3 w-3" />
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="ghost" 
-                            onClick={() => openUrl(url.url)}
-                            disabled={!url.url}
-                            className="h-8 w-8 p-0"
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                     {platform.urls.map((url, urlIndex) => (
+                       <div key={url.id} className={`flex items-center justify-between p-3 rounded border ${
+                         primaryUrl === url.url ? 'bg-green-100 border-green-200' : 'bg-gray-50 border-gray-200'
+                       }`}>
+                         <div className="flex-1 space-y-2">
+                           <div className="flex items-center gap-2">
+                             <span className="text-sm font-medium">{url.label}</span>
+                             <Badge className={`text-xs ${
+                               url.type === 'development' ? 'bg-gray-500 text-white' : 'bg-blue-500 text-white'
+                             }`}>
+                               {url.type.toUpperCase()}
+                             </Badge>
+                             {primaryUrl === url.url && (
+                               <Badge className="bg-green-500 text-white text-xs">👥 BEST</Badge>
+                             )}
+                           </div>
+                           
+                           {url.isEditing ? (
+                             <div className="flex items-center gap-2">
+                               <Input
+                                 value={url.tempUrl || ''}
+                                 onChange={(e) => handleTempUrlChange(platformIndex, url.id, e.target.value)}
+                                 placeholder="Enter URL..."
+                                 className="text-xs font-mono"
+                               />
+                               <Button
+                                 size="sm"
+                                 onClick={() => handleSaveUrl(platformIndex, url.id)}
+                                 className="h-8 px-2 bg-green-600 hover:bg-green-700 text-white"
+                               >
+                                 <Save className="h-3 w-3" />
+                               </Button>
+                               <Button
+                                 size="sm"
+                                 variant="ghost"
+                                 onClick={() => handleCancelEdit(platformIndex, url.id)}
+                                 className="h-8 px-2"
+                               >
+                                 <X className="h-3 w-3" />
+                               </Button>
+                             </div>
+                           ) : (
+                             <div className="flex items-center gap-2">
+                               <div className="text-xs text-gray-600 font-mono flex-1 bg-white/60 p-2 rounded border">
+                                 {url.url || "No URL set"}
+                               </div>
+                               <Button
+                                 size="sm"
+                                 variant="ghost"
+                                 onClick={() => handleStartEdit(platformIndex, url.id)}
+                                 className="h-8 px-2"
+                               >
+                                 <Edit className="h-3 w-3" />
+                               </Button>
+                             </div>
+                           )}
+                         </div>
+                         
+                         <div className="flex items-center gap-2 ml-2">
+                           <Button 
+                             size="sm" 
+                             variant="ghost" 
+                             onClick={() => handleSetPrimaryUrl(url.url)}
+                             disabled={!url.url || primaryUrl === url.url}
+                             className="h-8 w-8 p-0"
+                             title="Set as Primary URL"
+                           >
+                             <Check className="h-3 w-3" />
+                           </Button>
+                           <Button 
+                             size="sm" 
+                             variant="ghost" 
+                             onClick={() => openUrl(url.url)}
+                             disabled={!url.url}
+                             className="h-8 w-8 p-0"
+                             title="Open URL"
+                           >
+                             <ExternalLink className="h-3 w-3" />
+                           </Button>
+                           <Button 
+                             size="sm" 
+                             variant="ghost" 
+                             onClick={() => handleDeleteUrl(platformIndex, url.id)}
+                             className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                             title="Delete URL"
+                           >
+                             <Trash2 className="h-3 w-3" />
+                           </Button>
+                         </div>
+                       </div>
+                     ))}
                   </div>
                 ))}
               </div>
@@ -487,60 +589,87 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                   {/* URLs Section */}
                   <div className="space-y-4">
                     {platform.urls.map((url, urlIndex) => (
-                      <div key={url.id} className="grid grid-cols-2 gap-4 p-3 border rounded-lg">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-sm">{url.label}</Label>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-6 px-2 bg-red-100 text-red-600 text-xs hover:bg-red-200"
-                                onClick={() => handleDeleteUrl(index, url.id)}
-                              >
-                                <Trash2 className="h-3 w-3 mr-1" />
-                                DELETE
-                              </Button>
-                              {url.url && (
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className={`h-6 px-2 text-xs ${
-                                    primaryUrl === url.url 
-                                      ? 'bg-green-100 text-green-600' 
-                                      : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-600'
-                                  }`}
-                                  onClick={() => handleSetPrimaryUrl(url.url)}
-                                >
-                                  <Check className="h-3 w-3 mr-1" />
-                                  {primaryUrl === url.url ? 'PRIMARY' : 'SET PRIMARY'}
-                                </Button>
-                              )}
-                            </div>
-                          </div>
-                          <Input
-                            value={url.url}
-                            onChange={(e) => handleUrlUpdate(index, url.id, e.target.value)}
-                            onBlur={(e) => handleUrlUpdate(index, url.id, e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                handleUrlUpdate(index, url.id, e.currentTarget.value);
-                              }
-                            }}
-                            placeholder="https://example.com"
-                            className="text-sm"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm">Type</Label>
-                          <Badge className={`text-xs w-fit ${
-                            url.type === 'development' ? 'bg-gray-500 text-white' : 'bg-blue-500 text-white'
-                          }`}>
-                            {url.type.toUpperCase()}
-                          </Badge>
-                        </div>
-                      </div>
+                       <div key={url.id} className="grid grid-cols-2 gap-4 p-3 border rounded-lg">
+                         <div className="space-y-2">
+                           <div className="flex items-center justify-between">
+                             <Label className="text-sm">{url.label}</Label>
+                             <div className="flex items-center gap-2">
+                               <Button
+                                 size="sm"
+                                 variant="ghost"
+                                 className="h-6 px-2 bg-red-100 text-red-600 text-xs hover:bg-red-200"
+                                 onClick={() => handleDeleteUrl(index, url.id)}
+                               >
+                                 <Trash2 className="h-3 w-3 mr-1" />
+                                 DELETE
+                               </Button>
+                               {url.url && (
+                                 <Button
+                                   size="sm"
+                                   variant="ghost"
+                                   className={`h-6 px-2 text-xs ${
+                                     primaryUrl === url.url 
+                                       ? 'bg-green-100 text-green-600' 
+                                       : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-600'
+                                   }`}
+                                   onClick={() => handleSetPrimaryUrl(url.url)}
+                                 >
+                                   <Check className="h-3 w-3 mr-1" />
+                                   {primaryUrl === url.url ? 'PRIMARY' : 'SET PRIMARY'}
+                                 </Button>
+                               )}
+                             </div>
+                           </div>
+                           
+                           {url.isEditing ? (
+                             <div className="flex items-center gap-2">
+                               <Input
+                                 value={url.tempUrl || ''}
+                                 onChange={(e) => handleTempUrlChange(index, url.id, e.target.value)}
+                                 placeholder="https://example.com"
+                                 className="text-sm"
+                               />
+                               <Button
+                                 size="sm"
+                                 onClick={() => handleSaveUrl(index, url.id)}
+                                 className="h-8 px-2 bg-green-600 hover:bg-green-700 text-white"
+                               >
+                                 <Save className="h-3 w-3" />
+                               </Button>
+                               <Button
+                                 size="sm"
+                                 variant="ghost"
+                                 onClick={() => handleCancelEdit(index, url.id)}
+                                 className="h-8 px-2"
+                               >
+                                 <X className="h-3 w-3" />
+                               </Button>
+                             </div>
+                           ) : (
+                             <div className="flex items-center gap-2">
+                               <div className="text-sm bg-gray-50 p-2 rounded border flex-1 font-mono">
+                                 {url.url || "No URL set"}
+                               </div>
+                               <Button
+                                 size="sm"
+                                 variant="ghost"
+                                 onClick={() => handleStartEdit(index, url.id)}
+                                 className="h-8 px-2"
+                               >
+                                 <Edit className="h-3 w-3" />
+                               </Button>
+                             </div>
+                           )}
+                         </div>
+                         <div className="space-y-2">
+                           <Label className="text-sm">Type</Label>
+                           <Badge className={`text-xs w-fit ${
+                             url.type === 'development' ? 'bg-gray-500 text-white' : 'bg-blue-500 text-white'
+                           }`}>
+                             {url.type.toUpperCase()}
+                           </Badge>
+                         </div>
+                       </div>
                     ))}
                     
                     {/* Add URL Buttons */}
