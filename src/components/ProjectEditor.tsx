@@ -157,7 +157,10 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
     }
   ]);
 
-  const [primaryUrl, setPrimaryUrl] = useState(project?.primaryUrl || "https://phoenix-project-revive.lovable.app/");
+  const [primaryUrl, setPrimaryUrl] = useState(() => {
+    // Smart primary URL selection - use the same logic as dashboard
+    return project?.primaryUrl || project?.lovable_live_url || project?.lovable_dev_url || project?.deployment || "";
+  });
 
   const handleSave = () => {
     if (project?.id) {
@@ -276,7 +279,7 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
         // Immediately save to project data
         if (project?.id) {
           const urlObj = updatedPlatform.urls.find(u => u.id === urlId);
-          if (urlObj) {
+          if (urlObj && urlObj.url) {
             let updateField = '';
             if (platform.name === 'Lovable Deployment') {
               updateField = urlObj.type === 'development' ? 'lovable_dev_url' : 'lovable_live_url';
@@ -293,10 +296,18 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
             console.log('Update field:', updateField, 'with value:', urlObj.url);
             
             if (updateField) {
-              setProjectData(prev => ({ ...prev, [updateField]: urlObj.url }));
+              const updateData = { [updateField]: urlObj.url };
+              setProjectData(prev => ({ ...prev, ...updateData }));
               // Save to store immediately
-              updateProject(project.id, { [updateField]: urlObj.url });
+              updateProject(project.id, updateData);
               console.log('Saved to project store:', updateField, '=', urlObj.url);
+              
+              // Update primary URL if this is a live URL from preferred platforms
+              if (urlObj.type === 'live' && (platform.name === 'Lovable Deployment' || platform.name === 'Netlify Deployment')) {
+                setPrimaryUrl(urlObj.url);
+                updateProject(project.id, { primaryUrl: urlObj.url });
+                console.log('Updated primary URL to:', urlObj.url);
+              }
             }
           }
         }
