@@ -63,45 +63,7 @@ export const ModeSwitcher = ({ currentMode, onModeChange, compact = false }: Mod
   const otherMode = modes.find(m => m.id !== currentMode);
 
   if (compact) {
-    return (
-      <div className="relative">
-        <Button 
-          variant="outline" 
-          className={`w-full text-left justify-start ${currentModeConfig?.bgColor} hover:opacity-80 ${currentModeConfig?.borderColor} ${currentModeConfig?.color}`}
-          size="sm"
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <div className="w-2 h-2 rounded-full bg-current mr-3"></div>
-          Switch to {otherMode?.name}
-          <div className="ml-auto text-xs bg-current/10 text-current px-2 py-1 rounded">
-            {otherMode?.tagline}
-          </div>
-        </Button>
-
-        {isExpanded && (
-          <Card className="absolute bottom-full left-0 right-0 mb-2 z-50">
-            <CardContent className="p-3">
-              <div className="space-y-2">
-                {modes.map((mode) => (
-                  <Button
-                    key={mode.id}
-                    variant={mode.id === currentMode ? "default" : "ghost"}
-                    className={`w-full justify-start ${mode.id === currentMode ? mode.bgColor : ''}`}
-                    onClick={() => handleModeSwitch(mode.id)}
-                  >
-                    {mode.icon}
-                    <div className="ml-2 text-left">
-                      <div className="font-medium">{mode.name}</div>
-                      <div className="text-xs opacity-70">{mode.tagline}</div>
-                    </div>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    );
+    return null; // Removed the mode switcher completely
   }
 
   return (
