@@ -158,8 +158,10 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
   ]);
 
   const [primaryUrl, setPrimaryUrl] = useState(() => {
-    // Smart primary URL selection - use the same logic as dashboard
-    return project?.primaryUrl || project?.lovable_live_url || project?.lovable_dev_url || project?.deployment || "";
+    console.log('ProjectEditor - Setting primary URL from project:', project);
+    const selectedUrl = project?.primaryUrl || project?.lovable_live_url || project?.lovable_dev_url || project?.deployment || "";
+    console.log('ProjectEditor - Selected primary URL:', selectedUrl);
+    return selectedUrl;
   });
 
   const handleSave = () => {
@@ -298,16 +300,21 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
             if (updateField) {
               const updateData = { [updateField]: urlObj.url };
               setProjectData(prev => ({ ...prev, ...updateData }));
-              // Save to store immediately
-              updateProject(project.id, updateData);
-              console.log('Saved to project store:', updateField, '=', urlObj.url);
               
-              // Update primary URL if this is a live URL from preferred platforms
-              if (urlObj.type === 'live' && (platform.name === 'Lovable Deployment' || platform.name === 'Netlify Deployment')) {
+              // Always update primary URL for live URLs from important platforms
+              if (urlObj.type === 'live' && (platform.name === 'Lovable Deployment' || platform.name === 'Netlify Deployment' || platform.name === 'Vercel Deployment')) {
+                updateData.primaryUrl = urlObj.url;
                 setPrimaryUrl(urlObj.url);
-                updateProject(project.id, { primaryUrl: urlObj.url });
-                console.log('Updated primary URL to:', urlObj.url);
+                console.log('CRITICAL: Setting primaryUrl to:', urlObj.url);
               }
+              
+              // Save to store immediately with all updates
+              updateProject(project.id, updateData);
+              console.log('CRITICAL: Saved to project store:', updateData);
+              
+              // Force refresh the component to reflect changes
+              const updatedProject = { ...project, ...updateData };
+              setProjectData(updatedProject);
             }
           }
         }
