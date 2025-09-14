@@ -2,6 +2,7 @@ import { Check, Upload, Link, Settings2, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useAppStore } from "@/store/appStore";
 import { useState } from "react";
 
 interface ChecklistItemProps {
