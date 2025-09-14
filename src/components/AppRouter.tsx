@@ -12,6 +12,7 @@ import { Mobile } from '@/pages/Mobile';
 import { Integrations } from '@/pages/Integrations';
 import { Help } from '@/pages/Help';
 import { Settings } from '@/pages/Settings';
+import { TemplateMarketplace } from '@/pages/TemplateMarketplace';
 
 export const AppRouter = () => {
   return (
@@ -28,6 +29,7 @@ export const AppRouter = () => {
           <Route path="/security" element={<Security />} />
           <Route path="/mobile" element={<Mobile />} />
           <Route path="/integrations" element={<Integrations />} />
+          <Route path="/templates" element={<TemplateMarketplace />} />
           <Route path="/help" element={<Help />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

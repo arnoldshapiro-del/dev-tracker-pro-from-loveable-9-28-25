@@ -25,6 +25,7 @@ const sidebarItems = [
   { icon: Bot, label: "AI Assistants", path: "/ai" },
   { icon: Rocket, label: "Deployment", path: "/deployment" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
+  { icon: Puzzle, label: "Templates", path: "/templates" },
   { icon: Users, label: "Team", path: "/team" },
   { icon: Workflow, label: "Workflows", path: "/workflows" },
   { icon: Shield, label: "Security", path: "/security" },
