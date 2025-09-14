@@ -1,5 +1,5 @@
 import { Sidebar } from "./Sidebar";
-import { Plus, Bot, Rocket, BarChart3, ExternalLink, Activity, Folder, CheckCircle, Edit } from "lucide-react";
+import { Plus, Bot, Rocket, BarChart3, ExternalLink, Activity, Folder, CheckCircle, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -8,7 +8,7 @@ import { ProjectEditor } from "./ProjectEditor";
 import { useState } from "react";
 
 export const Dashboard = () => {
-  const { projects } = useAppStore();
+  const { projects, deleteProject } = useAppStore();
   const { toast } = useToast();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   
@@ -48,8 +48,8 @@ export const Dashboard = () => {
     console.log('Full project object:', JSON.stringify(project, null, 2));
     console.log('primaryUrl type and value:', typeof project.primaryUrl, project.primaryUrl);
     
-    // Get fresh project data from store to ensure we have latest
-    const freshProject = projects.find(p => p.id === project.id);
+    // Get fresh project data from store to ensure we have latest, but only if ID exists
+    const freshProject = project.id ? projects.find(p => p.id === project.id) : null;
     console.log('Fresh project from store:', JSON.stringify(freshProject, null, 2));
     
     const projectToUse = freshProject || project;
@@ -70,6 +70,16 @@ export const Dashboard = () => {
         title: "No Primary URL",
         description: "This project doesn't have a primary URL set. Edit the project to set one.",
         variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeleteProject = (project: Project) => {
+    if (project.id) {
+      deleteProject(project.id);
+      toast({
+        title: "Project Deleted",
+        description: `${project.name} has been deleted successfully.`,
       });
     }
   };
@@ -193,6 +203,16 @@ export const Dashboard = () => {
                       title="Edit project"
                     >
                       <Edit className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteProject(project);
+                      }}
+                      className="p-1 hover:bg-red-100 rounded"
+                      title="Delete project"
+                    >
+                      <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-600" />
                     </button>
                     <button
                       onClick={(e) => {

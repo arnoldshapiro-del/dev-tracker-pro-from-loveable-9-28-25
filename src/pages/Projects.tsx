@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Plus, Github, ExternalLink, Calendar, AlertCircle, TrendingUp, GripVertical, CalendarIcon, Users, Building, Tag, Key, Globe, Shield, Database, Server } from "lucide-react";
+import { Search, Plus, Github, ExternalLink, Calendar, AlertCircle, TrendingUp, GripVertical, CalendarIcon, Users, Building, Tag, Key, Globe, Shield, Database, Server, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectEditor } from "@/components/ProjectEditor";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -41,9 +41,10 @@ interface SortableProjectCardProps {
   project: Project;
   onEdit: (project: Project) => void;
   onOpen: (project: Project) => void;
+  onDelete: (project: Project) => void;
 }
 
-const SortableProjectCard = ({ project, onEdit, onOpen }: SortableProjectCardProps) => {
+const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProjectCardProps) => {
   const {
     attributes,
     listeners,
@@ -105,6 +106,18 @@ const SortableProjectCard = ({ project, onEdit, onOpen }: SortableProjectCardPro
             >
               <Plus className="h-3 w-3 mr-1" />
               Edit
+            </Button>
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(project);
+              }}
+              className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="h-3 w-3 mr-1" />
+              Delete
             </Button>
           </div>
         </div>
@@ -333,6 +346,16 @@ export const Projects = () => {
         title: "No URL Available",
         description: "This project doesn't have a deployment or repository URL configured.",
         variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeleteProject = (project: Project) => {
+    if (project.id) {
+      deleteProject(project.id);
+      toast({
+        title: "Project Deleted",
+        description: `${project.name} has been deleted successfully.`,
       });
     }
   };
@@ -734,12 +757,13 @@ export const Projects = () => {
         >
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map((project) => (
-              <SortableProjectCard
-                key={project.id}
-                project={project}
-                onEdit={handleEditProject}
-                onOpen={handleOpenProject}
-              />
+                <SortableProjectCard
+                  key={project.id}
+                  project={project}
+                  onEdit={handleEditProject}
+                  onOpen={handleOpenProject}
+                  onDelete={handleDeleteProject}
+                />
             ))}
           </div>
         </SortableContext>
