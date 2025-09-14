@@ -194,7 +194,13 @@ export const Projects = () => {
     issues: 0,
     technologies: [] as string[],
     ai_platform: 'mocha',
-    project_type: 'web'
+    project_type: 'web',
+    platform_url: '',
+    github_repo_url: '',
+    netlify_url: '',
+    credits_used: 0,
+    credits_remaining: 100,
+    initial_budget_credits: 100
   });
 
   const sensors = useSensors(
@@ -236,7 +242,13 @@ export const Projects = () => {
       issues: 0,
       technologies: [],
       ai_platform: 'mocha',
-      project_type: 'web'
+      project_type: 'web',
+      platform_url: '',
+      github_repo_url: '',
+      netlify_url: '',
+      credits_used: 0,
+      credits_remaining: 100,
+      initial_budget_credits: 100
     });
     setIsCreateModalOpen(false);
   };
@@ -297,48 +309,157 @@ export const Projects = () => {
               New Project
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Create New Project</DialogTitle>
+              <DialogTitle>Add New AI Project</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Project Name</Label>
+                <Label htmlFor="name">Project Name *</Label>
                 <Input
                   id="name"
                   value={newProject.name}
                   onChange={(e) => setNewProject(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Enter project name"
+                  placeholder="My Amazing App"
                 />
               </div>
+              
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
                   value={newProject.description}
                   onChange={(e) => setNewProject(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Project description"
+                  placeholder="What does this project do?"
+                  rows={3}
                 />
               </div>
+              
               <div className="grid gap-2">
-                <Label htmlFor="status">Status</Label>
-                <Select value={newProject.status} onValueChange={(value) => setNewProject(prev => ({ ...prev, status: value as any }))}>
+                <Label htmlFor="ai_platform">AI Platform *</Label>
+                <Select value={newProject.ai_platform} onValueChange={(value) => setNewProject(prev => ({ ...prev, ai_platform: value }))}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select AI Platform" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="on-hold">On Hold</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="mocha">Mocha</SelectItem>
+                    <SelectItem value="lovable">Lovable</SelectItem>
+                    <SelectItem value="bolt">Bolt</SelectItem>
+                    <SelectItem value="emergent">Emergent</SelectItem>
+                    <SelectItem value="genspark">GenSpark</SelectItem>
+                    <SelectItem value="google-opal">Google Opal</SelectItem>
+                    <SelectItem value="google-gemini">Google Gemini</SelectItem>
+                    <SelectItem value="chatgpt-5">ChatGPT 5</SelectItem>
+                    <SelectItem value="cursor">Cursor</SelectItem>
+                    <SelectItem value="claude">Claude</SelectItem>
+                    <SelectItem value="replit">Replit</SelectItem>
+                    <SelectItem value="abacus-ai">Abacus AI</SelectItem>
+                    <SelectItem value="manus">Manus</SelectItem>
+                    <SelectItem value="minimax">Minimax</SelectItem>
+                    <SelectItem value="custom">Custom Platform</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="project_type">Project Type</Label>
+                <Select value={newProject.project_type} onValueChange={(value) => setNewProject(prev => ({ ...prev, project_type: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Web App" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="web">Web App</SelectItem>
+                    <SelectItem value="mobile">Mobile App</SelectItem>
+                    <SelectItem value="medical">Medical App</SelectItem>
+                    <SelectItem value="ecommerce">Ecommerce</SelectItem>
+                    <SelectItem value="saas">SaaS</SelectItem>
+                    <SelectItem value="ai">AI Tool</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="platform_url">AI Platform Project URL</Label>
+                <Input
+                  id="platform_url"
+                  value={newProject.platform_url || ''}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, platform_url: e.target.value }))}
+                  placeholder="https://mocha.app/projects/123"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="github_repo_url">GitHub Repository URL</Label>
+                <Input
+                  id="github_repo_url"
+                  value={newProject.github_repo_url || ''}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, github_repo_url: e.target.value }))}
+                  placeholder="https://github.com/username/repo"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="netlify_url">Netlify Deployment URL</Label>
+                <Input
+                  id="netlify_url"
+                  value={newProject.netlify_url || ''}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, netlify_url: e.target.value }))}
+                  placeholder="https://your-app.netlify.app"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="credits_remaining">Credits Remaining</Label>
+                  <Input
+                    id="credits_remaining"
+                    type="number"
+                    value={newProject.credits_remaining || 100}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, credits_remaining: parseInt(e.target.value) || 0 }))}
+                    placeholder="Credits left"
+                    className="bg-green-50 border-green-200"
+                  />
+                </div>
+                
+                <div className="grid gap-2">
+                  <Label htmlFor="credits_used">Credits Used (Auto-Calculated)</Label>
+                  <Input
+                    id="credits_used"
+                    type="number"
+                    value={newProject.credits_used || 0}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, credits_used: parseInt(e.target.value) || 0 }))}
+                    placeholder="0"
+                    className="bg-red-50 border-red-200"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="initial_budget_credits">Initial Budget (Total Credits)</Label>
+                <Input
+                  id="initial_budget_credits"
+                  type="number"
+                  value={newProject.initial_budget_credits || 100}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, initial_budget_credits: parseInt(e.target.value) || 0 }))}
+                  placeholder="100"
+                  className="bg-blue-50 border-blue-200"
+                />
+              </div>
             </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsCreateModalOpen(false)}>
-                Cancel
+            
+            <div className="flex justify-between gap-2">
+              <Button 
+                variant="destructive" 
+                onClick={() => setIsCreateModalOpen(false)}
+                className="bg-red-100 text-red-700 hover:bg-red-200 border border-red-300"
+              >
+                ✕ CANCEL & CLOSE MODAL
               </Button>
-              <Button onClick={handleCreateProject}>
+              <Button 
+                onClick={handleCreateProject}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
                 Create Project
               </Button>
             </div>
