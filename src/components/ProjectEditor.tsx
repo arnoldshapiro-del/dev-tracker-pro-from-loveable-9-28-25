@@ -58,6 +58,7 @@ interface PlatformConfig {
   phoneNumber?: string;
   configuredAt?: string;
   status?: string;
+  isCustom?: boolean;
 }
 
 export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) => {
@@ -89,12 +90,12 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
       developmentUpdated: ""
     },
     {
-      name: "Vercel Deployment",
+      name: "Lovable Deployment",
       icon: <Zap className="h-4 w-4" />,
       color: "text-purple-600",
       urls: [
-        { id: "vercel-dev", url: "https://zoer.ai/zchat/7671", type: "development", label: "Development URL" },
-        { id: "vercel-live", url: "https://app.vercel.app", type: "live", label: "Published URL" }
+        { id: "lovable-dev", url: "https://zoer.ai/zchat/7671", type: "development", label: "Development URL" },
+        { id: "lovable-live", url: "https://app.vercel.app", type: "live", label: "Published URL" }
       ],
       deploymentId: "dpl_xyz123",
       developmentUpdated: "",
@@ -112,6 +113,42 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
       configuredAt: "",
       status: "Not Configured",
       developmentUpdated: ""
+    },
+    {
+      name: "Custom Platform 1",
+      icon: <Globe className="h-4 w-4" />,
+      color: "text-blue-600",
+      urls: [
+        { id: "custom1-dev", url: "", type: "development", label: "Development URL" },
+        { id: "custom1-live", url: "", type: "live", label: "Live URL" }
+      ],
+      isCustom: true,
+      developmentUpdated: "",
+      deployedAt: ""
+    },
+    {
+      name: "Custom Platform 2",
+      icon: <Globe className="h-4 w-4" />,
+      color: "text-orange-600",
+      urls: [
+        { id: "custom2-dev", url: "", type: "development", label: "Development URL" },
+        { id: "custom2-live", url: "", type: "live", label: "Live URL" }
+      ],
+      isCustom: true,
+      developmentUpdated: "",
+      deployedAt: ""
+    },
+    {
+      name: "Custom Platform 3",
+      icon: <Globe className="h-4 w-4" />,
+      color: "text-teal-600",
+      urls: [
+        { id: "custom3-dev", url: "", type: "development", label: "Development URL" },
+        { id: "custom3-live", url: "", type: "live", label: "Live URL" }
+      ],
+      isCustom: true,
+      developmentUpdated: "",
+      deployedAt: ""
     }
   ]);
 
@@ -131,6 +168,12 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
   const handlePlatformUpdate = (index: number, field: string, value: string) => {
     setPlatforms(prev => prev.map((platform, i) => 
       i === index ? { ...platform, [field]: value } : platform
+    ));
+  };
+
+  const handlePlatformNameUpdate = (index: number, newName: string) => {
+    setPlatforms(prev => prev.map((platform, i) => 
+      i === index ? { ...platform, name: newName } : platform
     ));
   };
 
@@ -368,7 +411,16 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-2">
                     <span className={platform.color}>{platform.icon}</span>
-                    <span className="font-medium">{platform.name}</span>
+                    {platform.isCustom ? (
+                      <Input
+                        value={platform.name}
+                        onChange={(e) => handlePlatformNameUpdate(index, e.target.value)}
+                        className="font-medium h-6 border-dashed"
+                        placeholder="Enter platform name (e.g., ZOER, REPLIT)"
+                      />
+                    ) : (
+                      <span className="font-medium">{platform.name}</span>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -449,7 +501,7 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
 
                   {/* Platform-specific fields */}
                   <div className="grid grid-cols-3 gap-4 text-sm">
-                    {(platform.name === "Netlify Deployment" || platform.name === "Vercel Deployment") && (
+                    {(platform.name === "Netlify Deployment" || platform.name === "Lovable Deployment") && (
                       <>
                         <div className="space-y-1">
                           <Label className="text-xs">Development Updated</Label>
@@ -514,6 +566,38 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
                           </Select>
                         </div>
                         <div></div>
+                      </>
+                    )}
+
+                    {platform.isCustom && (
+                      <>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Development Updated</Label>
+                          <Input
+                            type="datetime-local"
+                            value={platform.developmentUpdated}
+                            onChange={(e) => handlePlatformUpdate(index, 'developmentUpdated', e.target.value)}
+                            className="text-xs"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Deployed At</Label>
+                          <Input
+                            type="datetime-local"
+                            value={platform.deployedAt}
+                            onChange={(e) => handlePlatformUpdate(index, 'deployedAt', e.target.value)}
+                            className="text-xs"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Custom Field</Label>
+                          <Input
+                            value={platform.deploymentId || ""}
+                            onChange={(e) => handlePlatformUpdate(index, 'deploymentId', e.target.value)}
+                            placeholder="Custom identifier"
+                            className="text-xs"
+                          />
+                        </div>
                       </>
                     )}
                   </div>
