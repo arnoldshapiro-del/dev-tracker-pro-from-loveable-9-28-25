@@ -78,60 +78,68 @@ export const Dashboard = () => {
         {/* Top Action Cards */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           <Card 
-            className="gradient-lavender text-white cursor-pointer hover:scale-105 transition-all duration-300 border-0 shadow-lg"
+            className="cursor-pointer hover:scale-105 transition-all duration-300"
             onClick={handleStartNewProject}
           >
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <Plus className="h-5 w-5" />
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Plus className="h-5 w-5 text-primary" />
+                </div>
                 <div>
-                  <div className="font-semibold text-sm">Start New Project</div>
-                  <div className="text-xs opacity-90">Quickly create new project</div>
+                  <div className="font-semibold text-sm text-foreground">Start New Project</div>
+                  <div className="text-xs text-muted-foreground">Quickly create new project</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card 
-            className="gradient-forest text-white cursor-pointer hover:scale-105 transition-all duration-300 border-0 shadow-lg"
+            className="cursor-pointer hover:scale-105 transition-all duration-300"
             onClick={handleCompareAI}
           >
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <Bot className="h-5 w-5" />
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Bot className="h-5 w-5 text-primary" />
+                </div>
                 <div>
-                  <div className="font-semibold text-sm">Compare AI Assistants</div>
-                  <div className="text-xs opacity-90">Find the most suitable assistant</div>
+                  <div className="font-semibold text-sm text-foreground">Compare AI Assistants</div>
+                  <div className="text-xs text-muted-foreground">Find the most suitable assistant</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card 
-            className="gradient-ocean text-white cursor-pointer hover:scale-105 transition-all duration-300 border-0 shadow-lg"
+            className="cursor-pointer hover:scale-105 transition-all duration-300"
             onClick={handleDeployProject}
           >
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <Rocket className="h-5 w-5" />
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Rocket className="h-5 w-5 text-primary" />
+                </div>
                 <div>
-                  <div className="font-semibold text-sm">Deploy Projects</div>
-                  <div className="text-xs opacity-90">Deploy and host your project</div>
+                  <div className="font-semibold text-sm text-foreground">Deploy Projects</div>
+                  <div className="text-xs text-muted-foreground">Deploy and host your project</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card 
-            className="gradient-gold text-white cursor-pointer hover:scale-105 transition-all duration-300 border-0 shadow-lg"
+            className="cursor-pointer hover:scale-105 transition-all duration-300"
             onClick={handleAnalytics}
           >
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <BarChart3 className="h-5 w-5" />
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                </div>
                 <div>
-                  <div className="font-semibold text-sm">Analytics</div>
-                  <div className="text-xs opacity-90">Monitor and analyze your projects</div>
+                  <div className="font-semibold text-sm text-foreground">Analytics</div>
+                  <div className="text-xs text-muted-foreground">Monitor and analyze your projects</div>
                 </div>
               </div>
             </CardContent>
@@ -139,9 +147,9 @@ export const Dashboard = () => {
         </div>
 
         {/* Recent Projects */}
-        <Card className="mb-8 bg-white shadow-sm">
+        <Card className="mb-8">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-gray-900">📁 Recent Projects</CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">📁 Recent Projects</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -206,9 +214,9 @@ export const Dashboard = () => {
         </Card>
 
         {/* Development Metrics */}
-        <Card className="bg-white shadow-sm">
+        <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-gray-900">📊 Development Metrics</CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">📊 Development Metrics</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-4 gap-6">

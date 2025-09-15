@@ -75,7 +75,7 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
     <div 
       ref={setNodeRef} 
       style={style} 
-      className={`${getProjectGradient(project.id)} hover:shadow-2xl transition-all duration-300 cursor-pointer min-h-[320px] min-w-[400px] p-8 rounded-xl hover:scale-[1.02] text-white relative overflow-hidden`}
+      className="white-card hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[320px] min-w-[400px] p-8 hover:scale-[1.02] relative"
     >
       {/* Drag Handle */}
       <div 
@@ -89,30 +89,34 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
       {/* Project Header */}
       <div className="mb-6">
         <h3 
-          className="text-3xl font-bold text-white cursor-pointer hover:text-white/90 mb-2 pr-12"
+          className="text-3xl font-bold text-foreground cursor-pointer hover:text-primary mb-2 pr-12"
           onClick={() => onOpen(project)}
         >
           {project.name}
         </h3>
-        <p className="text-white/80 text-lg leading-relaxed">{project.description}</p>
+        <p className="text-muted-foreground text-lg leading-relaxed">{project.description}</p>
       </div>
 
       {/* Status Badge */}
       <div className="mb-6">
-        <span className="bg-white/20 backdrop-blur-sm text-white font-bold px-4 py-2 rounded-lg text-sm uppercase tracking-wide">
+        <span className={`chip ${
+          project.status === 'active' ? 'chip-green' :
+          project.status === 'completed' ? 'chip-blue' :
+          project.status === 'planning' ? 'chip-amber' : 'chip-red'
+        }`}>
           {project.status}
         </span>
       </div>
 
       {/* Progress */}
       <div className="mb-6">
-        <div className="flex justify-between text-white mb-3">
+        <div className="flex justify-between text-foreground mb-3">
           <span className="font-semibold text-lg">Progress</span>
           <span className="font-bold text-lg">{project.progress}%</span>
         </div>
-        <div className="w-full bg-white/20 rounded-full h-4">
+        <div className="progress-bar w-full bg-secondary">
           <div 
-            className="bg-white h-4 rounded-full transition-all shadow-lg" 
+            className="progress-bar bg-primary transition-all" 
             style={{ width: `${project.progress}%` }}
           />
         </div>
@@ -121,21 +125,21 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
       {/* Metrics */}
       <div className="grid grid-cols-2 gap-6 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-white/20 backdrop-blur-sm">
-            <AlertCircle className="h-6 w-6 text-white" />
+          <div className="p-3 rounded-lg bg-red-500/10">
+            <AlertCircle className="h-6 w-6 text-red-600" />
           </div>
           <div>
-            <div className="text-white font-semibold text-lg">{project.issues}</div>
-            <div className="text-white/70 text-sm">Issues</div>
+            <div className="text-foreground font-semibold text-lg">{project.issues}</div>
+            <div className="text-muted-foreground text-sm">Issues</div>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-white/20 backdrop-blur-sm">
-            <Calendar className="h-6 w-6 text-white" />
+          <div className="p-3 rounded-lg bg-primary/10">
+            <Calendar className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <div className="text-white font-semibold text-lg">{project.lastActivity}</div>
-            <div className="text-white/70 text-sm">Last Activity</div>
+            <div className="text-foreground font-semibold text-lg">{project.lastActivity}</div>
+            <div className="text-muted-foreground text-sm">Last Activity</div>
           </div>
         </div>
       </div>
@@ -144,24 +148,23 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
       <div className="flex items-center gap-3 mt-auto">
         <Button 
           size="sm" 
-          variant="secondary"
           onClick={(e) => {
             e.stopPropagation();
             onEdit(project);
           }}
-          className={`${getProjectGradient(project.id + '-edit')} border-0 text-white hover:scale-105 transition-all duration-200 font-semibold shadow-lg`}
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-4 w-4 mr-2" />
           Edit Project
         </Button>
         <Button 
           size="sm" 
-          variant="secondary"
+          variant="outline"
           onClick={(e) => {
             e.stopPropagation();
             onDelete(project);
           }}
-          className="bg-red-500/80 backdrop-blur-sm text-white hover:bg-red-600/90 border-red-400/30 font-semibold"
+          className="border-red-300 text-red-600 hover:bg-red-50"
         >
           <Trash2 className="h-4 w-4 mr-2" />
           Delete
@@ -170,18 +173,18 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
 
       {/* Technologies */}
       {project.technologies && project.technologies.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-white/20">
+        <div className="mt-4 pt-4 border-t border-border">
           <div className="flex flex-wrap gap-2">
             {project.technologies.slice(0, 4).map((tech, index) => (
               <span 
                 key={index} 
-                className="bg-white/15 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
+                className="chip chip-blue"
               >
                 {tech}
               </span>
             ))}
             {project.technologies.length > 4 && (
-              <span className="bg-white/15 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+              <span className="chip chip-blue">
                 +{project.technologies.length - 4} more
               </span>
             )}

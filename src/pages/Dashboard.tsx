@@ -503,50 +503,58 @@ export const Dashboard = () => {
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg">
+        <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">{analytics.totalProjects}</div>
-                <div className="text-xs opacity-90">Total Projects</div>
+                <div className="text-2xl font-bold text-foreground">{analytics.totalProjects}</div>
+                <div className="text-xs text-muted-foreground">Total Projects</div>
               </div>
-              <Folder className="h-8 w-8 opacity-80" />
+              <div className="p-3 bg-primary/10 rounded-lg">
+                <Folder className="h-6 w-6 text-primary" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg">
+        <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">{analytics.activeProjects}</div>
-                <div className="text-xs opacity-90">Active Projects</div>
+                <div className="text-2xl font-bold text-foreground">{analytics.activeProjects}</div>
+                <div className="text-xs text-muted-foreground">Active Projects</div>
               </div>
-              <Code2 className="h-8 w-8 opacity-80" />
+              <div className="p-3 bg-green-500/10 rounded-lg">
+                <Code2 className="h-6 w-6 text-green-600" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-cyan-500 to-cyan-600 text-white border-0 shadow-lg">
+        <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">0%</div>
-                <div className="text-xs opacity-90">Success Rate</div>
+                <div className="text-2xl font-bold text-foreground">0%</div>
+                <div className="text-xs text-muted-foreground">Success Rate</div>
               </div>
-              <BarChart3 className="h-8 w-8 opacity-80" />
+              <div className="p-3 bg-cyan-500/10 rounded-lg">
+                <BarChart3 className="h-6 w-6 text-cyan-600" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg">
+        <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">0</div>
-                <div className="text-xs opacity-90">Credits Used</div>
+                <div className="text-2xl font-bold text-foreground">0</div>
+                <div className="text-xs text-muted-foreground">Credits Used</div>
               </div>
-              <Lightbulb className="h-8 w-8 opacity-80" />
+              <div className="p-3 bg-amber-500/10 rounded-lg">
+                <Lightbulb className="h-6 w-6 text-amber-600" />
+              </div>
             </div>
           </CardContent>
         </Card>

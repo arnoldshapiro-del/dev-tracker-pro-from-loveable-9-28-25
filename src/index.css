@@ -9,32 +9,32 @@ Modern dashboard with vibrant gradients and clean design
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 220 13% 9%; /* #111827 */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 13% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 13% 9%;
 
-    --primary: 263 85% 65%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 222.2 84% 4.9%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 220 13% 9%;
 
-    --muted: 210 40% 98%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 220 9% 46%; /* #6B7280 */
 
-    --accent: 210 40% 98%;
-    --accent-foreground: 222.2 84% 4.9%;
+    --accent: 221.2 83.2% 53.3%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 263 85% 65%;
+    --border: 220 13% 91%; /* #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 221.2 83.2% 53.3%;
 
     --radius: 0.75rem;
 
@@ -138,7 +138,56 @@ Modern dashboard with vibrant gradients and clean design
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground;
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+  }
+  
+  /* White card theme styles */
+  .white-card {
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 14px;
+    color: hsl(var(--foreground));
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  .white-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Chip styles with subtle tints */
+  .chip {
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+  }
+  
+  .chip-blue {
+    background-color: hsl(221.2 83.2% 53.3% / 0.12);
+    color: hsl(221.2 83.2% 45%);
+  }
+  
+  .chip-green {
+    background-color: hsl(142 71% 45% / 0.12);
+    color: hsl(142 71% 35%);
+  }
+  
+  .chip-amber {
+    background-color: hsl(43 96% 56% / 0.12);
+    color: hsl(43 96% 46%);
+  }
+  
+  .chip-red {
+    background-color: hsl(0 84% 60% / 0.12);
+    color: hsl(0 84% 50%);
+  }
+  
+  /* Progress bar styles */
+  .progress-bar {
+    border-radius: 8px;
+    height: 8px;
   }
   
   /* Custom utility classes - VIBRANT MOCHA COLORS */
