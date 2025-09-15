@@ -65,11 +65,11 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <Sidebar />
       
       {/* Main Content */}
-      <div className="ml-64 p-6 bg-gray-50">
+      <div className="ml-64 p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome back, Arnold</h1>
           <p className="text-gray-600">Here's what's happening with your projects</p>

@@ -8,8 +8,9 @@ Modern dashboard with vibrant gradients and clean design
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 17% 98%; /* #F6F7F9 */
     --foreground: 220 13% 9%; /* #111827 */
+    --background: 210 17% 98%; /* #F6F7F9 */
 
     --card: 0 0% 100%;
     --card-foreground: 220 13% 9%;
@@ -138,21 +139,24 @@ Modern dashboard with vibrant gradients and clean design
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: #F6F7F9;
     font-family: Inter, system-ui, -apple-system, sans-serif;
   }
   
-  /* White card theme styles */
+  /* White card theme styles with subtle 3D elevation */
   .white-card {
     background: white;
-    border: 1px solid hsl(var(--border));
+    border: 1px solid #E5E7EB;
     border-radius: 14px;
-    color: hsl(var(--foreground));
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    color: #111827;
+    box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06), 0 1px 2px rgba(17, 24, 39, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .white-card:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08), 0 2px 4px rgba(17, 24, 39, 0.06);
+    transform: translateY(-2px);
   }
   
   /* Chip styles with subtle tints */

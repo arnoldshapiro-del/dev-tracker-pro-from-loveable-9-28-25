@@ -81,9 +81,9 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
       <div 
         {...attributes} 
         {...listeners} 
-        className="absolute top-4 right-4 cursor-grab hover:bg-white/20 p-2 rounded opacity-70 hover:opacity-100"
+        className="absolute top-4 right-4 cursor-grab hover:bg-gray-100 p-2 rounded opacity-70 hover:opacity-100"
       >
-        <GripVertical className="h-5 w-5 text-white" />
+        <GripVertical className="h-5 w-5 text-muted-foreground" />
       </div>
 
       {/* Project Header */}
@@ -353,7 +353,7 @@ export const Projects = () => {
         
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <Button className="gradient-purple border-0">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="h-4 w-4 mr-2" />
               New Project
             </Button>
