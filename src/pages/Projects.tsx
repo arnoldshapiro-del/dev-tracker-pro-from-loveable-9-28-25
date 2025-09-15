@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppStore, Project } from "@/store/appStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -198,6 +198,22 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
 export const Projects = () => {
   const { projects, addProject, updateProject, deleteProject, reorderProjects } = useAppStore();
   const { toast } = useToast();
+  
+  // Clean up projects with missing or invalid data on component mount
+  useEffect(() => {
+    const invalidProjects = projects.filter(p => !p.id || !p.name?.trim());
+    if (invalidProjects.length > 0) {
+      console.log('Found invalid projects:', invalidProjects);
+      const validProjects = projects.filter(p => p.id && p.name?.trim());
+      if (validProjects.length !== projects.length) {
+        reorderProjects(validProjects);
+        toast({
+          title: "Cleaned up projects",
+          description: `Removed ${invalidProjects.length} invalid project(s).`,
+        });
+      }
+    }
+  }, []);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -326,18 +342,32 @@ export const Projects = () => {
   };
 
   const handleDeleteProject = (project: Project) => {
+    console.log('=== DELETE PROJECT DEBUG ===');
+    console.log('Project to delete:', JSON.stringify(project, null, 2));
+    
     if (project.id) {
       deleteProject(project.id);
       toast({
         title: "Project Deleted",
-        description: `${project.name} has been deleted successfully.`,
+        description: `${project.name || 'Unnamed Project'} has been deleted successfully.`,
       });
     } else {
-      toast({
-        title: "Cannot Delete Project",
-        description: "This project doesn't have a valid ID.",
-        variant: "destructive"
-      });
+      // For projects without valid IDs, remove by index
+      const projectIndex = projects.findIndex(p => p === project);
+      if (projectIndex !== -1) {
+        const updatedProjects = projects.filter((_, index) => index !== projectIndex);
+        reorderProjects(updatedProjects);
+        toast({
+          title: "Project Deleted",
+          description: "Unnamed project has been removed successfully.",
+        });
+      } else {
+        toast({
+          title: "Cannot Delete Project",
+          description: "Project not found or invalid data.",
+          variant: "destructive"
+        });
+      }
     }
   };
 

@@ -49,12 +49,33 @@ export const Dashboard = () => {
   };
 
   const handleDeleteProject = (project: Project) => {
+    console.log('=== DELETE PROJECT DEBUG (Dashboard) ===');
+    console.log('Project to delete:', JSON.stringify(project, null, 2));
+    
     if (project.id) {
       deleteProject(project.id);
       toast({
         title: "Project Deleted",
-        description: `${project.name} has been deleted successfully.`,
+        description: `${project.name || 'Unnamed Project'} has been deleted successfully.`,
       });
+    } else {
+      // For projects without valid IDs, remove by index
+      const projectIndex = projects.findIndex(p => p === project);
+      if (projectIndex !== -1) {
+        const updatedProjects = projects.filter((_, index) => index !== projectIndex);
+        // Note: reorderProjects is not available in Dashboard, so we can't fix here
+        toast({
+          title: "Cannot Delete Project",
+          description: "Please delete this project from the Projects page.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Cannot Delete Project",
+          description: "Project not found or invalid data.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
