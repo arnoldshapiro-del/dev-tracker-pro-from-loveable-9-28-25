@@ -401,9 +401,50 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
           {/* Project Basic Info Section - MOVED TO TOP */}
           <Card className="border-purple-200 bg-purple-50/50">
             <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-purple-600" />
-                <span className="font-medium text-purple-800">📝 PROJECT DETAILS</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Search className="h-4 w-4 text-purple-600" />
+                  <span className="font-medium text-purple-800">📝 PROJECT DETAILS</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={handleSave}
+                    className="gap-1"
+                  >
+                    <Save className="h-3 w-3" />
+                    Save
+                  </Button>
+                  {!isCreating && project?.id && (
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => {
+                        // Add delete functionality if needed
+                        toast({
+                          title: "Delete Project",
+                          description: "Delete functionality would go here",
+                        });
+                      }}
+                      className="gap-1"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                      Delete
+                    </Button>
+                  )}
+                  {primaryUrl && (
+                    <Button 
+                      size="sm" 
+                      variant="secondary" 
+                      onClick={() => openUrl(primaryUrl)}
+                      className="gap-1"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      Open
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -468,6 +509,56 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                     onChange={(e) => setProjectData(prev => ({ ...prev, progress: parseInt(e.target.value) || 0 }))}
                     placeholder="Progress percentage"
                   />
+                </div>
+                
+                {/* Development URL */}
+                <div className="space-y-2">
+                  <Label htmlFor="developmentUrl">Development URL</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="developmentUrl"
+                      value={projectData.lovable_dev_url || ''}
+                      onChange={(e) => setProjectData(prev => ({ ...prev, lovable_dev_url: e.target.value }))}
+                      placeholder="https://your-dev-url.com"
+                    />
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => openUrl(projectData.lovable_dev_url || '')}
+                      disabled={!projectData.lovable_dev_url}
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+                
+                {/* Live URL */}
+                <div className="space-y-2">
+                  <Label htmlFor="liveUrl">Live URL</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="liveUrl"
+                      value={projectData.lovable_live_url || ''}
+                      onChange={(e) => {
+                        const newUrl = e.target.value;
+                        setProjectData(prev => ({ ...prev, lovable_live_url: newUrl }));
+                        // Auto-set as primary URL if it's a live URL
+                        if (newUrl) {
+                          setPrimaryUrl(newUrl);
+                          setProjectData(prev => ({ ...prev, primaryUrl: newUrl }));
+                        }
+                      }}
+                      placeholder="https://your-live-url.com"
+                    />
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => openUrl(projectData.lovable_live_url || '')}
+                      disabled={!projectData.lovable_live_url}
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>
