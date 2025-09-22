@@ -18,6 +18,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { ProjectTabs } from "@/components/ProjectTabs";
 import { TemplateMarketplace } from "@/components/TemplateMarketplace";
+import { ProjectActions } from "@/components/ProjectActions";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { AuthModal } from "@/components/auth/AuthModal";
 import { 
   DndContext, 
   closestCenter,
@@ -196,24 +199,17 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
 };
 
 export const Projects = () => {
-  const { projects, addProject, updateProject, deleteProject, reorderProjects } = useAppStore();
+  const { projects, addProject, updateProject, deleteProject, reorderProjects, loadProjects } = useAppStore();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // Clean up projects with missing or invalid data on component mount
+  // Load projects when user is authenticated
   useEffect(() => {
-    const invalidProjects = projects.filter(p => !p.id || !p.name?.trim());
-    if (invalidProjects.length > 0) {
-      console.log('Found invalid projects:', invalidProjects);
-      const validProjects = projects.filter(p => p.id && p.name?.trim());
-      if (validProjects.length !== projects.length) {
-        reorderProjects(validProjects);
-        toast({
-          title: "Cleaned up projects",
-          description: `Removed ${invalidProjects.length} invalid project(s).`,
-        });
-      }
+    if (user) {
+      loadProjects();
     }
-  }, []);
+  }, [user, loadProjects]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -265,7 +261,12 @@ export const Projects = () => {
     return matchesSearch && matchesFilter;
   });
 
-  const handleCreateProject = () => {
+  const handleCreateProject = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
     if (!newProject.name.trim()) {
       toast({
         title: "Error",
@@ -275,7 +276,7 @@ export const Projects = () => {
       return;
     }
 
-    addProject(newProject);
+    await addProject(newProject);
     toast({
       title: "Project Created!",
       description: `${newProject.name} has been added successfully.`,
@@ -786,11 +787,22 @@ export const Projects = () => {
         </div>
       )}
 
+      {/* Project Data Management */}
+      <div className="mt-8">
+        <ProjectActions />
+      </div>
+
       {/* Project Editor Modal */}
       <ProjectEditor
         project={editingProject || undefined}
         isOpen={!!editingProject}
         onClose={() => setEditingProject(null)}
+      />
+
+      {/* Auth Modal */}
+      <AuthModal 
+        open={showAuthModal} 
+        onOpenChange={setShowAuthModal} 
       />
     </div>
   );
