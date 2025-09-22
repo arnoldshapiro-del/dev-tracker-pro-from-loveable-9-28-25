@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { CalendarIcon, Users, Building, Tag, Key, Globe, Shield, Database, Server } from "lucide-react";
-import { ProjectEditorStandalone } from "@/components/ProjectEditorStandalone";
+import { ProjectEditor } from "@/components/ProjectEditor";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AuthModal } from "@/components/auth/AuthModal";
 
@@ -826,7 +826,7 @@ export const Dashboard = () => {
 
       {/* Project Editor Modal */}
       {editingProject && (
-        <ProjectEditorStandalone
+        <ProjectEditor
           project={editingProject}
           isOpen={!!editingProject}
           onClose={() => setEditingProject(null)}
