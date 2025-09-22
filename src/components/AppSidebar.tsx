@@ -18,6 +18,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ModeSwitcher } from "@/components/ModeSwitcher";
 import { useModeStore } from "@/store/modeStore";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -43,8 +44,13 @@ export const AppSidebar = () => {
     <div className="fixed left-0 top-0 h-full w-64 bg-background border-r border-border flex flex-col z-50">
       {/* Logo */}
       <div className="p-6 border-b border-border">
-        <h1 className="text-xl font-bold text-primary">DevTracker Pro</h1>
-        <p className="text-xs text-muted-foreground mt-1">Developer Dashboard</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-primary">DevTracker Pro</h1>
+            <p className="text-xs text-muted-foreground mt-1">Developer Dashboard</p>
+          </div>
+          <ThemeToggle />
+        </div>
       </div>
       
       {/* Navigation */}
