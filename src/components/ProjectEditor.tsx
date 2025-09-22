@@ -33,6 +33,7 @@ interface ProjectEditorProps {
   project?: Project;
   isOpen: boolean;
   onClose: () => void;
+  isCreating?: boolean;
 }
 
 interface PlatformUrl {
@@ -66,8 +67,8 @@ interface PlatformConfig {
   isCustom?: boolean;
 }
 
-export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) => {
-  const { updateProject } = useAppStore();
+export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectEditorProps) => {
+  const { updateProject, addProject } = useAppStore();
   const { toast } = useToast();
   
   const [projectData, setProjectData] = useState<Partial<Project>>({
@@ -837,7 +838,7 @@ export const ProjectEditor = ({ project, isOpen, onClose }: ProjectEditorProps) 
               Cancel & Close
             </Button>
             <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
-              Update Project
+              {isCreating ? 'Create Project' : 'Update Project'}
             </Button>
           </div>
         </div>

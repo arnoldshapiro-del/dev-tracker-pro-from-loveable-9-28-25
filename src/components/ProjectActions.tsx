@@ -79,8 +79,12 @@ export const ProjectActions = () => {
           for (const project of importedProjects) {
               console.log('Importing project:', project.name || 'Unnamed');
               try {
+                // Preserve the actual project name and important URLs from the imported data
+                const actualProjectName = project.name || project.title || 'Imported Project';
+                const preferredLiveUrl = project.primaryUrl || project.lovable_live_url || project.netlify_url || project.vercel_url || project.deployment || project.platform_url || '';
+                
                 const cleanProject = {
-                  name: project.name || 'Imported Project',
+                  name: actualProjectName,
                   description: project.description || '',
                   status: project.status || 'active',
                   progress: project.progress || 0,
@@ -88,8 +92,8 @@ export const ProjectActions = () => {
                   technologies: project.technologies || [],
                   ai_platform: project.ai_platform || 'mocha',
                   project_type: project.project_type || 'web',
-                  platform_url: project.platform_url || project.primaryUrl || '',
-                  github_repo_url: project.github_repo_url || '',
+                  platform_url: project.platform_url || '',
+                  github_repo_url: project.github_repo_url || project.repository || '',
                   netlify_url: project.netlify_url || '',
                   netlify_dev_url: project.netlify_dev_url || '',
                   vercel_url: project.vercel_url || '',
@@ -106,11 +110,13 @@ export const ProjectActions = () => {
                   time_to_deploy_hours: project.time_to_deploy_hours,
                   build_success_rate: project.build_success_rate,
                   deployment_success_rate: project.deployment_success_rate,
-                  repository: project.repository || '',
+                  repository: project.repository || project.github_repo_url || '',
                   deployment: project.deployment || '',
-                  primaryUrl: project.primaryUrl || project.platform_url || '',
+                  primary_url: preferredLiveUrl, // Map to database field
                   lastActivity: new Date().toISOString().split('T')[0],
                 };
+                
+                console.log('Cleaned project data:', cleanProject);
                 
                 await addProject(cleanProject);
               successCount++;
