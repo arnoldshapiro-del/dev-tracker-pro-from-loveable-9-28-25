@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Plus, Bot, Rocket, BarChart3, Code2, Folder, ExternalLink, FileText, Lightbulb } from "lucide-react";
+import { Plus, Bot, Rocket, BarChart3, Code2, Folder, ExternalLink, FileText, Lightbulb, Grid3X3, List, Trash2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store/appStore";
 import { useNavigate } from "react-router-dom";
-import { CalendarIcon, Users, Building, Tag, Key, Globe, Shield, Database, Server } from "lucide-react";
+import { CalendarIcon, Users, Building, Tag, Key, Globe, Shield, Database, Server, AlertCircle, Calendar } from "lucide-react";
 import { ProjectEditor } from "@/components/ProjectEditor";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AuthModal } from "@/components/auth/AuthModal";
@@ -18,6 +18,7 @@ export const Dashboard = () => {
   const [editingProject, setEditingProject] = useState<any>(null);
   const [isCreatingNewProject, setIsCreatingNewProject] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
   
   // Load projects when user authenticates
   React.useEffect(() => {
@@ -266,74 +267,183 @@ export const Dashboard = () => {
                   <FileText className="h-5 w-5" />
                   Recent Projects
                 </CardTitle>
-                <Button variant="outline" size="sm">View All</Button>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center border rounded-md">
+                    <Button
+                      variant={viewMode === 'cards' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setViewMode('cards')}
+                      className="rounded-r-none"
+                    >
+                      <Grid3X3 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={viewMode === 'list' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setViewMode('list')}
+                      className="rounded-l-none"
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => navigate('/projects')}>View All</Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {projects.slice(0, 5).map((project) => (
-                  <div 
-                    key={project.id}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-gray-100"
-                    onClick={() => handleProjectClick(project)}
-                  >
-                    <div className="flex items-center gap-3">
-                      {platformIcons[project.ai_platform || 'mocha'] || platformIcons.mocha}
-                      <div>
-                        <div className="font-medium text-gray-900 text-sm">{project.name}</div>
-                        <div className="text-xs text-gray-500">{project.ai_platform || 'mocha'} • {project.progress}% complete</div>
+              {viewMode === 'list' ? (
+                <div className="space-y-3">
+                  {projects.slice(0, 5).map((project) => (
+                    <div 
+                      key={project.id}
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-gray-100"
+                      onClick={() => handleProjectClick(project)}
+                    >
+                      <div className="flex items-center gap-3">
+                        {platformIcons[project.ai_platform || 'mocha'] || platformIcons.mocha}
+                        <div>
+                          <div className="font-medium text-gray-900 text-sm">{project.name}</div>
+                          <div className="text-xs text-gray-500">{project.ai_platform || 'mocha'} • {project.progress}% complete</div>
+                        </div>
                       </div>
+                       <div className="flex items-center gap-2">
+                         <span className={`text-xs px-2 py-1 rounded-full ${
+                           project.status === 'active' ? 'bg-blue-100 text-blue-700' : 
+                           project.status === 'completed' ? 'bg-green-100 text-green-700' : 
+                           project.status === 'planning' ? 'bg-yellow-100 text-yellow-700' :
+                           'bg-gray-100 text-gray-700'
+                         }`}>
+                           {project.status}
+                         </span>
+                         <Button
+                           size="sm"
+                           variant="ghost"
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             setEditingProject(project);
+                           }}
+                           className="h-8 px-2 text-blue-600 hover:bg-blue-50"
+                         >
+                           <Edit className="h-4 w-4" />
+                         </Button>
+                         <Button
+                           size="sm"
+                           variant="ghost"
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             if (project.id) {
+                               deleteProject(project.id);
+                               toast({
+                                 title: "Project Deleted",
+                                 description: `${project.name} has been deleted successfully.`,
+                               });
+                             }
+                           }}
+                           className="h-8 px-2 text-red-600 hover:bg-red-50"
+                         >
+                           <Trash2 className="h-4 w-4" />
+                         </Button>
+                         <button
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             handleProjectClick(project);
+                           }}
+                           className="p-1 hover:bg-gray-100 rounded"
+                         >
+                           <ExternalLink className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                         </button>
+                       </div>
                     </div>
-                     <div className="flex items-center gap-2">
-                       <span className={`text-xs px-2 py-1 rounded-full ${
-                         project.status === 'active' ? 'bg-blue-100 text-blue-700' : 
-                         project.status === 'completed' ? 'bg-green-100 text-green-700' : 
-                         project.status === 'planning' ? 'bg-yellow-100 text-yellow-700' :
-                         'bg-gray-100 text-gray-700'
-                       }`}>
-                         {project.status}
-                       </span>
-                       <Button
-                         size="sm"
-                         variant="ghost"
-                         onClick={(e) => {
-                           e.stopPropagation();
-                           setEditingProject(project);
-                         }}
-                         className="h-8 px-2 text-blue-600 hover:bg-blue-50"
-                       >
-                         Edit
-                       </Button>
-                       <Button
-                         size="sm"
-                         variant="ghost"
-                         onClick={(e) => {
-                           e.stopPropagation();
-                           if (project.id) {
-                             deleteProject(project.id);
-                             toast({
-                               title: "Project Deleted",
-                               description: `${project.name} has been deleted successfully.`,
-                             });
-                           }
-                         }}
-                         className="h-8 px-2 text-red-600 hover:bg-red-50"
-                       >
-                         Delete
-                       </Button>
-                       <button
-                         onClick={(e) => {
-                           e.stopPropagation();
-                           handleProjectClick(project);
-                         }}
-                         className="p-1 hover:bg-gray-100 rounded"
-                       >
-                         <ExternalLink className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                       </button>
-                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4">
+                  {projects.slice(0, 3).map((project) => (
+                    <Card 
+                      key={project.id}
+                      className="hover:shadow-md transition-shadow cursor-pointer border border-gray-200"
+                      onClick={() => handleProjectClick(project)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3 className="font-semibold text-gray-900 mb-1">{project.name}</h3>
+                            <p className="text-sm text-gray-600 mb-2">{project.description}</p>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              project.status === 'active' ? 'bg-blue-100 text-blue-700' : 
+                              project.status === 'completed' ? 'bg-green-100 text-green-700' : 
+                              project.status === 'planning' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {project.status}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingProject(project);
+                              }}
+                              className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (project.id) {
+                                  deleteProject(project.id);
+                                  toast({
+                                    title: "Project Deleted",
+                                    description: `${project.name} has been deleted successfully.`,
+                                  });
+                                }
+                              }}
+                              className="h-8 w-8 p-0 text-red-600 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div className="flex items-center gap-2">
+                            <div className="p-1 rounded bg-primary/10">
+                              <BarChart3 className="h-3 w-3 text-primary" />
+                            </div>
+                            <div>
+                              <div className="font-medium">{project.progress}%</div>
+                              <div className="text-xs text-gray-500">Progress</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="p-1 rounded bg-red-500/10">
+                              <AlertCircle className="h-3 w-3 text-red-600" />
+                            </div>
+                            <div>
+                              <div className="font-medium">{project.issues}</div>
+                              <div className="text-xs text-gray-500">Issues</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="p-1 rounded bg-green-500/10">
+                              <Calendar className="h-3 w-3 text-green-600" />
+                            </div>
+                            <div>
+                              <div className="font-medium text-xs">{project.lastActivity}</div>
+                              <div className="text-xs text-gray-500">Activity</div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

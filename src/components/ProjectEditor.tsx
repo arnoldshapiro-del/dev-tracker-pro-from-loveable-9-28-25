@@ -165,44 +165,64 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
     return selectedUrl;
   });
 
-  const handleSave = () => {
-    if (project?.id) {
-      // Collect all URLs from platforms into the project data
-      const allUrls: any = {};
-      platforms.forEach(platform => {
-        platform.urls.forEach(url => {
-          if (url.url) {
-            if (platform.name === 'Lovable Deployment') {
-              if (url.type === 'development') {
-                allUrls.lovable_dev_url = url.url;
-              } else {
-                allUrls.lovable_live_url = url.url;
-              }
-            } else if (platform.name === 'Netlify Deployment') {
-              if (url.type === 'development') {
-                allUrls.netlify_dev_url = url.url;
-              } else {
-                allUrls.netlify_url = url.url;
-              }
-            } else if (platform.name === 'Vercel Deployment') {
-              if (url.type === 'development') {
-                allUrls.vercel_dev_url = url.url;
-              } else {
-                allUrls.vercel_url = url.url;
-              }
+  const handleSave = async () => {
+    // Collect all URLs from platforms into the project data
+    const allUrls: any = {};
+    platforms.forEach(platform => {
+      platform.urls.forEach(url => {
+        if (url.url) {
+          if (platform.name === 'Lovable Deployment') {
+            if (url.type === 'development') {
+              allUrls.lovable_dev_url = url.url;
             } else {
-              // Custom platforms
-              const platformKey = platform.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-              if (url.type === 'development') {
-                allUrls[`${platformKey}_dev_url`] = url.url;
-              } else {
-                allUrls[`${platformKey}_live_url`] = url.url;
-              }
+              allUrls.lovable_live_url = url.url;
+            }
+          } else if (platform.name === 'Netlify Deployment') {
+            if (url.type === 'development') {
+              allUrls.netlify_dev_url = url.url;
+            } else {
+              allUrls.netlify_url = url.url;
+            }
+          } else if (platform.name === 'Vercel Deployment') {
+            if (url.type === 'development') {
+              allUrls.vercel_dev_url = url.url;
+            } else {
+              allUrls.vercel_url = url.url;
+            }
+          } else {
+            // Custom platforms
+            const platformKey = platform.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            if (url.type === 'development') {
+              allUrls[`${platformKey}_dev_url`] = url.url;
+            } else {
+              allUrls[`${platformKey}_live_url`] = url.url;
             }
           }
-        });
+        }
       });
+    });
 
+    if (isCreating) {
+      // Create new project
+      const projectToCreate = {
+        name: projectData.name || 'New Project',
+        description: projectData.description || '',
+        status: projectData.status || 'planning',
+        progress: projectData.progress || 0,
+        credits_used: projectData.credits_used || 0,
+        primaryUrl,
+        ...allUrls
+      };
+      console.log('=== CREATING PROJECT FROM EDITOR ===');
+      console.log('Project data:', projectToCreate);
+      
+      await addProject(projectToCreate);
+      toast({
+        title: "Project Created",
+        description: "Your new project has been created successfully.",
+      });
+    } else if (project?.id) {
+      // Update existing project
       updateProject(project.id, { 
         ...projectData, 
         primaryUrl,
@@ -378,6 +398,81 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Project Basic Info Section - MOVED TO TOP */}
+          <Card className="border-purple-200 bg-purple-50/50">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Search className="h-4 w-4 text-purple-600" />
+                <span className="font-medium text-purple-800">📝 PROJECT DETAILS</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="projectName">Project Name</Label>
+                  <Input
+                    id="projectName"
+                    value={projectData.name || ''}
+                    onChange={(e) => setProjectData(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Enter project name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="creditsUsed">Credits Used</Label>
+                  <Input
+                    id="creditsUsed"
+                    type="number"
+                    value={projectData.credits_used || 0}
+                    onChange={(e) => setProjectData(prev => ({ ...prev, credits_used: parseInt(e.target.value) || 0 }))}
+                    placeholder="Credits used"
+                  />
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={projectData.description || ''}
+                    onChange={(e) => setProjectData(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Describe your project"
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select 
+                    value={projectData.status || 'planning'} 
+                    onValueChange={(value) => setProjectData(prev => ({ ...prev, status: value as "development" | "planning" | "testing" | "deployed" | "maintenance" | "abandoned" | "active" | "completed" | "on-hold" | "archived" }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="planning">Planning</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="on-hold">On Hold</SelectItem>
+                      <SelectItem value="development">Development</SelectItem>
+                      <SelectItem value="testing">Testing</SelectItem>
+                      <SelectItem value="deployed">Deployed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="progress">Progress (%)</Label>
+                  <Input
+                    id="progress"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={projectData.progress || 0}
+                    onChange={(e) => setProjectData(prev => ({ ...prev, progress: parseInt(e.target.value) || 0 }))}
+                    placeholder="Progress percentage"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Primary URL Section */}
           <Card className="border-green-200 bg-green-50/50">
             <CardHeader className="pb-3">
