@@ -166,6 +166,10 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
   });
 
   const handleSave = async () => {
+    console.log('=== HANDLE SAVE START ===');
+    console.log('isCreating:', isCreating);
+    console.log('projectData:', projectData);
+    
     // Collect all URLs from platforms into the project data
     const allUrls: any = {};
     platforms.forEach(platform => {
@@ -203,36 +207,88 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
     });
 
     if (isCreating) {
-      // Create new project
+      // Validate required fields for new project
+      if (!projectData.name || projectData.name.trim() === '') {
+        toast({
+          title: "Validation Error",
+          description: "Project name is required.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Create new project with comprehensive data
       const projectToCreate = {
-        name: projectData.name || 'New Project',
+        name: projectData.name.trim(),
         description: projectData.description || '',
         status: projectData.status || 'planning',
         progress: projectData.progress || 0,
         credits_used: projectData.credits_used || 0,
-        primaryUrl,
+        initial_budget_credits: projectData.initial_budget_credits || 100,
+        credits_remaining: projectData.credits_remaining || 100,
+        primaryUrl: primaryUrl || projectData.lovable_live_url || projectData.lovable_dev_url || '',
+        lovable_dev_url: projectData.lovable_dev_url || '',
+        lovable_live_url: projectData.lovable_live_url || '',
+        lastActivity: new Date().toISOString().split('T')[0],
+        issues: projectData.issues || 0,
+        technologies: projectData.technologies || [],
+        repository: projectData.repository || '',
+        deployment: projectData.deployment || '',
         ...allUrls
       };
+      
       console.log('=== CREATING PROJECT FROM EDITOR ===');
       console.log('Project data:', projectToCreate);
       
-      await addProject(projectToCreate);
-      toast({
-        title: "Project Created",
-        description: "Your new project has been created successfully.",
-      });
+      try {
+        await addProject(projectToCreate);
+        console.log('✅ Project created successfully');
+        toast({
+          title: "Project Created Successfully",
+          description: `${projectToCreate.name} has been created and saved.`,
+        });
+      } catch (error) {
+        console.error('❌ Error creating project:', error);
+        toast({
+          title: "Error Creating Project",
+          description: "Failed to create project. Please try again.",
+          variant: "destructive"
+        });
+        return; // Don't close modal on error
+      }
     } else if (project?.id) {
       // Update existing project
-      updateProject(project.id, { 
+      const updateData = { 
         ...projectData, 
-        primaryUrl,
+        primaryUrl: primaryUrl || projectData.lovable_live_url || projectData.lovable_dev_url || '',
+        lovable_dev_url: projectData.lovable_dev_url || '',
+        lovable_live_url: projectData.lovable_live_url || '',
+        lastActivity: new Date().toISOString().split('T')[0],
         ...allUrls
-      });
-      toast({
-        title: "Project Updated",
-        description: "Your project has been saved successfully.",
-      });
+      };
+      
+      console.log('=== UPDATING PROJECT ===');
+      console.log('Update data:', updateData);
+      
+      try {
+        updateProject(project.id, updateData);
+        console.log('✅ Project updated successfully');
+        toast({
+          title: "Project Updated Successfully",
+          description: "Your project has been saved successfully.",
+        });
+      } catch (error) {
+        console.error('❌ Error updating project:', error);
+        toast({
+          title: "Error Updating Project",
+          description: "Failed to update project. Please try again.",
+          variant: "destructive"
+        });
+        return; // Don't close modal on error
+      }
     }
+    
+    console.log('=== HANDLE SAVE COMPLETE ===');
     onClose();
   };
 
@@ -524,6 +580,63 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                     <Button 
                       size="sm" 
                       variant="outline"
+                      onClick={() => {
+                        // Save the development URL
+                        if (project?.id && projectData.lovable_dev_url) {
+                          updateProject(project.id, { lovable_dev_url: projectData.lovable_dev_url });
+                          toast({
+                            title: "Development URL Saved",
+                            description: "Development URL has been saved successfully.",
+                          });
+                        }
+                      }}
+                      disabled={!projectData.lovable_dev_url}
+                      className="gap-1"
+                    >
+                      <Save className="h-3 w-3" />
+                      Save
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        // Edit/clear the development URL
+                        setProjectData(prev => ({ ...prev, lovable_dev_url: '' }));
+                        if (project?.id) {
+                          updateProject(project.id, { lovable_dev_url: '' });
+                          toast({
+                            title: "Development URL Cleared",
+                            description: "Development URL has been cleared.",
+                          });
+                        }
+                      }}
+                      className="gap-1"
+                    >
+                      <Edit className="h-3 w-3" />
+                      Edit
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        // Delete the development URL
+                        setProjectData(prev => ({ ...prev, lovable_dev_url: '' }));
+                        if (project?.id) {
+                          updateProject(project.id, { lovable_dev_url: '' });
+                          toast({
+                            title: "Development URL Deleted",
+                            description: "Development URL has been deleted.",
+                          });
+                        }
+                      }}
+                      className="gap-1 border-red-300 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                      Delete
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
                       onClick={() => openUrl(projectData.lovable_dev_url || '')}
                       disabled={!projectData.lovable_dev_url}
                     >
@@ -550,6 +663,68 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                       }}
                       placeholder="https://your-live-url.com"
                     />
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        // Save the live URL
+                        if (project?.id && projectData.lovable_live_url) {
+                          const updateData = { 
+                            lovable_live_url: projectData.lovable_live_url,
+                            primaryUrl: projectData.lovable_live_url // Auto-set as primary
+                          };
+                          updateProject(project.id, updateData);
+                          setPrimaryUrl(projectData.lovable_live_url);
+                          toast({
+                            title: "Live URL Saved",
+                            description: "Live URL has been saved and set as primary URL.",
+                          });
+                        }
+                      }}
+                      disabled={!projectData.lovable_live_url}
+                      className="gap-1"
+                    >
+                      <Save className="h-3 w-3" />
+                      Save
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        // Edit/clear the live URL
+                        setProjectData(prev => ({ ...prev, lovable_live_url: '' }));
+                        if (project?.id) {
+                          updateProject(project.id, { lovable_live_url: '' });
+                          toast({
+                            title: "Live URL Cleared",
+                            description: "Live URL has been cleared.",
+                          });
+                        }
+                      }}
+                      className="gap-1"
+                    >
+                      <Edit className="h-3 w-3" />
+                      Edit
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        // Delete the live URL
+                        setProjectData(prev => ({ ...prev, lovable_live_url: '' }));
+                        if (project?.id) {
+                          updateProject(project.id, { lovable_live_url: '' });
+                          toast({
+                            title: "Live URL Deleted",
+                            description: "Live URL has been deleted.",
+                          });
+                        }
+                      }}
+                      className="gap-1 border-red-300 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                      Delete
+                    </Button>
                     <Button 
                       size="sm" 
                       variant="outline"
