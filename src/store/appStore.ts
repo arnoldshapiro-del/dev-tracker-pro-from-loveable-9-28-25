@@ -139,13 +139,13 @@ export const useAppStore = create<AppState>()(
       })),
       
       analytics: {
-        dailyProgress: 50,
-        weeklyCommits: 23,
-        totalProjects: 10,
-        activeProjects: 10,
-        completedTasks: 47,
-        totalIssues: 8,
-        resolvedIssues: 5
+        dailyProgress: 0,
+        weeklyCommits: 0,
+        totalProjects: 0,
+        activeProjects: 0,
+        completedTasks: 0,
+        totalIssues: 0,
+        resolvedIssues: 0
       },
       
       updateAnalytics: (data) => set((state) => ({
