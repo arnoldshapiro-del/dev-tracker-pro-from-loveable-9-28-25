@@ -27,6 +27,18 @@ export const Dashboard = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  
+  // Load projects when user authenticates
+  React.useEffect(() => {
+    console.log('=== DASHBOARD USER EFFECT ===');
+    console.log('User:', user);
+    console.log('Projects count:', projects.length);
+    
+    if (user) {
+      console.log('Loading projects for authenticated user...');
+      loadProjects();
+    }
+  }, [user, loadProjects]);
   const [newProject, setNewProject] = useState({
     name: '',
     description: '',
@@ -56,12 +68,18 @@ export const Dashboard = () => {
   });
 
   const handleCreateProject = async () => {
+    console.log('=== DASHBOARD CREATE PROJECT ===');
+    console.log('User authenticated:', !!user);
+    console.log('Project data:', newProject);
+    
     if (!user) {
+      console.log('No user, showing auth modal');
       setShowAuthModal(true);
       return;
     }
 
     if (!newProject.name.trim()) {
+      console.log('No project name provided');
       toast({
         title: "Error",
         description: "Project name is required",
@@ -70,7 +88,9 @@ export const Dashboard = () => {
       return;
     }
 
-    await addProject({
+    console.log('Calling addProject...');
+    try {
+      await addProject({
       ...newProject,
       progress: 0,
       lastActivity: 'Just created',
@@ -78,10 +98,19 @@ export const Dashboard = () => {
       technologies: []
     });
     
+    console.log('Project created successfully');
     toast({
       title: "Project Created!",
       description: `${newProject.name} has been added to your dashboard.`,
     });
+    } catch (error) {
+      console.error('Error creating project:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create project",
+        variant: "destructive"
+      });
+    }
 
     setNewProject({
       name: '',

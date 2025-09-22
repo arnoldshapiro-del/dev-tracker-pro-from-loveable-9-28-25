@@ -91,8 +91,16 @@ export const useAppStore = create<AppState>()((set, get) => ({
   projects: [],
   
   addProject: async (projectData) => {
+    console.log('=== ADD PROJECT DEBUG START ===');
+    console.log('Project data received:', projectData);
+    
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    console.log('Current user:', user);
+    
+    if (!user) {
+      console.error('No authenticated user found!');
+      return;
+    }
 
     const newProject = {
       ...projectData,
@@ -100,6 +108,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
       primary_url: projectData.primaryUrl || projectData.platform_url || projectData.deployment,
       last_activity: new Date().toISOString().split('T')[0],
     };
+    
+    console.log('Project data to insert:', newProject);
 
     const { data, error } = await supabase
       .from('projects')
@@ -108,9 +118,15 @@ export const useAppStore = create<AppState>()((set, get) => ({
       .single();
 
     if (error) {
-      console.error('Error adding project:', error);
+      console.error('=== SUPABASE INSERT ERROR ===');
+      console.error('Error details:', error);
+      console.error('Error message:', error.message);
+      console.error('Error code:', error.code);
       return;
     }
+    
+    console.log('=== INSERT SUCCESS ===');
+    console.log('Returned data:', data);
 
     const mappedProject: Project = {
       id: data.id,
@@ -156,6 +172,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
         activeProjects: mappedProject.status === 'active' ? state.analytics.activeProjects + 1 : state.analytics.activeProjects
       }
     }));
+    
+    console.log('=== PROJECT ADDED TO STORE ===');
+    console.log('Current projects count:', get().projects.length);
   },
       
   updateProject: async (id, updates) => {
@@ -206,14 +225,23 @@ export const useAppStore = create<AppState>()((set, get) => ({
   })),
 
   loadProjects: async () => {
+    console.log('=== LOAD PROJECTS DEBUG ===');
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    console.log('Current user:', user);
+    
+    if (!user) {
+      console.log('No authenticated user for loading projects');
+      return;
+    }
 
+    console.log('Fetching projects from Supabase...');
     const { data, error } = await supabase
       .from('projects')
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
+
+    console.log('Supabase response - data:', data, 'error:', error);
 
     if (error) {
       console.error('Error loading projects:', error);

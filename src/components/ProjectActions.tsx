@@ -67,11 +67,17 @@ export const ProjectActions = () => {
         }
 
         setIsLoading(true);
+        console.log('=== IMPORT START ===');
+        console.log('User authenticated:', !!user);
+        console.log('Projects to import:', importedProjects.length);
 
         if (user) {
           // Import to cloud if authenticated
           let successCount = 0;
+          console.log('Starting import of', importedProjects.length, 'projects');
+          
           for (const project of importedProjects) {
+            console.log('Importing project:', project.name || 'Unnamed');
             try {
               await addProject({
                 name: project.name || 'Imported Project',

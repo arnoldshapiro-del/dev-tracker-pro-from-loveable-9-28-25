@@ -262,12 +262,18 @@ export const Projects = () => {
   });
 
   const handleCreateProject = async () => {
+    console.log('=== PROJECTS CREATE PROJECT ===');
+    console.log('User authenticated:', !!user);
+    console.log('Project data:', newProject);
+    
     if (!user) {
+      console.log('No user, showing auth modal');
       setShowAuthModal(true);
       return;
     }
 
     if (!newProject.name.trim()) {
+      console.log('No project name provided');
       toast({
         title: "Error",
         description: "Project name is required",
@@ -276,11 +282,22 @@ export const Projects = () => {
       return;
     }
 
-    await addProject(newProject);
-    toast({
-      title: "Project Created!",
-      description: `${newProject.name} has been added successfully.`,
-    });
+    console.log('Calling addProject...');
+    try {
+      await addProject(newProject);
+      console.log('Project created successfully');
+      toast({
+        title: "Project Created!",
+        description: `${newProject.name} has been added successfully.`,
+      });
+    } catch (error) {
+      console.error('Error creating project:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create project",
+        variant: "destructive"
+      });
+    }
 
     setNewProject({
       name: '',
