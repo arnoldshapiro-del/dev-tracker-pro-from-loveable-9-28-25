@@ -15,12 +15,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { CalendarIcon, Users, Building, Tag, Key, Globe, Shield, Database, Server } from "lucide-react";
+import { ProjectEditorStandalone } from "@/components/ProjectEditorStandalone";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { AuthModal } from "@/components/auth/AuthModal";
 
 export const Dashboard = () => {
-  const { projects, analytics, addProject } = useAppStore();
+  const { projects, analytics, addProject, deleteProject, updateProject, loadProjects } = useAppStore();
+  const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<any>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [newProject, setNewProject] = useState({
     name: '',
     description: '',
@@ -49,7 +55,12 @@ export const Dashboard = () => {
     project_tags: [] as string[]
   });
 
-  const handleCreateProject = () => {
+  const handleCreateProject = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
     if (!newProject.name.trim()) {
       toast({
         title: "Error",
@@ -59,7 +70,7 @@ export const Dashboard = () => {
       return;
     }
 
-    addProject({
+    await addProject({
       ...newProject,
       progress: 0,
       lastActivity: 'Just created',
@@ -643,25 +654,53 @@ export const Dashboard = () => {
                         <div className="text-xs text-gray-500">{project.ai_platform || 'mocha'} • {project.progress}% complete</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        project.status === 'active' ? 'bg-blue-100 text-blue-700' : 
-                        project.status === 'completed' ? 'bg-green-100 text-green-700' : 
-                        project.status === 'planning' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-gray-100 text-gray-700'
-                      }`}>
-                        {project.status}
-                      </span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleProjectClick(project);
-                        }}
-                        className="p-1 hover:bg-gray-100 rounded"
-                      >
-                        <ExternalLink className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                      </button>
-                    </div>
+                     <div className="flex items-center gap-2">
+                       <span className={`text-xs px-2 py-1 rounded-full ${
+                         project.status === 'active' ? 'bg-blue-100 text-blue-700' : 
+                         project.status === 'completed' ? 'bg-green-100 text-green-700' : 
+                         project.status === 'planning' ? 'bg-yellow-100 text-yellow-700' :
+                         'bg-gray-100 text-gray-700'
+                       }`}>
+                         {project.status}
+                       </span>
+                       <Button
+                         size="sm"
+                         variant="ghost"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           setEditingProject(project);
+                         }}
+                         className="h-8 px-2 text-blue-600 hover:bg-blue-50"
+                       >
+                         Edit
+                       </Button>
+                       <Button
+                         size="sm"
+                         variant="ghost"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           if (project.id) {
+                             deleteProject(project.id);
+                             toast({
+                               title: "Project Deleted",
+                               description: `${project.name} has been deleted successfully.`,
+                             });
+                           }
+                         }}
+                         className="h-8 px-2 text-red-600 hover:bg-red-50"
+                       >
+                         Delete
+                       </Button>
+                       <button
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           handleProjectClick(project);
+                         }}
+                         className="p-1 hover:bg-gray-100 rounded"
+                       >
+                         <ExternalLink className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                       </button>
+                     </div>
                   </div>
                 ))}
               </div>
@@ -745,6 +784,21 @@ export const Dashboard = () => {
           Analytics
         </Button>
       </div>
+
+      {/* Project Editor Modal */}
+      {editingProject && (
+        <ProjectEditorStandalone
+          project={editingProject}
+          isOpen={!!editingProject}
+          onClose={() => setEditingProject(null)}
+        />
+      )}
+
+      {/* Auth Modal */}
+      <AuthModal 
+        open={showAuthModal} 
+        onOpenChange={setShowAuthModal} 
+      />
     </div>
   );
 };

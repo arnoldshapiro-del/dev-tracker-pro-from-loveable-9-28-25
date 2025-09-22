@@ -49,10 +49,21 @@ export const ProjectActions = () => {
     reader.onload = async (e) => {
       try {
         const content = e.target?.result as string;
-        const importedProjects = JSON.parse(content);
+        let importedProjects;
         
+        try {
+          importedProjects = JSON.parse(content);
+        } catch (parseError) {
+          throw new Error('Invalid JSON format - please check your file');
+        }
+        
+        // Handle both array and single object formats
         if (!Array.isArray(importedProjects)) {
-          throw new Error('Invalid file format');
+          if (typeof importedProjects === 'object' && importedProjects !== null) {
+            importedProjects = [importedProjects];
+          } else {
+            throw new Error('File must contain project data as an array or object');
+          }
         }
 
         setIsLoading(true);
@@ -209,25 +220,33 @@ export const ProjectActions = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!user && (
-          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-amber-800">Authentication Required</p>
-                <p className="text-sm text-amber-700">Sign in to access cloud storage features</p>
-              </div>
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              {!user ? (
+                <>
+                  <p className="font-medium text-blue-800">Authentication Required</p>
+                  <p className="text-sm text-blue-700">Sign in to access cloud storage features</p>
+                </>
+              ) : (
+                <>
+                  <p className="font-medium text-green-800">✓ Signed in as {user.email}</p>
+                  <p className="text-sm text-green-700">Cloud storage features are enabled</p>
+                </>
+              )}
+            </div>
+            {!user && (
               <Button 
                 onClick={() => setShowAuthModal(true)}
-                variant="outline"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
                 size="sm"
-                className="border-amber-300 text-amber-700 hover:bg-amber-100"
               >
                 <LogIn className="h-4 w-4 mr-2" />
                 Sign In
               </Button>
-            </div>
+            )}
           </div>
-        )}
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Button 
