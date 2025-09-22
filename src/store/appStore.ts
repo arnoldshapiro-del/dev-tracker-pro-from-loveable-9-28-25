@@ -103,9 +103,36 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
 
     const newProject = {
-      ...projectData,
+      name: projectData.name,
+      description: projectData.description,
+      status: projectData.status,
+      progress: projectData.progress || 0,
+      issues: projectData.issues || 0,
+      ai_platform: projectData.ai_platform,
+      project_type: projectData.project_type,
+      platform_url: projectData.platform_url || '',
+      github_repo_url: projectData.github_repo_url || '',
+      netlify_url: projectData.netlify_url || '',
+      netlify_dev_url: projectData.netlify_dev_url || '',
+      vercel_url: projectData.vercel_url || '',
+      vercel_dev_url: projectData.vercel_dev_url || '',
+      lovable_live_url: projectData.lovable_live_url || '',
+      lovable_dev_url: projectData.lovable_dev_url || '',
+      mocha_published_url: projectData.mocha_published_url || '',
+      credits_used: projectData.credits_used || 0,
+      credits_remaining: projectData.credits_remaining || 100,
+      initial_budget_credits: projectData.initial_budget_credits || 100,
+      features_completed: projectData.features_completed || [],
+      features_pending: projectData.features_pending || [],
+      known_bugs: projectData.known_bugs || [],
+      time_to_deploy_hours: projectData.time_to_deploy_hours || null,
+      build_success_rate: projectData.build_success_rate || null,
+      deployment_success_rate: projectData.deployment_success_rate || null,
+      technologies: projectData.technologies || [],
+      repository: projectData.repository || '',
+      deployment: projectData.deployment || '',
       user_id: user.id,
-      primary_url: projectData.primaryUrl || projectData.platform_url || projectData.deployment,
+      primary_url: projectData.primaryUrl || projectData.platform_url || projectData.deployment || '',
       last_activity: new Date().toISOString().split('T')[0],
     };
     
@@ -178,12 +205,44 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
       
   updateProject: async (id, updates) => {
+    // Map frontend fields to database fields
+    const dbUpdates: any = {};
+    
+    if (updates.name !== undefined) dbUpdates.name = updates.name;
+    if (updates.description !== undefined) dbUpdates.description = updates.description;
+    if (updates.status !== undefined) dbUpdates.status = updates.status;
+    if (updates.progress !== undefined) dbUpdates.progress = updates.progress;
+    if (updates.issues !== undefined) dbUpdates.issues = updates.issues;
+    if (updates.technologies !== undefined) dbUpdates.technologies = updates.technologies;
+    if (updates.ai_platform !== undefined) dbUpdates.ai_platform = updates.ai_platform;
+    if (updates.project_type !== undefined) dbUpdates.project_type = updates.project_type;
+    if (updates.platform_url !== undefined) dbUpdates.platform_url = updates.platform_url;
+    if (updates.github_repo_url !== undefined) dbUpdates.github_repo_url = updates.github_repo_url;
+    if (updates.netlify_url !== undefined) dbUpdates.netlify_url = updates.netlify_url;
+    if (updates.netlify_dev_url !== undefined) dbUpdates.netlify_dev_url = updates.netlify_dev_url;
+    if (updates.vercel_url !== undefined) dbUpdates.vercel_url = updates.vercel_url;
+    if (updates.vercel_dev_url !== undefined) dbUpdates.vercel_dev_url = updates.vercel_dev_url;
+    if (updates.lovable_live_url !== undefined) dbUpdates.lovable_live_url = updates.lovable_live_url;
+    if (updates.lovable_dev_url !== undefined) dbUpdates.lovable_dev_url = updates.lovable_dev_url;
+    if (updates.mocha_published_url !== undefined) dbUpdates.mocha_published_url = updates.mocha_published_url;
+    if (updates.credits_used !== undefined) dbUpdates.credits_used = updates.credits_used;
+    if (updates.credits_remaining !== undefined) dbUpdates.credits_remaining = updates.credits_remaining;
+    if (updates.initial_budget_credits !== undefined) dbUpdates.initial_budget_credits = updates.initial_budget_credits;
+    if (updates.features_completed !== undefined) dbUpdates.features_completed = updates.features_completed;
+    if (updates.features_pending !== undefined) dbUpdates.features_pending = updates.features_pending;
+    if (updates.known_bugs !== undefined) dbUpdates.known_bugs = updates.known_bugs;
+    if (updates.time_to_deploy_hours !== undefined) dbUpdates.time_to_deploy_hours = updates.time_to_deploy_hours;
+    if (updates.build_success_rate !== undefined) dbUpdates.build_success_rate = updates.build_success_rate;
+    if (updates.deployment_success_rate !== undefined) dbUpdates.deployment_success_rate = updates.deployment_success_rate;
+    if (updates.repository !== undefined) dbUpdates.repository = updates.repository;
+    if (updates.deployment !== undefined) dbUpdates.deployment = updates.deployment;
+    if (updates.primaryUrl !== undefined) dbUpdates.primary_url = updates.primaryUrl;
+    
+    dbUpdates.updated_at = new Date().toISOString();
+
     const { error } = await supabase
       .from('projects')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
+      .update(dbUpdates)
       .eq('id', id);
 
     if (error) {

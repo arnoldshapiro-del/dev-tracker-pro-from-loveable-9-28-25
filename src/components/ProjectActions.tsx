@@ -77,40 +77,42 @@ export const ProjectActions = () => {
           console.log('Starting import of', importedProjects.length, 'projects');
           
           for (const project of importedProjects) {
-            console.log('Importing project:', project.name || 'Unnamed');
-            try {
-              await addProject({
-                name: project.name || 'Imported Project',
-                description: project.description || '',
-                status: project.status || 'active',
-                progress: project.progress || 0,
-                lastActivity: project.lastActivity || new Date().toISOString().split('T')[0],
-                issues: project.issues || 0,
-                technologies: project.technologies || [],
-                ai_platform: project.ai_platform || 'mocha',
-                project_type: project.project_type || 'web',
-                platform_url: project.platform_url || project.primaryUrl || '',
-                github_repo_url: project.github_repo_url || '',
-                netlify_url: project.netlify_url || '',
-                credits_used: project.credits_used || 0,
-                credits_remaining: project.credits_remaining || 100,
-                initial_budget_credits: project.initial_budget_credits || 100,
-                repository: project.repository || '',
-                deployment: project.deployment || '',
-                primaryUrl: project.primaryUrl || project.platform_url || '',
-                features_completed: project.features_completed || [],
-                features_pending: project.features_pending || [],
-                known_bugs: project.known_bugs || [],
-                time_to_deploy_hours: project.time_to_deploy_hours,
-                build_success_rate: project.build_success_rate,
-                deployment_success_rate: project.deployment_success_rate,
-                netlify_dev_url: project.netlify_dev_url,
-                vercel_url: project.vercel_url,
-                vercel_dev_url: project.vercel_dev_url,
-                lovable_live_url: project.lovable_live_url,
-                lovable_dev_url: project.lovable_dev_url,
-                mocha_published_url: project.mocha_published_url,
-              });
+              console.log('Importing project:', project.name || 'Unnamed');
+              try {
+                const cleanProject = {
+                  name: project.name || 'Imported Project',
+                  description: project.description || '',
+                  status: project.status || 'active',
+                  progress: project.progress || 0,
+                  issues: project.issues || 0,
+                  technologies: project.technologies || [],
+                  ai_platform: project.ai_platform || 'mocha',
+                  project_type: project.project_type || 'web',
+                  platform_url: project.platform_url || project.primaryUrl || '',
+                  github_repo_url: project.github_repo_url || '',
+                  netlify_url: project.netlify_url || '',
+                  netlify_dev_url: project.netlify_dev_url || '',
+                  vercel_url: project.vercel_url || '',
+                  vercel_dev_url: project.vercel_dev_url || '',
+                  lovable_live_url: project.lovable_live_url || '',
+                  lovable_dev_url: project.lovable_dev_url || '',
+                  mocha_published_url: project.mocha_published_url || '',
+                  credits_used: project.credits_used || 0,
+                  credits_remaining: project.credits_remaining || 100,
+                  initial_budget_credits: project.initial_budget_credits || 100,
+                  features_completed: project.features_completed || [],
+                  features_pending: project.features_pending || [],
+                  known_bugs: project.known_bugs || [],
+                  time_to_deploy_hours: project.time_to_deploy_hours,
+                  build_success_rate: project.build_success_rate,
+                  deployment_success_rate: project.deployment_success_rate,
+                  repository: project.repository || '',
+                  deployment: project.deployment || '',
+                  primaryUrl: project.primaryUrl || project.platform_url || '',
+                  lastActivity: new Date().toISOString().split('T')[0],
+                };
+                
+                await addProject(cleanProject);
               successCount++;
             } catch (error) {
               console.error('Failed to import project:', project.name, error);

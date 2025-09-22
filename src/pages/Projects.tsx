@@ -284,7 +284,28 @@ export const Projects = () => {
 
     console.log('Calling addProject...');
     try {
-      await addProject(newProject);
+      const cleanProject = {
+        name: newProject.name,
+        description: newProject.description,
+        status: newProject.status,
+        progress: newProject.progress,
+        lastActivity: newProject.lastActivity,
+        issues: newProject.issues,
+        technologies: newProject.technologies,
+        ai_platform: newProject.ai_platform,
+        project_type: newProject.project_type,
+        platform_url: newProject.platform_url,
+        github_repo_url: newProject.github_repo_url,
+        netlify_url: newProject.netlify_url,
+        credits_used: newProject.credits_used,
+        credits_remaining: newProject.credits_remaining,
+        initial_budget_credits: newProject.initial_budget_credits,
+        repository: '',
+        deployment: '',
+        primaryUrl: '',
+      };
+      
+      await addProject(cleanProject);
       console.log('Project created successfully');
       toast({
         title: "Project Created!",

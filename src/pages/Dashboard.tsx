@@ -91,12 +91,22 @@ export const Dashboard = () => {
     console.log('Calling addProject...');
     try {
       await addProject({
-      ...newProject,
-      progress: 0,
-      lastActivity: 'Just created',
-      issues: 0,
-      technologies: []
-    });
+        name: newProject.name,
+        description: newProject.description,
+        status: newProject.status,
+        ai_platform: newProject.ai_platform,
+        project_type: newProject.project_type,
+        platform_url: newProject.platform_url,
+        github_repo_url: newProject.github_repo_url,
+        netlify_url: newProject.netlify_url,
+        credits_used: newProject.credits_used,
+        credits_remaining: newProject.credits_remaining,
+        initial_budget_credits: newProject.initial_budget_credits,
+        progress: 0,
+        lastActivity: 'Just created',
+        issues: 0,
+        technologies: [],
+      });
     
     console.log('Project created successfully');
     toast({
