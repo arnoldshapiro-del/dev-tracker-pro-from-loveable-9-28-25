@@ -114,7 +114,7 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
       icon: <Zap className="h-4 w-4" />,
       color: "text-purple-600",
       urls: [
-        { id: "lovable-dev", url: project?.lovable_dev_url || "https://zoer.ai/zchat/7671", type: "development", label: "Development URL" },
+        { id: "lovable-dev", url: project?.lovable_dev_url || "", type: "development", label: "Development URL" },
         { id: "lovable-live", url: project?.lovable_live_url || "https://phoenix-project-revive.lovable.app/", type: "live", label: "Published URL" }
       ],
       deploymentId: "dpl_xyz123",
@@ -607,8 +607,8 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                   />
                 </div>
                 
-                {/* Development URL */}
-                <div className="space-y-2">
+                {/* Development URL - Full Width */}
+                <div className="space-y-2 col-span-2">
                   <Label htmlFor="developmentUrl">Development URL</Label>
                   <div className="flex gap-2">
                     <Input
@@ -675,22 +675,14 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                   </div>
                 </div>
                 
-                {/* Live URL */}
-                <div className="space-y-2">
+                {/* Live URL - Full Width */}
+                <div className="space-y-2 col-span-2">
                   <Label htmlFor="liveUrl">Live URL</Label>
                   <div className="flex gap-2">
                     <Input
                       id="liveUrl"
                       value={projectData.lovable_live_url || ''}
-                      onChange={(e) => {
-                        const newUrl = e.target.value;
-                        setProjectData(prev => ({ ...prev, lovable_live_url: newUrl }));
-                        // Auto-set as primary URL if it's a live URL
-                        if (newUrl) {
-                          setPrimaryUrl(newUrl);
-                          setProjectData(prev => ({ ...prev, primaryUrl: newUrl }));
-                        }
-                      }}
+                      onChange={(e) => setProjectData(prev => ({ ...prev, lovable_live_url: e.target.value }))}
                       placeholder="https://your-live-url.com"
                       className="flex-1 min-w-0 font-mono text-sm"
                     />
@@ -726,15 +718,10 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                       onClick={() => {
                         // Save the live URL
                         if (project?.id && projectData.lovable_live_url) {
-                          const updateData = { 
-                            lovable_live_url: projectData.lovable_live_url,
-                            primaryUrl: projectData.lovable_live_url // Auto-set as primary
-                          };
-                          updateProject(project.id, updateData);
-                          setPrimaryUrl(projectData.lovable_live_url);
+                          updateProject(project.id, { lovable_live_url: projectData.lovable_live_url });
                           toast({
                             title: "Live URL Saved",
-                            description: "Live URL has been saved and set as primary URL.",
+                            description: "Live URL has been saved successfully.",
                           });
                         }
                       }}
@@ -949,7 +936,7 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
               <Input
                 value={projectData.name}
                 onChange={(e) => setProjectData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="DevTracker Pro amazing made by Zoer 9-8-25"
+                placeholder="Enter project name"
               />
             </div>
             <div className="space-y-2">
@@ -968,7 +955,7 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
             <Textarea
               value={projectData.description}
               onChange={(e) => setProjectData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Beautiful made by Zoer 9-8-25"
+              placeholder="Enter project description"
               rows={3}
             />
           </div>
@@ -1015,7 +1002,7 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                         value={platform.name}
                         onChange={(e) => handlePlatformNameUpdate(index, e.target.value)}
                         className="font-medium h-6 border-dashed"
-                        placeholder="Enter platform name (e.g., ZOER, REPLIT)"
+                        placeholder="Enter platform name (e.g., Vercel, Custom Platform)"
                       />
                     ) : (
                       <span className="font-medium">{platform.name}</span>
