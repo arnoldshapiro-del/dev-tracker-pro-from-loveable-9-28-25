@@ -19,7 +19,8 @@ export const AppRouter = () => {
     <BrowserRouter>
       <AppLayout>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Projects />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/ai" element={<AIAssistants />} />
           <Route path="/deployment" element={<Deployment />} />
