@@ -22,7 +22,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: FolderOpen, label: "Projects", path: "/projects" },
   { icon: Bot, label: "AI Assistants", path: "/ai" },
   { icon: Rocket, label: "Deployment", path: "/deployment" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
