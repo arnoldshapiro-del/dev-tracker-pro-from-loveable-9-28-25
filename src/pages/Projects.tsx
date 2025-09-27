@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Search, Plus, Github, ExternalLink, Calendar, AlertCircle, TrendingUp, GripVertical, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { openProjectUrl } from "@/utils/projectUtils";
@@ -153,18 +154,38 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
           <Plus className="h-4 w-4 mr-2" />
           Edit Project
         </Button>
-        <Button 
-          size="sm" 
-          variant="outline"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(project);
-          }}
-          className="border-red-300 text-red-600 hover:bg-red-50"
-        >
-          <Trash2 className="h-4 w-4 mr-2" />
-          Delete
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              className="border-red-300 text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure you want to delete it?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the project "{project.name}" and remove all associated data.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => onDelete(project)}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete Project
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       {/* Technologies */}
@@ -208,6 +229,7 @@ export const Projects = () => {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [deletedProject, setDeletedProject] = useState<Project | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -270,11 +292,23 @@ export const Projects = () => {
     console.log('=== DELETE PROJECT DEBUG ===');
     console.log('Project to delete:', JSON.stringify(project, null, 2));
     
+    // Store the deleted project for potential undo
+    setDeletedProject(project);
+    
     if (project.id) {
       deleteProject(project.id);
       toast({
         title: "Project Deleted",
         description: `${project.name || 'Unnamed Project'} has been deleted successfully.`,
+        action: (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleUndoDelete()}
+          >
+            Undo
+          </Button>
+        ),
       });
     } else {
       // For projects without valid IDs, remove by index
@@ -285,6 +319,15 @@ export const Projects = () => {
         toast({
           title: "Project Deleted",
           description: "Unnamed project has been removed successfully.",
+          action: (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleUndoDelete()}
+            >
+              Undo
+            </Button>
+          ),
         });
       } else {
         toast({
@@ -293,6 +336,22 @@ export const Projects = () => {
           variant: "destructive"
         });
       }
+    }
+  };
+
+  const handleUndoDelete = () => {
+    if (deletedProject) {
+      if (deletedProject.id) {
+        addProject(deletedProject);
+      } else {
+        // For projects without IDs, add back to the array
+        reorderProjects([...projects, deletedProject]);
+      }
+      setDeletedProject(null);
+      toast({
+        title: "Project Restored",
+        description: `${deletedProject.name || 'Unnamed Project'} has been restored.`,
+      });
     }
   };
 
