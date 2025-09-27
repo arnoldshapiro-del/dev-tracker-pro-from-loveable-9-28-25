@@ -279,8 +279,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }));
   },
       
-  reorderProjects: (projects: Project[]) => set(() => ({
-    projects
+  reorderProjects: (projects: Project[]) => set((state) => ({
+    projects,
+    // Don't trigger a reload after reordering
   })),
 
   loadProjects: async () => {

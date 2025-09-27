@@ -235,16 +235,26 @@ export const Projects = () => {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      const oldIndex = projects.findIndex((item) => item.id === active.id);
-      const newIndex = projects.findIndex((item) => item.id === over?.id);
+      // Work with the filtered projects for display but maintain original order
+      const oldIndex = filteredProjects.findIndex((item) => item.id === active.id);
+      const newIndex = filteredProjects.findIndex((item) => item.id === over?.id);
 
-      const newProjects = arrayMove(projects, oldIndex, newIndex);
-      reorderProjects(newProjects);
-      
-      toast({
-        title: "Projects Reordered",
-        description: "Project order has been updated.",
-      });
+      // Only reorder if we're not filtering or searching
+      if (searchTerm === "" && filterStatus === "all") {
+        const newProjects = arrayMove(projects, oldIndex, newIndex);
+        reorderProjects(newProjects);
+        
+        toast({
+          title: "Projects Reordered",
+          description: "Project order has been updated.",
+        });
+      } else {
+        toast({
+          title: "Cannot Reorder",
+          description: "Clear filters to reorder projects.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
