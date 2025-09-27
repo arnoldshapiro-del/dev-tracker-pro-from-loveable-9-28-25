@@ -616,7 +616,34 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                       value={projectData.lovable_dev_url || ''}
                       onChange={(e) => setProjectData(prev => ({ ...prev, lovable_dev_url: e.target.value }))}
                       placeholder="https://your-dev-url.com"
+                      className="flex-1 min-w-0 font-mono text-sm"
                     />
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        if (projectData.lovable_dev_url) {
+                          setPrimaryUrl(projectData.lovable_dev_url);
+                          setProjectData(prev => ({ ...prev, primaryUrl: projectData.lovable_dev_url }));
+                          if (project?.id) {
+                            updateProject(project.id, { primaryUrl: projectData.lovable_dev_url });
+                          }
+                          toast({
+                            title: "Primary URL Set",
+                            description: "Development URL is now your primary URL.",
+                          });
+                        }
+                      }}
+                      disabled={!projectData.lovable_dev_url}
+                      className={`gap-1 whitespace-nowrap ${
+                        primaryUrl === projectData.lovable_dev_url 
+                          ? 'bg-green-100 text-green-600 border-green-300' 
+                          : ''
+                      }`}
+                    >
+                      <Check className="h-3 w-3" />
+                      {primaryUrl === projectData.lovable_dev_url ? 'PRIMARY' : 'Set Primary'}
+                    </Button>
                     <Button 
                       size="sm" 
                       variant="outline"
@@ -631,7 +658,7 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                         }
                       }}
                       disabled={!projectData.lovable_dev_url}
-                      className="gap-1"
+                      className="gap-1 whitespace-nowrap"
                     >
                       <Save className="h-3 w-3" />
                       Save
@@ -639,46 +666,9 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => {
-                        // Edit/clear the development URL
-                        setProjectData(prev => ({ ...prev, lovable_dev_url: '' }));
-                        if (project?.id) {
-                          updateProject(project.id, { lovable_dev_url: '' });
-                          toast({
-                            title: "Development URL Cleared",
-                            description: "Development URL has been cleared.",
-                          });
-                        }
-                      }}
-                      className="gap-1"
-                    >
-                      <Edit className="h-3 w-3" />
-                      Edit
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => {
-                        // Delete the development URL
-                        setProjectData(prev => ({ ...prev, lovable_dev_url: '' }));
-                        if (project?.id) {
-                          updateProject(project.id, { lovable_dev_url: '' });
-                          toast({
-                            title: "Development URL Deleted",
-                            description: "Development URL has been deleted.",
-                          });
-                        }
-                      }}
-                      className="gap-1 border-red-300 text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                      Delete
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
                       onClick={() => openUrl(projectData.lovable_dev_url || '')}
                       disabled={!projectData.lovable_dev_url}
+                      className="whitespace-nowrap"
                     >
                       <ExternalLink className="h-3 w-3" />
                     </Button>
@@ -702,7 +692,34 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                         }
                       }}
                       placeholder="https://your-live-url.com"
+                      className="flex-1 min-w-0 font-mono text-sm"
                     />
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        if (projectData.lovable_live_url) {
+                          setPrimaryUrl(projectData.lovable_live_url);
+                          setProjectData(prev => ({ ...prev, primaryUrl: projectData.lovable_live_url }));
+                          if (project?.id) {
+                            updateProject(project.id, { primaryUrl: projectData.lovable_live_url });
+                          }
+                          toast({
+                            title: "Primary URL Set",
+                            description: "Live URL is now your primary URL.",
+                          });
+                        }
+                      }}
+                      disabled={!projectData.lovable_live_url}
+                      className={`gap-1 whitespace-nowrap ${
+                        primaryUrl === projectData.lovable_live_url 
+                          ? 'bg-green-100 text-green-600 border-green-300' 
+                          : ''
+                      }`}
+                    >
+                      <Check className="h-3 w-3" />
+                      {primaryUrl === projectData.lovable_live_url ? 'PRIMARY' : 'Set Primary'}
+                    </Button>
                     <Button 
                       size="sm" 
                       variant="outline"
@@ -722,7 +739,7 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                         }
                       }}
                       disabled={!projectData.lovable_live_url}
-                      className="gap-1"
+                      className="gap-1 whitespace-nowrap"
                     >
                       <Save className="h-3 w-3" />
                       Save
@@ -730,46 +747,9 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => {
-                        // Edit/clear the live URL
-                        setProjectData(prev => ({ ...prev, lovable_live_url: '' }));
-                        if (project?.id) {
-                          updateProject(project.id, { lovable_live_url: '' });
-                          toast({
-                            title: "Live URL Cleared",
-                            description: "Live URL has been cleared.",
-                          });
-                        }
-                      }}
-                      className="gap-1"
-                    >
-                      <Edit className="h-3 w-3" />
-                      Edit
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => {
-                        // Delete the live URL
-                        setProjectData(prev => ({ ...prev, lovable_live_url: '' }));
-                        if (project?.id) {
-                          updateProject(project.id, { lovable_live_url: '' });
-                          toast({
-                            title: "Live URL Deleted",
-                            description: "Live URL has been deleted.",
-                          });
-                        }
-                      }}
-                      className="gap-1 border-red-300 text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                      Delete
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
                       onClick={() => openUrl(projectData.lovable_live_url || '')}
                       disabled={!projectData.lovable_live_url}
+                      className="whitespace-nowrap"
                     >
                       <ExternalLink className="h-3 w-3" />
                     </Button>
@@ -864,20 +844,46 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                                  <X className="h-3 w-3" />
                                </Button>
                              </div>
-                           ) : (
-                             <div className="flex items-center gap-2">
-                               <div className="text-xs text-gray-600 font-mono flex-1 bg-white/60 p-2 rounded border">
-                                 {url.url || "No URL set"}
-                               </div>
-                               <Button
-                                 size="sm"
-                                 variant="ghost"
-                                 onClick={() => handleStartEdit(platformIndex, url.id)}
-                                 className="h-8 px-2"
-                               >
-                                 <Edit className="h-3 w-3" />
-                               </Button>
-                             </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <div className="text-xs text-gray-600 font-mono flex-1 bg-white/60 p-2 rounded border">
+                                  {url.url || "No URL set"}
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    if (url.url) {
+                                      setPrimaryUrl(url.url);
+                                      setProjectData(prev => ({ ...prev, primaryUrl: url.url }));
+                                      if (project?.id) {
+                                        updateProject(project.id, { primaryUrl: url.url });
+                                      }
+                                      toast({
+                                        title: "Primary URL Set",
+                                        description: `${url.label} is now your primary URL.`,
+                                      });
+                                    }
+                                  }}
+                                  disabled={!url.url}
+                                  className={`h-8 px-2 text-xs whitespace-nowrap ${
+                                    primaryUrl === url.url 
+                                      ? 'bg-green-100 text-green-600 hover:bg-green-200' 
+                                      : 'hover:bg-green-100 hover:text-green-600'
+                                  }`}
+                                >
+                                  <Check className="h-3 w-3 mr-1" />
+                                  {primaryUrl === url.url ? 'PRIMARY' : 'SET PRIMARY'}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleStartEdit(platformIndex, url.id)}
+                                  className="h-8 px-2"
+                                >
+                                  <Edit className="h-3 w-3" />
+                                </Button>
+                              </div>
                            )}
                          </div>
                          
