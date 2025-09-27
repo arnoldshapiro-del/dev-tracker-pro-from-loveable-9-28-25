@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppStore, Project } from "@/store/appStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,14 +71,28 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
   const { updateProject, addProject } = useAppStore();
   const { toast } = useToast();
   
-  const [projectData, setProjectData] = useState<Partial<Project>>({
-    id: project?.id || '',
-    name: project?.name || '',
-    description: project?.description || '',
-    status: project?.status || 'planning',
-    progress: project?.progress || 0,
-    primaryUrl: project?.primaryUrl || '',
-    ...project
+  // Initialize project data properly based on editing vs creating
+  const [projectData, setProjectData] = useState<Partial<Project>>(() => {
+    if (isCreating || !project) {
+      return {
+        id: '',
+        name: '',
+        description: '',
+        status: 'planning',
+        progress: 0,
+        primaryUrl: '',
+        ai_platform: '',
+        project_type: '',
+      };
+    }
+    // When editing, use all existing project data
+    return {
+      ...project,
+      // Ensure we preserve all the important fields
+      name: project.name || '',
+      description: project.description || '',
+      primaryUrl: project.primaryUrl || project.lovable_live_url || project.lovable_dev_url || '',
+    };
   });
 
   const [platforms, setPlatforms] = useState<PlatformConfig[]>([
@@ -157,6 +171,32 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
       deployedAt: ""
     }
   ]);
+
+  // Reset form data when project changes
+  useEffect(() => {
+    if (isCreating || !project) {
+      setProjectData({
+        id: '',
+        name: '',
+        description: '',
+        status: 'planning',
+        progress: 0,
+        primaryUrl: '',
+        ai_platform: '',
+        project_type: '',
+      });
+      setPrimaryUrl('');
+    } else {
+      // When editing, populate with existing project data
+      setProjectData({
+        ...project,
+        name: project.name || '',
+        description: project.description || '',
+        primaryUrl: project.primaryUrl || project.lovable_live_url || project.lovable_dev_url || '',
+      });
+      setPrimaryUrl(project.primaryUrl || project.lovable_live_url || project.lovable_dev_url || '');
+    }
+  }, [project, isCreating]);
 
   const [primaryUrl, setPrimaryUrl] = useState(() => {
     console.log('ProjectEditor - Setting primary URL from project:', project);
