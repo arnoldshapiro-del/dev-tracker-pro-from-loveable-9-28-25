@@ -32,6 +32,7 @@ export const AppRouter = () => {
           <Route path="/templates" element={<TemplateMarketplace />} />
           <Route path="/help" element={<Help />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<Dashboard />} />
         </Routes>
       </AppLayout>
     </BrowserRouter>
