@@ -101,12 +101,12 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
       icon: <Bell className="h-4 w-4" />,
       color: "text-green-600",
       urls: [
-        { id: "netlify-dev", url: project?.netlify_dev_url || "https://app.netlify.com/sites/myapp", type: "development", label: "Development URL" },
-        { id: "netlify-live", url: project?.netlify_url || "https://app.netlify.app", type: "live", label: "Live URL" }
+        { id: "netlify-dev", url: project?.netlify_dev_url || "", type: "development", label: "Development URL" },
+        { id: "netlify-live", url: project?.netlify_url || "", type: "live", label: "Live URL" }
       ],
       deployedAt: "",
-      domainName: "myapp.netlify.app",
-      deployId: "6123456789abcdef",
+      domainName: "",
+      deployId: "",
       developmentUpdated: ""
     },
     {
@@ -115,9 +115,9 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
       color: "text-purple-600",
       urls: [
         { id: "lovable-dev", url: project?.lovable_dev_url || "", type: "development", label: "Development URL" },
-        { id: "lovable-live", url: project?.lovable_live_url || "https://phoenix-project-revive.lovable.app/", type: "live", label: "Published URL" }
+        { id: "lovable-live", url: project?.lovable_live_url || "", type: "live", label: "Published URL" }
       ],
-      deploymentId: "dpl_xyz123",
+      deploymentId: "",
       developmentUpdated: "",
       deployedAt: ""
     },
