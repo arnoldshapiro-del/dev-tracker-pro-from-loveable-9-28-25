@@ -297,8 +297,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     const { data, error } = await supabase
       .from('projects')
       .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .eq('user_id', user.id);
 
     console.log('Supabase response - data:', data, 'error:', error);
 
