@@ -663,15 +663,34 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                       <Save className="h-3 w-3" />
                       Save
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => openUrl(projectData.lovable_dev_url || '')}
-                      disabled={!projectData.lovable_dev_url}
-                      className="whitespace-nowrap"
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                    </Button>
+                     <Button 
+                       size="sm" 
+                       variant="outline"
+                       onClick={() => {
+                         setProjectData(prev => ({ ...prev, lovable_dev_url: '' }));
+                         if (project?.id) {
+                           updateProject(project.id, { lovable_dev_url: '' });
+                           toast({
+                             title: "Development URL Deleted",
+                             description: "Development URL has been cleared successfully.",
+                           });
+                         }
+                       }}
+                       disabled={!projectData.lovable_dev_url}
+                       className="gap-1 whitespace-nowrap text-red-500 hover:text-red-700"
+                     >
+                       <Trash2 className="h-3 w-3" />
+                       Delete
+                     </Button>
+                     <Button 
+                       size="sm" 
+                       variant="outline"
+                       onClick={() => openUrl(projectData.lovable_dev_url || '')}
+                       disabled={!projectData.lovable_dev_url}
+                       className="whitespace-nowrap"
+                     >
+                       <ExternalLink className="h-3 w-3" />
+                     </Button>
                   </div>
                 </div>
                 
@@ -731,15 +750,34 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
                       <Save className="h-3 w-3" />
                       Save
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => openUrl(projectData.lovable_live_url || '')}
-                      disabled={!projectData.lovable_live_url}
-                      className="whitespace-nowrap"
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                    </Button>
+                     <Button 
+                       size="sm" 
+                       variant="outline"
+                       onClick={() => {
+                         setProjectData(prev => ({ ...prev, lovable_live_url: '' }));
+                         if (project?.id) {
+                           updateProject(project.id, { lovable_live_url: '' });
+                           toast({
+                             title: "Live URL Deleted",
+                             description: "Live URL has been cleared successfully.",
+                           });
+                         }
+                       }}
+                       disabled={!projectData.lovable_live_url}
+                       className="gap-1 whitespace-nowrap text-red-500 hover:text-red-700"
+                     >
+                       <Trash2 className="h-3 w-3" />
+                       Delete
+                     </Button>
+                     <Button 
+                       size="sm" 
+                       variant="outline"
+                       onClick={() => openUrl(projectData.lovable_live_url || '')}
+                       disabled={!projectData.lovable_live_url}
+                       className="whitespace-nowrap"
+                     >
+                       <ExternalLink className="h-3 w-3" />
+                     </Button>
                   </div>
                 </div>
               </div>
