@@ -925,14 +925,14 @@ export const ProjectEditor = ({ project, isOpen, onClose, isCreating }: ProjectE
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                <span className="font-medium text-yellow-800">⚠️ QUICK TIPS</span>
+                <span className="font-medium text-yellow-800">💡 URL MANAGEMENT</span>
               </div>
             </CardHeader>
             <CardContent className="text-sm space-y-1">
-              <div><span className="text-green-600">• Green URLs</span> = Most recent with timestamps (use these!)</div>
-              <div><span className="text-blue-600">• LIVE URLs</span> = Your actual deployed apps that users see</div>
+              <div><span className="text-blue-600">• LIVE URLs</span> = Your deployed apps that users see</div>
               <div><span className="text-orange-600">• DEV URLs</span> = Your development/console URLs for editing</div>
-              <div><span className="text-gray-600">• 👥 BEST</span> = The most recent live URL (recommended for sharing)</div>
+              <div><span className="text-green-600">• PRIMARY URL</span> = Opens when you click project name (you choose!)</div>
+              <div><span className="text-gray-600">• Save both URLs, then set one as PRIMARY for easy access</span></div>
             </CardContent>
           </Card>
 
