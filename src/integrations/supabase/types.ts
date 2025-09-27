@@ -24,6 +24,7 @@ export type Database = {
           deployment: string | null
           deployment_success_rate: number | null
           description: string | null
+          display_order: number | null
           features_completed: string[] | null
           features_pending: string[] | null
           github_repo_url: string | null
@@ -60,6 +61,7 @@ export type Database = {
           deployment?: string | null
           deployment_success_rate?: number | null
           description?: string | null
+          display_order?: number | null
           features_completed?: string[] | null
           features_pending?: string[] | null
           github_repo_url?: string | null
@@ -96,6 +98,7 @@ export type Database = {
           deployment?: string | null
           deployment_success_rate?: number | null
           description?: string | null
+          display_order?: number | null
           features_completed?: string[] | null
           features_pending?: string[] | null
           github_repo_url?: string | null

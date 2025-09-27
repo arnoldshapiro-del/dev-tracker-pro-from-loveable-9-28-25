@@ -279,10 +279,21 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }));
   },
       
-  reorderProjects: (projects: Project[]) => set((state) => ({
-    projects,
-    // Don't trigger a reload after reordering
-  })),
+  reorderProjects: (projects: Project[]) => {
+    // Update display_order in database for each project
+    projects.forEach(async (project, index) => {
+      if (project.id) {
+        await supabase
+          .from('projects')
+          .update({ display_order: index + 1 })
+          .eq('id', project.id);
+      }
+    });
+    
+    set((state) => ({
+      projects,
+    }));
+  },
 
   loadProjects: async () => {
     console.log('=== LOAD PROJECTS DEBUG ===');
@@ -298,7 +309,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
     const { data, error } = await supabase
       .from('projects')
       .select('*')
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: true }); // fallback ordering
 
     console.log('Supabase response - data:', data, 'error:', error);
 

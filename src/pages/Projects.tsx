@@ -197,12 +197,12 @@ export const Projects = () => {
   const { user } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // Load projects when user is authenticated
+  // Load projects when user is authenticated - but only once per session
   useEffect(() => {
-    if (user) {
+    if (user && projects.length === 0) {
       loadProjects();
     }
-  }, [user, loadProjects]);
+  }, [user, loadProjects, projects.length]);
   
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");

@@ -26,11 +26,11 @@ export const Dashboard = () => {
     console.log('User:', user);
     console.log('Projects count:', projects.length);
     
-    if (user) {
+    if (user && projects.length === 0) {
       console.log('Loading projects for authenticated user...');
       loadProjects();
     }
-  }, [user, loadProjects]);
+  }, [user, loadProjects, projects.length]);
 
   const handleStartNewProject = () => {
     if (!user) {
