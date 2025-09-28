@@ -12,11 +12,11 @@ import {
 import { Palette } from "lucide-react"
 
 const themes = [
-  { value: "light", label: "Ocean Blue", color: "#2563EB" },
-  { value: "dark", label: "Dark Pro", color: "#8B5CF6" },
-  { value: "medical", label: "Medical Green", color: "#10B981" },
-  { value: "sunset", label: "Warm Orange", color: "#F59E0B" },
-  { value: "royal", label: "Royal Purple", color: "#9333EA" }
+  { value: "light", label: "Ocean Blue", color: "#3B82F6" },
+  { value: "dark", label: "Dark Pro", color: "#1F2937" },
+  { value: "medical", label: "Medical Clean", color: "#10B981" },
+  { value: "sunset", label: "Warm Sunset", color: "#F59E0B" },
+  { value: "royal", label: "Royal Purple", color: "#8B5CF6" }
 ]
 
 export function ThemeSwitcher() {

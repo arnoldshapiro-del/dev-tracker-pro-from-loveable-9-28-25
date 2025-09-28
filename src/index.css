@@ -7,170 +7,200 @@ Modern dashboard with vibrant gradients and clean design
 */
 
 @layer base {
-  /* Theme 1: Ocean Blue (Default) */
-  :root, [data-theme="light"] {
-    --background: 246 248 250; /* #F6F8FA */
-    --foreground: 17 24 39; /* #111827 */
-    --card: 255 255 255; /* Pure white cards */
-    --card-foreground: 17 24 39;
-    --popover: 255 255 255;
-    --popover-foreground: 17 24 39;
-    --primary: 37 99 235; /* #2563EB - Blue */
-    --primary-foreground: 255 255 255;
-    --secondary: 241 245 249;
-    --secondary-foreground: 17 24 39;
-    --muted: 241 245 249;
-    --muted-foreground: 107 114 128;
-    --accent: 37 99 235;
-    --accent-foreground: 255 255 255;
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
-    --border: 229 231 235;
-    --input: 229 231 235;
-    --ring: 37 99 235;
+  /* Default theme (Ocean Blue) */
+  :root {
+    --background: 210 17% 98%;
+    --foreground: 220 13% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 220 13% 9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 221.2 83.2% 53.3%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.75rem;
-    --sidebar-background: 255 255 255;
-    --sidebar-foreground: 17 24 39;
-    --sidebar-primary: 37 99 235;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 241 245 249;
-    --sidebar-accent-foreground: 17 24 39;
-    --sidebar-border: 229 231 235;
-    --sidebar-ring: 37 99 235;
-    --success: 34 197 94;
-    --success-foreground: 255 255 255;
+    --vibrant-blue: 220 91% 60%;
+    --vibrant-green: 160 84% 39%;
+    --vibrant-orange: 38 92% 50%;
+    --vibrant-red: 0 84% 60%;
+    --vibrant-purple: 248 53% 58%;
+    --vibrant-cyan: 189 94% 43%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-primary: 263 85% 65%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 210 40% 98%;
+    --sidebar-accent-foreground: 222.2 84% 4.9%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 263 85% 65%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
   }
 
   /* Theme 2: Dark Professional */
   [data-theme="dark"] {
-    --background: 15 15 23; /* #0F0F17 - Very dark */
-    --foreground: 255 255 255;
-    --card: 255 255 255; /* Keep cards white even in dark mode */
-    --card-foreground: 17 24 39; /* Dark text on white cards */
-    --popover: 255 255 255;
-    --popover-foreground: 17 24 39;
-    --primary: 139 92 246; /* #8B5CF6 - Purple */
-    --primary-foreground: 255 255 255;
-    --secondary: 30 30 46;
-    --secondary-foreground: 255 255 255;
-    --muted: 30 30 46;
-    --muted-foreground: 156 163 175;
-    --accent: 139 92 246;
-    --accent-foreground: 255 255 255;
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
-    --border: 55 65 81;
-    --input: 55 65 81;
-    --ring: 139 92 246;
-    --sidebar-background: 30 30 46; /* #1E1E2E - Dark purple sidebar */
-    --sidebar-foreground: 255 255 255;
-    --sidebar-primary: 139 92 246;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 45 45 69;
-    --sidebar-accent-foreground: 255 255 255;
-    --sidebar-border: 55 65 81;
-    --sidebar-ring: 139 92 246;
-    --success: 34 197 94;
-    --success-foreground: 255 255 255;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 263 85% 65%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 263 85% 65%;
+    --vibrant-blue: 217 91% 65%;
+    --vibrant-green: 142 76% 45%;
+    --vibrant-orange: 38 92% 55%;
+    --vibrant-red: 0 84% 65%;
+    --vibrant-purple: 263 85% 65%;
+    --vibrant-cyan: 189 94% 48%;
+    --sidebar-background: 240 10% 8%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 263 85% 65%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 263 85% 65%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
   }
 
-  /* Theme 3: Medical Green */
+  /* Theme 3: Medical Clean */
   [data-theme="medical"] {
-    --background: 246 248 250;
-    --foreground: 17 24 39;
-    --card: 255 255 255;
-    --card-foreground: 17 24 39;
-    --popover: 255 255 255;
-    --popover-foreground: 17 24 39;
-    --primary: 16 185 129; /* #10B981 - Green */
-    --primary-foreground: 255 255 255;
-    --secondary: 241 245 249;
-    --secondary-foreground: 17 24 39;
-    --muted: 241 245 249;
-    --muted-foreground: 107 114 128;
-    --accent: 16 185 129;
-    --accent-foreground: 255 255 255;
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
-    --border: 229 231 235;
-    --input: 229 231 235;
-    --ring: 16 185 129;
-    --sidebar-background: 255 255 255;
-    --sidebar-foreground: 17 24 39;
-    --sidebar-primary: 16 185 129;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 241 245 249;
-    --sidebar-accent-foreground: 17 24 39;
-    --sidebar-border: 229 231 235;
-    --sidebar-ring: 16 185 129;
-    --success: 34 197 94;
-    --success-foreground: 255 255 255;
+    --background: 160 20% 98%;
+    --foreground: 160 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 160 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 10% 10%;
+    --primary: 160 100% 35%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 160 30% 95%;
+    --secondary-foreground: 160 10% 10%;
+    --muted: 160 30% 95%;
+    --muted-foreground: 160 10% 45%;
+    --accent: 160 100% 35%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 160 20% 90%;
+    --input: 160 20% 90%;
+    --ring: 160 100% 35%;
+    --vibrant-blue: 200 100% 45%;
+    --vibrant-green: 160 100% 35%;
+    --vibrant-orange: 35 100% 50%;
+    --vibrant-red: 0 85% 55%;
+    --vibrant-purple: 280 60% 55%;
+    --vibrant-cyan: 180 100% 40%;
+    --sidebar-background: 160 30% 97%;
+    --sidebar-foreground: 160 10% 10%;
+    --sidebar-primary: 160 100% 35%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 160 30% 95%;
+    --sidebar-accent-foreground: 160 10% 10%;
+    --sidebar-border: 160 20% 90%;
+    --sidebar-ring: 160 100% 35%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
   }
 
-  /* Theme 4: Warm Orange */
+  /* Theme 4: Warm Sunset */
   [data-theme="sunset"] {
-    --background: 246 248 250;
-    --foreground: 17 24 39;
-    --card: 255 255 255;
-    --card-foreground: 17 24 39;
-    --popover: 255 255 255;
-    --popover-foreground: 17 24 39;
-    --primary: 245 158 11; /* #F59E0B - Orange */
-    --primary-foreground: 255 255 255;
-    --secondary: 241 245 249;
-    --secondary-foreground: 17 24 39;
-    --muted: 241 245 249;
-    --muted-foreground: 107 114 128;
-    --accent: 245 158 11;
-    --accent-foreground: 255 255 255;
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
-    --border: 229 231 235;
-    --input: 229 231 235;
-    --ring: 245 158 11;
-    --sidebar-background: 255 255 255;
-    --sidebar-foreground: 17 24 39;
-    --sidebar-primary: 245 158 11;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 241 245 249;
-    --sidebar-accent-foreground: 17 24 39;
-    --sidebar-border: 229 231 235;
-    --sidebar-ring: 245 158 11;
-    --success: 34 197 94;
-    --success-foreground: 255 255 255;
+    --background: 35 25% 96%;
+    --foreground: 35 15% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 35 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 35 15% 15%;
+    --primary: 25 95% 55%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 35 40% 94%;
+    --secondary-foreground: 35 15% 15%;
+    --muted: 35 40% 94%;
+    --muted-foreground: 35 15% 45%;
+    --accent: 25 95% 55%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 35 25% 88%;
+    --input: 35 25% 88%;
+    --ring: 25 95% 55%;
+    --vibrant-blue: 220 85% 55%;
+    --vibrant-green: 120 70% 45%;
+    --vibrant-orange: 25 95% 55%;
+    --vibrant-red: 0 85% 60%;
+    --vibrant-purple: 280 70% 60%;
+    --vibrant-cyan: 190 85% 50%;
+    --sidebar-background: 35 40% 95%;
+    --sidebar-foreground: 35 15% 15%;
+    --sidebar-primary: 25 95% 55%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 35 40% 94%;
+    --sidebar-accent-foreground: 35 15% 15%;
+    --sidebar-border: 35 25% 88%;
+    --sidebar-ring: 25 95% 55%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
   }
 
   /* Theme 5: Royal Purple */
   [data-theme="royal"] {
-    --background: 246 248 250;
-    --foreground: 17 24 39;
-    --card: 255 255 255;
-    --card-foreground: 17 24 39;
-    --popover: 255 255 255;
-    --popover-foreground: 17 24 39;
-    --primary: 147 51 234; /* #9333EA - Purple */
-    --primary-foreground: 255 255 255;
-    --secondary: 241 245 249;
-    --secondary-foreground: 17 24 39;
-    --muted: 241 245 249;
-    --muted-foreground: 107 114 128;
-    --accent: 147 51 234;
-    --accent-foreground: 255 255 255;
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
-    --border: 229 231 235;
-    --input: 229 231 235;
-    --ring: 147 51 234;
-    --sidebar-background: 255 255 255;
-    --sidebar-foreground: 17 24 39;
-    --sidebar-primary: 147 51 234;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 241 245 249;
-    --sidebar-accent-foreground: 17 24 39;
-    --sidebar-border: 229 231 235;
-    --sidebar-ring: 147 51 234;
-    --success: 34 197 94;
-    --success-foreground: 255 255 255;
+    --background: 280 15% 96%;
+    --foreground: 280 10% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 280 10% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 280 10% 15%;
+    --primary: 270 85% 60%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 280 25% 93%;
+    --secondary-foreground: 280 10% 15%;
+    --muted: 280 25% 93%;
+    --muted-foreground: 280 10% 45%;
+    --accent: 270 85% 60%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 280 15% 88%;
+    --input: 280 15% 88%;
+    --ring: 270 85% 60%;
+    --vibrant-blue: 240 85% 60%;
+    --vibrant-green: 150 70% 45%;
+    --vibrant-orange: 35 90% 55%;
+    --vibrant-red: 350 85% 60%;
+    --vibrant-purple: 270 85% 60%;
+    --vibrant-cyan: 190 80% 50%;
+    --sidebar-background: 280 25% 94%;
+    --sidebar-foreground: 280 10% 15%;
+    --sidebar-primary: 270 85% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 280 25% 93%;
+    --sidebar-accent-foreground: 280 10% 15%;
+    --sidebar-border: 280 15% 88%;
+    --sidebar-ring: 270 85% 60%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
   }
 }
 
@@ -181,14 +211,9 @@ Modern dashboard with vibrant gradients and clean design
 
   body {
     @apply text-foreground;
-    background-color: #F6F8FA;
+    background-color: #F6F7F9;
     font-family: Inter, system-ui, -apple-system, sans-serif;
   }
-  
-  body[data-theme="dark"] { background-color: #0F0F17; }
-  body[data-theme="medical"] { background-color: #F6F8FA; }
-  body[data-theme="sunset"] { background-color: #F6F8FA; }
-  body[data-theme="royal"] { background-color: #F6F8FA; }
   
   /* White card theme styles with subtle 3D elevation */
   .white-card {
