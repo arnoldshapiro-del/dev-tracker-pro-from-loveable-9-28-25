@@ -18,7 +18,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ModeSwitcher } from "@/components/ModeSwitcher";
 import { useModeStore } from "@/store/modeStore";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -48,7 +48,7 @@ export const AppSidebar = () => {
             <h1 className="text-xl font-bold text-primary">DevTracker Pro</h1>
             <p className="text-xs text-muted-foreground mt-1">Developer Dashboard</p>
           </div>
-          <ThemeToggle />
+          <ThemeSwitcher />
         </div>
       </div>
       

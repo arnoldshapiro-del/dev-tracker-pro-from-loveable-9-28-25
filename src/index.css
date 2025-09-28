@@ -7,129 +7,200 @@ Modern dashboard with vibrant gradients and clean design
 */
 
 @layer base {
+  /* Default theme (Ocean Blue) */
   :root {
-    --background: 210 17% 98%; /* #F6F7F9 */
-    --foreground: 220 13% 9%; /* #111827 */
-    --background: 210 17% 98%; /* #F6F7F9 */
-
+    --background: 210 17% 98%;
+    --foreground: 220 13% 9%;
     --card: 0 0% 100%;
     --card-foreground: 220 13% 9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 9%;
-
     --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 0 0% 98%;
-
     --secondary: 210 40% 96%;
     --secondary-foreground: 220 13% 9%;
-
     --muted: 210 40% 96%;
-    --muted-foreground: 220 9% 46%; /* #6B7280 */
-
+    --muted-foreground: 220 9% 46%;
     --accent: 221.2 83.2% 53.3%;
     --accent-foreground: 0 0% 98%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 220 13% 91%; /* #E5E7EB */
+    --border: 220 13% 91%;
     --input: 220 13% 91%;
     --ring: 221.2 83.2% 53.3%;
-
     --radius: 0.75rem;
-
-    /* Custom DevTracker Colors - VIBRANT MOCHA STYLE */
-    --vibrant-blue: 220 91% 60%;          /* #2563EB equivalent */
-    --vibrant-green: 160 84% 39%;         /* #10B981 equivalent */
-    --vibrant-orange: 38 92% 50%;         /* #F59E0B equivalent */
-    --vibrant-red: 0 84% 60%;             /* #EF4444 equivalent */
-    --vibrant-purple: 248 53% 58%;        /* #8B5CF6 equivalent */
-    --vibrant-cyan: 189 94% 43%;          /* #06B6D4 equivalent */
-    --vibrant-pink: 330 81% 60%;          /* #EC4899 equivalent */
-    --vibrant-yellow: 48 96% 53%;         /* #EAB308 equivalent */
-    
-    /* Legacy gradient support */
-    --purple-gradient-start: 248 53% 58%;
-    --purple-gradient-end: 248 53% 58%;
-    --green-gradient-start: 160 84% 39%;
-    --green-gradient-end: 160 84% 39%;
-    --blue-gradient-start: 220 91% 60%;
-    --blue-gradient-end: 220 91% 60%;
-    --pink-gradient-start: 330 81% 60%;
-    --pink-gradient-end: 330 81% 60%;
-    --orange-gradient-start: 38 92% 50%;
-    --orange-gradient-end: 38 92% 50%;
-    --red-gradient-start: 0 84% 60%;
-    --red-gradient-end: 0 84% 60%;
-    
-    /* Success colors */
-    --success: 160 84% 39%;
-    --success-foreground: 0 0% 98%;
-    
-    /* Sidebar colors */
-    --sidebar-bg: 0 0% 100%;
-    --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-item-hover: 210 40% 98%;
-    
-    /* Beautiful New Gradients */
-    --gradient-coral: linear-gradient(135deg, #ff6b6b 0%, #ffa726 50%, #ffcc02 100%);
-    --gradient-mint: linear-gradient(135deg, #4ecdc4 0%, #44a08d 50%, #2dd4bf 100%);
-    --gradient-sunset: linear-gradient(135deg, #ff8a80 0%, #ff7043 50%, #f4511e 100%);
-    --gradient-ocean: linear-gradient(135deg, #26c6da 0%, #00acc1 50%, #0097a7 100%);
-    --gradient-forest: linear-gradient(135deg, #66bb6a 0%, #43a047 50%, #2e7d32 100%);
-    --gradient-lavender: linear-gradient(135deg, #ba68c8 0%, #9c27b0 50%, #7b1fa2 100%);
-    --gradient-gold: linear-gradient(135deg, #ffd54f 0%, #ffb300 50%, #ff8f00 100%);
-    --gradient-ruby: linear-gradient(135deg, #f06292 0%, #e91e63 50%, #c2185b 100%);
-    --gradient-sky: linear-gradient(135deg, #42a5f5 0%, #1e88e5 50%, #1565c0 100%);
-    --gradient-peach: linear-gradient(135deg, #ffab91 0%, #ff7043 50%, #f4511e 100%);
-    --gradient-emerald: linear-gradient(135deg, #4db6ac 0%, #26a69a 50%, #00695c 100%);
-    --gradient-plum: linear-gradient(135deg, #ab47bc 0%, #8e24aa 50%, #6a1b9a 100%);
-    --gradient-bronze: linear-gradient(135deg, #a1887f 0%, #8d6e63 50%, #5d4037 100%);
-    --gradient-electric: linear-gradient(135deg, #7e57c2 0%, #5e35b1 50%, #4527a0 100%);
-    
-    /* Legacy gradients - Vibrant Mocha-style */
-    --gradient-purple: linear-gradient(135deg, hsl(var(--purple-gradient-start)), hsl(var(--purple-gradient-end)));
-    --gradient-green: linear-gradient(135deg, hsl(var(--green-gradient-start)), hsl(var(--green-gradient-end)));
-    --gradient-blue: linear-gradient(135deg, hsl(var(--blue-gradient-start)), hsl(var(--blue-gradient-end)));
-    --gradient-pink: linear-gradient(135deg, hsl(var(--pink-gradient-start)), hsl(var(--pink-gradient-end)));
-    --gradient-orange: linear-gradient(135deg, hsl(var(--orange-gradient-start)), hsl(var(--orange-gradient-end)));
-    --gradient-red: linear-gradient(135deg, hsl(var(--red-gradient-start)), hsl(var(--red-gradient-end)));
-    
-    /* Shadows */
-    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.15);
-    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
+    --vibrant-blue: 220 91% 60%;
+    --vibrant-green: 160 84% 39%;
+    --vibrant-orange: 38 92% 50%;
+    --vibrant-red: 0 84% 60%;
+    --vibrant-purple: 248 53% 58%;
+    --vibrant-cyan: 189 94% 43%;
     --sidebar-background: 0 0% 100%;
-
     --sidebar-foreground: 222.2 84% 4.9%;
-
     --sidebar-primary: 263 85% 65%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 210 40% 98%;
-
     --sidebar-accent-foreground: 222.2 84% 4.9%;
-
     --sidebar-border: 214.3 31.8% 91.4%;
-
     --sidebar-ring: 263 85% 65%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
   }
 
-  /* Dark mode variants (for potential future use) */
-  .dark {
+  /* Theme 2: Dark Professional */
+  [data-theme="dark"] {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 10% 8%;
     --card-foreground: 0 0% 98%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 263 85% 65%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
-    --sidebar-background: 240 10% 3.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 263 85% 65%;
+    --vibrant-blue: 217 91% 65%;
+    --vibrant-green: 142 76% 45%;
+    --vibrant-orange: 38 92% 55%;
+    --vibrant-red: 0 84% 65%;
+    --vibrant-purple: 263 85% 65%;
+    --vibrant-cyan: 189 94% 48%;
+    --sidebar-background: 240 10% 8%;
     --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 263 85% 65%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 263 85% 65%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
+  }
+
+  /* Theme 3: Medical Clean */
+  [data-theme="medical"] {
+    --background: 160 20% 98%;
+    --foreground: 160 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 160 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 10% 10%;
+    --primary: 160 100% 35%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 160 30% 95%;
+    --secondary-foreground: 160 10% 10%;
+    --muted: 160 30% 95%;
+    --muted-foreground: 160 10% 45%;
+    --accent: 160 100% 35%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 160 20% 90%;
+    --input: 160 20% 90%;
+    --ring: 160 100% 35%;
+    --vibrant-blue: 200 100% 45%;
+    --vibrant-green: 160 100% 35%;
+    --vibrant-orange: 35 100% 50%;
+    --vibrant-red: 0 85% 55%;
+    --vibrant-purple: 280 60% 55%;
+    --vibrant-cyan: 180 100% 40%;
+    --sidebar-background: 160 30% 97%;
+    --sidebar-foreground: 160 10% 10%;
+    --sidebar-primary: 160 100% 35%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 160 30% 95%;
+    --sidebar-accent-foreground: 160 10% 10%;
+    --sidebar-border: 160 20% 90%;
+    --sidebar-ring: 160 100% 35%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
+  }
+
+  /* Theme 4: Warm Sunset */
+  [data-theme="sunset"] {
+    --background: 35 25% 96%;
+    --foreground: 35 15% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 35 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 35 15% 15%;
+    --primary: 25 95% 55%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 35 40% 94%;
+    --secondary-foreground: 35 15% 15%;
+    --muted: 35 40% 94%;
+    --muted-foreground: 35 15% 45%;
+    --accent: 25 95% 55%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 35 25% 88%;
+    --input: 35 25% 88%;
+    --ring: 25 95% 55%;
+    --vibrant-blue: 220 85% 55%;
+    --vibrant-green: 120 70% 45%;
+    --vibrant-orange: 25 95% 55%;
+    --vibrant-red: 0 85% 60%;
+    --vibrant-purple: 280 70% 60%;
+    --vibrant-cyan: 190 85% 50%;
+    --sidebar-background: 35 40% 95%;
+    --sidebar-foreground: 35 15% 15%;
+    --sidebar-primary: 25 95% 55%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 35 40% 94%;
+    --sidebar-accent-foreground: 35 15% 15%;
+    --sidebar-border: 35 25% 88%;
+    --sidebar-ring: 25 95% 55%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
+  }
+
+  /* Theme 5: Royal Purple */
+  [data-theme="royal"] {
+    --background: 280 15% 96%;
+    --foreground: 280 10% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 280 10% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 280 10% 15%;
+    --primary: 270 85% 60%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 280 25% 93%;
+    --secondary-foreground: 280 10% 15%;
+    --muted: 280 25% 93%;
+    --muted-foreground: 280 10% 45%;
+    --accent: 270 85% 60%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 280 15% 88%;
+    --input: 280 15% 88%;
+    --ring: 270 85% 60%;
+    --vibrant-blue: 240 85% 60%;
+    --vibrant-green: 150 70% 45%;
+    --vibrant-orange: 35 90% 55%;
+    --vibrant-red: 350 85% 60%;
+    --vibrant-purple: 270 85% 60%;
+    --vibrant-cyan: 190 80% 50%;
+    --sidebar-background: 280 25% 94%;
+    --sidebar-foreground: 280 10% 15%;
+    --sidebar-primary: 270 85% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 280 25% 93%;
+    --sidebar-accent-foreground: 280 10% 15%;
+    --sidebar-border: 280 15% 88%;
+    --sidebar-ring: 270 85% 60%;
+    --success: 142 76% 36%;
+    --success-foreground: 355.7 100% 97.3%;
   }
 }
 
