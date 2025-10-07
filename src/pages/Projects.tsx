@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Search, Plus, Github, ExternalLink, Calendar, AlertCircle, TrendingUp, GripVertical, Trash2 } from "lucide-react";
+import { Search, Plus, Github, ExternalLink, Calendar, AlertCircle, TrendingUp, GripVertical, Trash2, Archive } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { openProjectUrl } from "@/utils/projectUtils";
 import { ProjectEditor } from "@/components/ProjectEditor";
@@ -40,9 +40,10 @@ interface SortableProjectCardProps {
   onEdit: (project: Project) => void;
   onOpen: (project: Project) => void;
   onDelete: (project: Project) => void;
+  onArchive: (project: Project) => void;
 }
 
-const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProjectCardProps) => {
+const SortableProjectCard = ({ project, onEdit, onOpen, onDelete, onArchive }: SortableProjectCardProps) => {
   const {
     attributes,
     listeners,
@@ -154,6 +155,20 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
           <Plus className="h-4 w-4 mr-2" />
           Edit Project
         </Button>
+        
+        <Button 
+          size="sm" 
+          variant="outline"
+          onClick={(e) => {
+            e.stopPropagation();
+            onArchive(project);
+          }}
+          className="border-gray-300 text-gray-600 hover:bg-gray-50"
+        >
+          <Archive className="h-4 w-4 mr-2" />
+          Archive
+        </Button>
+        
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button 
@@ -213,7 +228,7 @@ const SortableProjectCard = ({ project, onEdit, onOpen, onDelete }: SortableProj
 };
 
 export const Projects = () => {
-  const { projects, addProject, updateProject, deleteProject, reorderProjects, loadProjects } = useAppStore();
+  const { projects, addProject, updateProject, deleteProject, archiveProject, reorderProjects, loadProjects } = useAppStore();
   const { toast } = useToast();
   const { user } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -239,6 +254,9 @@ export const Projects = () => {
   );
 
   const filteredProjects = projects.filter(project => {
+    // Exclude deleted and archived projects from main view
+    if (project.isDeleted || project.isArchived) return false;
+    
     const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          project.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === "all" || project.status === filterStatus;
@@ -339,6 +357,17 @@ export const Projects = () => {
     }
   };
 
+  const handleArchiveProject = (project: Project) => {
+    console.log('Archiving project:', project.id);
+    if (project.id) {
+      archiveProject(project.id);
+      toast({
+        title: "Project Archived",
+        description: `${project.name} has been archived successfully.`,
+      });
+    }
+  };
+
   const handleUndoDelete = () => {
     if (deletedProject) {
       if (deletedProject.id) {
@@ -356,7 +385,7 @@ export const Projects = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">{/* Fixed newProject reference error */}
+    <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -423,6 +452,7 @@ export const Projects = () => {
                 onEdit={handleEditProject}
                 onOpen={handleOpenProject}
                 onDelete={handleDeleteProject}
+                onArchive={handleArchiveProject}
               />
             ))}
           </div>
