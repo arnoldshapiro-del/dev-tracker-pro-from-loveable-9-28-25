@@ -16,6 +16,8 @@ export interface Project {
   technologies: string[];
   createdAt: string;
   updatedAt: string;
+  isArchived?: boolean;
+  isDeleted?: boolean;
   
   // DevTracker Pro specific fields
   ai_platform: string;
@@ -38,6 +40,17 @@ export interface Project {
   features_completed?: string[];
   features_pending?: string[];
   known_bugs?: string[];
+  files?: ProjectFile[];
+}
+
+export interface ProjectFile {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  content: string; // base64 encoded content
+  uploadedAt: string;
+  path?: string; // for folder structure
 }
 
 export interface AnalyticsData {
@@ -63,8 +76,16 @@ interface AppState {
   addProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
+  archiveProject: (id: string) => Promise<void>;
+  unarchiveProject: (id: string) => Promise<void>;
+  restoreProject: (id: string) => Promise<void>;
+  permanentlyDeleteProject: (id: string) => Promise<void>;
+  restoreAllDeleted: () => Promise<void>;
+  unarchiveAll: () => Promise<void>;
   reorderProjects: (projects: Project[]) => void;
   loadProjects: () => Promise<void>;
+  loadArchivedProjects: () => Promise<void>;
+  loadDeletedProjects: () => Promise<void>;
   
   // Analytics
   analytics: AnalyticsData;
@@ -237,6 +258,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
     if (updates.repository !== undefined) dbUpdates.repository = updates.repository;
     if (updates.deployment !== undefined) dbUpdates.deployment = updates.deployment;
     if (updates.primaryUrl !== undefined) dbUpdates.primary_url = updates.primaryUrl;
+    if (updates.isArchived !== undefined) dbUpdates.is_archived = updates.isArchived;
+    if (updates.isDeleted !== undefined) dbUpdates.is_deleted = updates.isDeleted;
+    if (updates.files !== undefined) dbUpdates.files = updates.files;
     
     dbUpdates.updated_at = new Date().toISOString();
 
@@ -260,13 +284,91 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
       
   deleteProject: async (id) => {
+    console.log('Deleting project:', id);
+    
+    // Soft delete using Supabase
+    const { error } = await supabase
+      .from('projects')
+      .update({ is_deleted: true })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error soft deleting project:', error);
+      return;
+    }
+
+    // Remove from local state immediately so UI updates
+    set((state) => ({
+      projects: state.projects.filter(project => project.id !== id)
+    }));
+    
+    console.log('Project deleted successfully');
+  },
+
+  archiveProject: async (id) => {
+    console.log('Archiving project:', id);
+    
+    const { error } = await supabase
+      .from('projects')
+      .update({ is_archived: true })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error archiving project:', error);
+      return;
+    }
+
+    // Remove from local state immediately so UI updates
+    set((state) => ({
+      projects: state.projects.filter(project => project.id !== id)
+    }));
+    
+    console.log('Project archived successfully');
+  },
+
+  unarchiveProject: async (id) => {
+    const { error } = await supabase
+      .from('projects')
+      .update({ is_archived: false })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error unarchiving project:', error);
+      return;
+    }
+
+    // Reload projects to show the unarchived project
+    await get().loadProjects();
+    
+    console.log('Project unarchived successfully');
+  },
+
+  restoreProject: async (id) => {
+    const { error } = await supabase
+      .from('projects')
+      .update({ is_deleted: false })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error restoring project:', error);
+      return;
+    }
+
+    // Reload projects to show the restored project
+    await get().loadProjects();
+    
+    console.log('Project restored successfully');
+  },
+
+  permanentlyDeleteProject: async (id) => {
+    // Permanently delete from Supabase
     const { error } = await supabase
       .from('projects')
       .delete()
       .eq('id', id);
 
     if (error) {
-      console.error('Error deleting project:', error);
+      console.error('Error permanently deleting project:', error);
       return;
     }
 
@@ -277,6 +379,36 @@ export const useAppStore = create<AppState>()((set, get) => ({
         totalProjects: state.analytics.totalProjects - 1
       }
     }));
+  },
+
+  restoreAllDeleted: async () => {
+    const { error } = await supabase
+      .from('projects')
+      .update({ is_deleted: false })
+      .eq('is_deleted', true);
+
+    if (error) {
+      console.error('Error restoring all deleted projects:', error);
+      return;
+    }
+
+    // Reload projects to show all restored projects
+    await get().loadProjects();
+  },
+
+  unarchiveAll: async () => {
+    const { error } = await supabase
+      .from('projects')
+      .update({ is_archived: false })
+      .eq('is_archived', true);
+
+    if (error) {
+      console.error('Error unarchiving all projects:', error);
+      return;
+    }
+
+    // Reload projects to show all unarchived projects
+    await get().loadProjects();
   },
       
   reorderProjects: (projects: Project[]) => {
@@ -306,12 +438,15 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
 
     console.log('Fetching projects from Supabase...');
+    // Load only active projects (not archived or deleted)
     const { data, error } = await supabase
       .from('projects')
       .select('*')
       .eq('user_id', user.id)
+      .or('is_archived.is.null,is_archived.eq.false')
+      .or('is_deleted.is.null,is_deleted.eq.false')
       .order('display_order', { ascending: true })
-      .order('created_at', { ascending: true }); // fallback ordering
+      .order('created_at', { ascending: true });
 
     console.log('Supabase response - data:', data, 'error:', error);
 
@@ -354,6 +489,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
       features_completed: project.features_completed || [],
       features_pending: project.features_pending || [],
       known_bugs: project.known_bugs || [],
+      files: project.files || [],
+      isArchived: project.is_archived || false,
+      isDeleted: project.is_deleted || false,
     }));
 
     set((state) => ({
@@ -361,8 +499,84 @@ export const useAppStore = create<AppState>()((set, get) => ({
       analytics: {
         ...state.analytics,
         totalProjects: projects.length,
-        activeProjects: projects.filter(p => p.status === 'active').length
+        activeProjects: projects.filter(p => p.status === 'active').length,
+        completedTasks: projects.filter(p => p.status === 'completed').length * 10,
+        totalIssues: projects.reduce((sum, p) => sum + p.issues, 0),
+        resolvedIssues: Math.floor(projects.reduce((sum, p) => sum + p.issues, 0) * 0.7)
       }
+    }));
+  },
+
+  loadArchivedProjects: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('is_archived', true)
+      .or('is_deleted.is.null,is_deleted.eq.false');
+
+    if (error) {
+      console.error('Error loading archived projects:', error);
+      return [];
+    }
+
+    return data.map(project => ({
+      id: project.id,
+      name: project.name || '',
+      description: project.description || '',
+      status: project.status as Project['status'],
+      progress: project.progress || 0,
+      lastActivity: project.last_activity || '',
+      repository: project.repository || '',
+      deployment: project.deployment || '',
+      primaryUrl: project.primary_url || '',
+      issues: project.issues || 0,
+      technologies: project.technologies || [],
+      createdAt: project.created_at?.split('T')[0] || '',
+      updatedAt: project.updated_at?.split('T')[0] || '',
+      ai_platform: project.ai_platform || '',
+      project_type: project.project_type || '',
+      isArchived: project.is_archived || false,
+      isDeleted: project.is_deleted || false,
+    }));
+  },
+
+  loadDeletedProjects: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('is_deleted', true);
+
+    if (error) {
+      console.error('Error loading deleted projects:', error);
+      return [];
+    }
+
+    return data.map(project => ({
+      id: project.id,
+      name: project.name || '',
+      description: project.description || '',
+      status: project.status as Project['status'],
+      progress: project.progress || 0,
+      lastActivity: project.last_activity || '',
+      repository: project.repository || '',
+      deployment: project.deployment || '',
+      primaryUrl: project.primary_url || '',
+      issues: project.issues || 0,
+      technologies: project.technologies || [],
+      createdAt: project.created_at?.split('T')[0] || '',
+      updatedAt: project.updated_at?.split('T')[0] || '',
+      ai_platform: project.ai_platform || '',
+      project_type: project.project_type || '',
+      isArchived: project.is_archived || false,
+      isDeleted: project.is_deleted || false,
     }));
   },
       
